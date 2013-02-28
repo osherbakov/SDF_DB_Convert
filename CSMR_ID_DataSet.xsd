@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="CSMR_ID_DataSet" targetNamespace="http://tempuri.org/CSMR_ID_DataSet.xsd" xmlns:mstns="http://tempuri.org/CSMR_ID_DataSet.xsd" xmlns="http://tempuri.org/CSMR_ID_DataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="MySettings" AppSettingsPropertyName="CSMR_ID_ConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="CSMR_ID_ConnectionString (MySettings)" PropertyReference="ApplicationSettings.CSMR_DB_Convert.My.MySettings.GlobalReference.Default.CSMR_ID_ConnectionString" Provider="System.Data.OleDb" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="CSMR_IDTableAdapter" GeneratorDataComponentClassName="CSMR_IDTableAdapter" Name="CSMR_ID" UserDataComponentName="CSMR_IDTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="CSMR_ID_ConnectionString (MySettings)" DbObjectName="CSMR_ID" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT CSMR_ID.*  FROM CSMR_ID</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="SSN" DataSetColumn="SSN" />
+              <Mapping SourceColumn="NAME_IND" DataSetColumn="NAME_IND" />
+              <Mapping SourceColumn="LAST_NAME" DataSetColumn="LAST_NAME" />
+              <Mapping SourceColumn="FIRST_NAME" DataSetColumn="FIRST_NAME" />
+              <Mapping SourceColumn="MIDDLE_NAME" DataSetColumn="MIDDLE_NAME" />
+              <Mapping SourceColumn="RANK" DataSetColumn="RANK" />
+              <Mapping SourceColumn="PAY_GR" DataSetColumn="PAY_GR" />
+              <Mapping SourceColumn="H_ADDR" DataSetColumn="H_ADDR" />
+              <Mapping SourceColumn="H_CITY" DataSetColumn="H_CITY" />
+              <Mapping SourceColumn="H_ZIP" DataSetColumn="H_ZIP" />
+              <Mapping SourceColumn="DOB" DataSetColumn="DOB" />
+              <Mapping SourceColumn="GENDER" DataSetColumn="GENDER" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="CSMR_ID_DataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="CSMR_ID_DataSet" msprop:Generator_UserDSName="CSMR_ID_DataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="CSMR_ID" msprop:Generator_TableClassName="CSMR_IDDataTable" msprop:Generator_TableVarName="tableCSMR_ID" msprop:Generator_TablePropName="CSMR_ID" msprop:Generator_RowDeletingName="CSMR_IDRowDeleting" msprop:Generator_UserTableName="CSMR_ID" msprop:Generator_RowChangingName="CSMR_IDRowChanging" msprop:Generator_RowEvHandlerName="CSMR_IDRowChangeEventHandler" msprop:Generator_RowDeletedName="CSMR_IDRowDeleted" msprop:Generator_RowEvArgName="CSMR_IDRowChangeEvent" msprop:Generator_RowChangedName="CSMR_IDRowChanged" msprop:Generator_RowClassName="CSMR_IDRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="SSN" msprop:Generator_ColumnVarNameInTable="columnSSN" msprop:Generator_ColumnPropNameInRow="SSN" msprop:Generator_ColumnPropNameInTable="SSNColumn" msprop:Generator_UserColumnName="SSN" type="xs:int" minOccurs="0" />
+              <xs:element name="NAME_IND" msprop:Generator_ColumnVarNameInTable="columnNAME_IND" msprop:Generator_ColumnPropNameInRow="NAME_IND" msprop:Generator_ColumnPropNameInTable="NAME_INDColumn" msprop:Generator_UserColumnName="NAME_IND" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="LAST_NAME" msprop:Generator_ColumnVarNameInTable="columnLAST_NAME" msprop:Generator_ColumnPropNameInRow="LAST_NAME" msprop:Generator_ColumnPropNameInTable="LAST_NAMEColumn" msprop:Generator_UserColumnName="LAST_NAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="FIRST_NAME" msprop:Generator_ColumnVarNameInTable="columnFIRST_NAME" msprop:Generator_ColumnPropNameInRow="FIRST_NAME" msprop:Generator_ColumnPropNameInTable="FIRST_NAMEColumn" msprop:Generator_UserColumnName="FIRST_NAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MIDDLE_NAME" msprop:Generator_ColumnVarNameInTable="columnMIDDLE_NAME" msprop:Generator_ColumnPropNameInRow="MIDDLE_NAME" msprop:Generator_ColumnPropNameInTable="MIDDLE_NAMEColumn" msprop:Generator_UserColumnName="MIDDLE_NAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="RANK" msprop:Generator_ColumnVarNameInTable="columnRANK" msprop:Generator_ColumnPropNameInRow="RANK" msprop:Generator_ColumnPropNameInTable="RANKColumn" msprop:Generator_UserColumnName="RANK" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PAY_GR" msprop:Generator_ColumnVarNameInTable="columnPAY_GR" msprop:Generator_ColumnPropNameInRow="PAY_GR" msprop:Generator_ColumnPropNameInTable="PAY_GRColumn" msprop:Generator_UserColumnName="PAY_GR" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="H_ADDR" msprop:Generator_ColumnVarNameInTable="columnH_ADDR" msprop:Generator_ColumnPropNameInRow="H_ADDR" msprop:Generator_ColumnPropNameInTable="H_ADDRColumn" msprop:Generator_UserColumnName="H_ADDR" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="H_CITY" msprop:Generator_ColumnVarNameInTable="columnH_CITY" msprop:Generator_ColumnPropNameInRow="H_CITY" msprop:Generator_ColumnPropNameInTable="H_CITYColumn" msprop:Generator_UserColumnName="H_CITY" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="H_ZIP" msprop:Generator_ColumnVarNameInTable="columnH_ZIP" msprop:Generator_ColumnPropNameInRow="H_ZIP" msprop:Generator_ColumnPropNameInTable="H_ZIPColumn" msprop:Generator_UserColumnName="H_ZIP" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DOB" msprop:Generator_ColumnVarNameInTable="columnDOB" msprop:Generator_ColumnPropNameInRow="DOB" msprop:Generator_ColumnPropNameInTable="DOBColumn" msprop:Generator_UserColumnName="DOB" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="GENDER" msprop:Generator_ColumnVarNameInTable="columnGENDER" msprop:Generator_ColumnPropNameInRow="GENDER" msprop:Generator_ColumnPropNameInTable="GENDERColumn" msprop:Generator_UserColumnName="GENDER" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="6" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
