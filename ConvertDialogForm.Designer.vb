@@ -494,14 +494,17 @@ Partial Class ConvertDialogForm
         '
         'RANKComboBox
         '
-        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.CSMR_IDBindingSource, "RANK", True))
-        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.CSMR_IDBindingSource, "RANK", True))
+        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.CSMR_IDBindingSource, "RANK", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.CSMR_IDBindingSource, "RANK", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
         Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "RANK", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.RANKComboBox.DataSource = Me.CSMR_IDBindingSource
+        Me.RANKComboBox.DisplayMember = "RANK"
         Me.RANKComboBox.FormattingEnabled = True
         Me.RANKComboBox.Location = New System.Drawing.Point(144, 162)
         Me.RANKComboBox.Name = "RANKComboBox"
         Me.RANKComboBox.Size = New System.Drawing.Size(68, 21)
         Me.RANKComboBox.TabIndex = 26
+        Me.RANKComboBox.ValueMember = "RANK"
         '
         'CSMR_IDBindingSource
         '
@@ -630,7 +633,6 @@ Partial Class ConvertDialogForm
         'CSMR_IDBindingNavigatorSaveItem
         '
         Me.CSMR_IDBindingNavigatorSaveItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.CSMR_IDBindingNavigatorSaveItem.Enabled = False
         Me.CSMR_IDBindingNavigatorSaveItem.Image = CType(resources.GetObject("CSMR_IDBindingNavigatorSaveItem.Image"), System.Drawing.Image)
         Me.CSMR_IDBindingNavigatorSaveItem.Name = "CSMR_IDBindingNavigatorSaveItem"
         Me.CSMR_IDBindingNavigatorSaveItem.Size = New System.Drawing.Size(23, 22)

@@ -3,83 +3,33 @@ Imports VB = Microsoft.VisualBasic
 
 
 
-
 Public Class ConvertDialogForm
     ' Regex to extract the First, Last names from the comma-separated list
     Private Shared np_rx As New Regex("\s*(?<LN>[a-zA-Z]+)\s*(,|\s+)\s*(?<FN>[a-zA-Z]+)\s*(,*|\s+)\s*(?<MI>[a-zA-Z]*)", _
                                       RegexOptions.Compiled Or RegexOptions.IgnoreCase)
 
-    ' Rank is 6 characters, PayGrade is 4
-    Private Shared RankToGrade() As String = { _
-"CIV       ", _
-"PVT   E 1 ", "PV2   E 2 ", "PFC   E 3 ", "SPC   E 4 ", "CPL   E 4 ", _
-"SGT   E 5 ", "SSG   E 6 ", "SFC   E 7 ", "MSG   E 8 ", "1SG   E 8 ", "SGM   E 9 ", _
-"CSM   E 9 ", "WOC   E 5 ", "WO1   W 1 ", "CW2   W 2 ", "CW3   W 3 ", "CW4   W 4 ", _
-"CW5   W 5 ", "OCS   E 6 ", "2LT   O 1 ", "1LT   O 2 ", "CPT   O 3 ", "MAJ   O 4 ", _
-"LTC   O 5 ", "COL   O 6 ", "BG    O 7 ", "MG    O 8 ", "LG    O 9 ", _
-"AB    E 1 ", "Amn   E 2 ", "A1C   E 3 ", "SrA   E 4 ", _
-"SSgt  E 5 ", "TSgt  E 6 ", "MSgt  E 7 ", "SMSgt E 8 ", "CMSgt E 9 ", "CCM   E 9 ", _
-"2nd LtO 1 ", "1st LtO 2 ", "Cpt   O 3 ", "Maj   O 4 ", _
-"Lt ColO 5 ", "Col   O 6 ", "Brig GO 7 ", "Maj GeO 8 ", "Lt GenO 9 "}
-
-    Private Shared EyesColors() As String = {"BLK", "BLU", "BRO", "BRN", "GRY", "GRN", "HAZ", "MAR", "PNK", "DIC", "UNK"}
-    Private Shared HairColors() As String = {"BAL", "BLK", "BLN", "BRO", "BRN", "GRY", "RED", "SDY", "WHI", "UNK"}
-    Private Shared Ranks As New List(Of String)
 
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
-        ' Populate the Ranks list to be used in comboBoxes
-        For Each rankgrade As String In RankToGrade
-            Ranks.Add(rankgrade.Substring(0, 6))
-        Next
-
-        RANKComboBox.DataSource = Ranks
-        HairComboBox.DataSource = HairColors
-        EyesComboBox.DataSource = EyesColors
-        RankComboBox_ID.DataSource = Ranks
+        Me.InitLists()
 
         '
         ' On start present the FileOpen dialog and get the Database File
         '
         If CSMR_ID_OpenFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK AndAlso _
-            Not String.IsNullOrEmpty(CSMR_ID_OpenFileDialog.FileName()) Then
-
+            Not String.IsNullOrEmpty(CSMR_ID_OpenFileDialog.FileName()) AndAlso _
+            IO.File.Exists(CSMR_ID_OpenFileDialog.FileName()) Then
             ' Open thedatabase and fill the data
             Try
                 Me.CSMR_IDTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + _
                          CSMR_ID_OpenFileDialog.FileName()
                 Me.CSMR_IDTableAdapter.Fill(Me.CSMR_ID_DataSet.CSMR_ID)
+                Me.CSMR_IDTableAdapter.Connection.Close()
             Catch ex As Exception
                 MessageBox.Show(ex.Message)
             End Try
 
-            ' Do some data checking and formatting
-            For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
-
-                ' If only NAME_IND is provided - extract it
-                If (dr.IsFIRST_NAMENull Or dr.IsLAST_NAMENull) And Not dr.IsNAME_INDNull Then
-                    Dim m As Match = np_rx.Match(dr.NAME_IND)
-                    dr.LAST_NAME = m.Groups("LN").Value
-                    dr.FIRST_NAME = m.Groups("FN").Value
-                    dr.MIDDLE_NAME = m.Groups("MI").Value
-                End If
-
-                ' If NAME_IND is not provided - make it
-                If dr.IsNAME_INDNull And _
-                    Not (dr.IsFIRST_NAMENull And dr.IsLAST_NAMENull) Then
-                    dr.NAME_IND = dr.LAST_NAME.ToUpper() + ", " + dr.FIRST_NAME.ToUpper() + " " + dr.MIDDLE_NAME
-                End If
-
-                ' If rank is provided - fill the Paygrade
-                If Not String.IsNullOrEmpty(dr.RANK) Then
-                    For Each rankgrade As String In RankToGrade
-                        If rankgrade.Contains(dr.RANK.Trim()) Then
-                            dr.PAY_GR = rankgrade.Substring(6).Trim()
-                            Exit For
-                        End If
-                    Next
-                End If
-            Next
+            Me.CheckInputRecords()
         End If
 
     End Sub
@@ -90,22 +40,29 @@ Public Class ConvertDialogForm
         Dim id_card As New IDCardData()
         Dim id_row As ID_CARDS_DataSet.ID_CARDSRow
 
-        Me.Validate()
+        If Not Me.Validate() Then
+            Exit Sub
+        End If
 
+        '        CSMR_IDBindingSource.EndEdit()
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
             With id_card
-                .DOB = dr.DOB
                 .Address = dr.H_ADDR + VB.vbCrLf + dr.H_CITY + ", CA " + dr.H_ZIP
                 .FirstName = dr.FIRST_NAME
-                .IssueDate = Date.Today()
-                .ExpirationDate = .IssueDate.AddYears(3)
                 .LastName = dr.LAST_NAME.ToUpper()
                 .MI = dr.MIDDLE_NAME.ToUpper()
-                .PayGrade = dr.PAY_GR.ToUpper()
-                .Rank = dr.RANK
+
                 .Sex = dr.GENDER.ToUpper()
+                .DOB = dr.DOB
+
+                .Rank = dr.RANK
+                .PayGrade = dr.PAY_GR.ToUpper()
+
                 .SSN = dr.SSN.ToString("000-00-0000")
                 .IdNumber = "CAB01-" + "0001AB"
+
+                .IssueDate = Date.Today()
+                .ExpirationDate = .IssueDate.AddYears(3)
 
                 ' See if photo exists - use LAST nams, then LAST_FIRST, then FIRST_LAST
                 Dim CurrDir As String = IO.Path.GetDirectoryName(CSMR_ID_OpenFileDialog.FileName())
@@ -132,6 +89,10 @@ Public Class ConvertDialogForm
                     Dim photo(fi.Length) As Byte
                     stream.Read(photo, 0, fi.Length())
                     .Photo = photo
+                    stream.Close()
+                    stream = Nothing
+                    fi = Nothing
+                    photo = Nothing
                 End If
             End With
 
@@ -165,7 +126,7 @@ Public Class ConvertDialogForm
                 .CACPDF = ""
                 .AAMVACode39 = ""
                 .CACCode39 = ""
-                .Photo = id_card.Photo.Clone()
+                .Photo = id_card.Photo
             End With
             ID_CARDS_DataSet.ID_CARDS.AddID_CARDSRow(id_row)
         Next
@@ -227,8 +188,7 @@ Public Class ConvertDialogForm
         Me.ID_CARDSTableAdapter.Connection.Close()
     End Sub
 
-    Private Sub RANKComboBox_SelectedValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RANKComboBox.SelectedValueChanged, RANKComboBox.SelectionChangeCommitted
-
+    Private Sub RANKComboBox_SelectedValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RANKComboBox.SelectedValueChanged
         For Each rankgrade As String In RankToGrade
             If rankgrade.Contains(RANKComboBox.Text) Then
                 PAY_GRTextBox.Text = rankgrade.Substring(6)

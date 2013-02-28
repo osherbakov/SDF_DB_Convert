@@ -179,7 +179,7 @@ Public Class IDCardData
 
     Public Property Photo() As Byte()
         Get
-            Return m_Photo
+            Return m_Photo.Clone()
         End Get
         Set(ByVal value As Byte())
             m_Photo = value.Clone()
