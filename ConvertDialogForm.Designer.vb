@@ -56,6 +56,8 @@ Partial Class ConvertDialogForm
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ConvertDialogForm))
         Me.TabControl_ID = New System.Windows.Forms.TabControl
         Me.TabPage_CSMR_ID = New System.Windows.Forms.TabPage
+        Me.IssuingStation = New System.Windows.Forms.TextBox
+        Me.Label1 = New System.Windows.Forms.Label
         Me.RANKComboBox = New System.Windows.Forms.ComboBox
         Me.CSMR_IDBindingSource = New System.Windows.Forms.BindingSource(Me.components)
         Me.CSMR_ID_DataSet = New CSMR_DB_Convert.CSMR_ID_DataSet
@@ -127,9 +129,7 @@ Partial Class ConvertDialogForm
         Me.TableAdapterManager1 = New CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.TableAdapterManager
         Me.CSMR_ID_OpenFileDialog = New System.Windows.Forms.OpenFileDialog
         Me.Form_error = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.ConvertDialogFormBindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.Label1 = New System.Windows.Forms.Label
-        Me.IssuingStation = New System.Windows.Forms.TextBox
+        Me.ID_CARDS_SaveFileDialog = New System.Windows.Forms.SaveFileDialog
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -173,7 +173,6 @@ Partial Class ConvertDialogForm
         Me.ID_CARDSBindingNavigator.SuspendLayout()
         CType(Me.PhotoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ConvertDialogFormBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'SSNLabel
@@ -495,6 +494,23 @@ Partial Class ConvertDialogForm
         Me.TabPage_CSMR_ID.TabIndex = 0
         Me.TabPage_CSMR_ID.Text = "CSMR_ID"
         Me.TabPage_CSMR_ID.UseVisualStyleBackColor = True
+        '
+        'IssuingStation
+        '
+        Me.IssuingStation.Location = New System.Drawing.Point(188, 325)
+        Me.IssuingStation.Name = "IssuingStation"
+        Me.IssuingStation.Size = New System.Drawing.Size(100, 20)
+        Me.IssuingStation.TabIndex = 28
+        Me.IssuingStation.Text = "CAB005"
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(52, 328)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(104, 13)
+        Me.Label1.TabIndex = 27
+        Me.Label1.Text = "ISSUING STATION:"
         '
         'RANKComboBox
         '
@@ -1140,26 +1156,12 @@ Partial Class ConvertDialogForm
         '
         Me.Form_error.ContainerControl = Me
         '
-        'ConvertDialogFormBindingSource
+        'ID_CARDS_SaveFileDialog
         '
-        Me.ConvertDialogFormBindingSource.DataSource = GetType(CSMR_DB_Convert.ConvertDialogForm)
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(52, 328)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(104, 13)
-        Me.Label1.TabIndex = 27
-        Me.Label1.Text = "ISSUING STATION:"
-        '
-        'IssuingStation
-        '
-        Me.IssuingStation.Location = New System.Drawing.Point(188, 325)
-        Me.IssuingStation.Name = "IssuingStation"
-        Me.IssuingStation.Size = New System.Drawing.Size(100, 20)
-        Me.IssuingStation.TabIndex = 28
-        Me.IssuingStation.Text = "CAB005"
+        Me.ID_CARDS_SaveFileDialog.DefaultExt = "mdb"
+        Me.ID_CARDS_SaveFileDialog.FileName = "ID_CARDS.mdb"
+        Me.ID_CARDS_SaveFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
+        Me.ID_CARDS_SaveFileDialog.InitialDirectory = "."
         '
         'ConvertDialogForm
         '
@@ -1186,7 +1188,6 @@ Partial Class ConvertDialogForm
         Me.ID_CARDSBindingNavigator.PerformLayout()
         CType(Me.PhotoPictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ConvertDialogFormBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1258,7 +1259,6 @@ Partial Class ConvertDialogForm
     Private WithEvents TableAdapterManager1 As CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.TableAdapterManager
     Friend WithEvents CSMR_ID_OpenFileDialog As System.Windows.Forms.OpenFileDialog
     Friend WithEvents Form_error As System.Windows.Forms.ErrorProvider
-    Friend WithEvents ConvertDialogFormBindingSource As System.Windows.Forms.BindingSource
     Friend WithEvents RANKComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents HairComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents EyesComboBox As System.Windows.Forms.ComboBox
@@ -1266,5 +1266,6 @@ Partial Class ConvertDialogForm
     Friend WithEvents BloodTypeComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents IssuingStation As System.Windows.Forms.TextBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents ID_CARDS_SaveFileDialog As System.Windows.Forms.SaveFileDialog
 
 End Class

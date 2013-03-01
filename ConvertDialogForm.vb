@@ -157,54 +157,57 @@ Public Class ConvertDialogForm
 
         Me.Validate()
 
-        Support.CreateAccessDatabase("c:\AA.mdb")
-        Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + "c:\AA.mdb"
-        Me.ID_CARDSTableAdapter.Connection.Open()
+        If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            Support.CreateAccessDatabase(ID_CARDS_SaveFileDialog.FileName)
+            Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + ID_CARDS_SaveFileDialog.FileName
+            Me.ID_CARDSTableAdapter.Connection.Open()
 
-        For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
-            With id_card
-                .Address = dr.Address
+            For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
+                With id_card
+                    .Address = dr.Address
 
-                .FirstName = dr.FirstName
-                .LastName = dr.LastName
-                .MI = dr.MI
-                .DOB = dr.DOB
+                    .FirstName = dr.FirstName
+                    .LastName = dr.LastName
+                    .MI = dr.MI
+                    .DOB = dr.DOB
 
-                .IssueDate = dr.IssueDate
-                .ExpirationDate = dr.ExpirationDate
+                    .IssueDate = dr.IssueDate
+                    .ExpirationDate = dr.ExpirationDate
 
-                .PayGrade = dr.PayGrade
-                .Rank = dr.Rank
-                .Sex = dr.Sex(0)
+                    .PayGrade = dr.PayGrade
+                    .Rank = dr.Rank
+                    .Sex = dr.Sex(0)
 
-                .BloodType = dr.BloodType
-                .Eyes = dr.Eyes
-                .Hair = dr.Hair
-                .Height = dr.Height
-                .Weight = dr.Weight
+                    .BloodType = dr.BloodType
+                    .Eyes = dr.Eyes
+                    .Hair = dr.Hair
+                    .Height = dr.Height
+                    .Weight = dr.Weight
 
-                .SSN = dr.SSN
-                .IdNumber = dr.IDNumber
-                .DLData = dr.DLData
-                .SerialNumber = dr.SerialNumber
-            End With
-            ' Update all MAG and PDF field
-            dr.AAMVAMAG = Support.EncodeAAMVAMagData(id_card)
-            dr.AAMVAPDF = Support.EncodeAAMVAPDF417Data(id_card)
-            dr.CACPDF = Support.EncodeCACPDF417Data(id_card)
-            With dr
-                Me.ID_CARDSTableAdapter.Insert(.IDNumber, .LastName, .FirstName, .MI, _
-                                               .DOB, .SSN, .Address, .H_Address, .H_City, .H_ZIP, _
-                                               .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
-                                               .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
-                                               .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
-                                               .AAMVACode39, .CACCode39)
-            End With
-        Next
-        Me.ID_CARDSTableAdapter.Connection.Close()
+                    .SSN = dr.SSN
+                    .IdNumber = dr.IDNumber
+                    .DLData = dr.DLData
+                    .SerialNumber = dr.SerialNumber
+                End With
+                ' Update all MAG and PDF field
+                dr.AAMVAMAG = Support.EncodeAAMVAMagData(id_card)
+                dr.AAMVAPDF = Support.EncodeAAMVAPDF417Data(id_card)
+                dr.CACPDF = Support.EncodeCACPDF417Data(id_card)
+                With dr
+                    Me.ID_CARDSTableAdapter.Insert(.IDNumber, .LastName, .FirstName, .MI, _
+                                                   .DOB, .SSN, .Address, .H_Address, .H_City, .H_ZIP, _
+                                                   .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
+                                                   .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
+                                                   .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
+                                                   .AAMVACode39, .CACCode39)
+                End With
+            Next
+            Me.ID_CARDSTableAdapter.Connection.Close()
+
+        End If
     End Sub
 
-    Private Sub RANKComboBox_SelectedValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RANKComboBox.SelectedValueChanged
+    Private Sub RANKComboBox_SelectedValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RANKComboBox.SelectedValueChanged, RANKComboBox.SelectedIndexChanged
         For Each rankgrade As String In RankToGrade
             If rankgrade.Contains(RANKComboBox.Text) Then
                 PAY_GRTextBox.Text = rankgrade.Substring(6)
@@ -233,4 +236,5 @@ Public Class ConvertDialogForm
             End If
         Next
     End Sub
+
 End Class

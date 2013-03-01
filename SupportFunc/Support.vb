@@ -261,7 +261,6 @@ Public Class FullSupport
         Return bm
     End Function
 
-    Private Shared Digit0 As Double = Char.GetNumericValue("0"c)
     Private Shared RefDate As New Date(1000, 1, 1)
 
     Private Shared rxCACver1 As New Regex _
@@ -299,6 +298,7 @@ Public Class FullSupport
                 .PayGrade = rm.Groups("Pay").Value.Trim
                 .IssueDate = RefDate.AddDays(B32toBin(rm.Groups("Issued").Value))
                 .ExpirationDate = RefDate.AddDays(B32toBin(rm.Groups("Expires").Value))
+                .DLData = .IdNumber
             End With
         End If
 
@@ -324,8 +324,9 @@ Public Class FullSupport
         ' Designator code - S - Social Security
         Result += "S"
 
-        ' Person DEERS Code - 
-        Num = ExtractNumber(data.IdNumber)
+        ' Person DEERS Code - get it from DL
+        Dim IDNumber As String = ExtractIDNumber(data)
+        Num = ExtractNumber(IDNumber)
         Result += BintoB32(Num, 7)
 
         ' First name limited and/or padded to 20 chars
@@ -468,6 +469,7 @@ Public Class FullSupport
 
             With idCard
                 .IdNumber = ExtractAAMVATag(scannedString, "DL", "DAQ")
+                .DLData = .IdNumber
                 .LastName = ExtractAAMVATag(scannedString, "DL", "DCS")
                 .FirstName = ExtractAAMVATag(scannedString, "DL", "DCT")
                 Dim names() As String = .FirstName.Split(New Char() {" "c}, StringSplitOptions.RemoveEmptyEntries)
@@ -485,7 +487,8 @@ Public Class FullSupport
                     ExtractAAMVATag(scannedString, "DL", "DAI") & ", " & _
                     ExtractAAMVATag(scannedString, "DL", "DAJ") & " " & ExtractAAMVATag(scannedString, "DL", "DAK")
 
-                .SSN = ExtractAAMVATag(scannedString, "ZC", "ZCN")
+                .SSN = String.Format("{0:###-##-####}", B32toBin(ExtractAAMVATag(scannedString, "ZC", "ZCN")))
+
                 .Rank = ExtractAAMVATag(scannedString, "ZC", "ZCO")
                 .PayGrade = ExtractAAMVATag(scannedString, "ZC", "ZCP")
                 .BloodType = ExtractAAMVATag(scannedString, "ZC", "ZCQ")
@@ -517,7 +520,7 @@ Public Class FullSupport
         ' Start building DL Subfile
         With Data
             Subf1.Append("DL")
-            Subf1.Append("DAQ" + .IdNumber + VB.vbLf)
+            Subf1.Append("DAQ" + ExtractIDNumber(Data) + VB.vbLf)
             Subf1.Append("DAA" + .LastName)
             If Not String.IsNullOrEmpty(.FirstName) Then Subf1.Append(", " + .FirstName)
             If Not String.IsNullOrEmpty(.MI) Then Subf1.Append(", " + .MI)
@@ -569,12 +572,14 @@ Public Class FullSupport
             End If
             Subf1.Append("DAU" + ht.ToString("D03") + " IN" + VB.vbLf)
             Subf1.Append("DAW" + .Weight + " LB" + VB.vbLf)
+            Subf1.Append("DCF" + .IdNumber + "/" + .SerialNumber + VB.vbLf)
             Subf1.Append(VB.vbCr)
 
             ' Start second subfile
             Subf2.Append("ZC")
             Subf2.Append("ZCM" + "CSMR" + VB.vbLf)
-            Subf2.Append("ZCN" + .SSN + VB.vbLf)
+            Dim SSN As Double = ExtractNumber(.SSN)
+            Subf2.Append("ZCN" + BintoB32(SSN, 6) + VB.vbLf)
             Subf2.Append("ZCO" + .Rank + VB.vbLf)
             Subf2.Append("ZCP" + .PayGrade + VB.vbLf)
             Subf2.Append("ZCQ" + .BloodType + VB.vbLf)
@@ -795,30 +800,12 @@ Public Class FullSupport
 
         strbldr.Append("636014")    ' ISO Code for California
 
-        IDStation = ""
-        IDNumber = IDData.IdNumber
-        Dim IDNums() As String = IDData.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
-        If IDNums.Length > 1 Then
-            IDStation = IDNums(0)
-            IDNumber = IDNums(1)
-        End If
-
-        Dim IDN As String = ""
-        For Each iCH As Char In IDNumber
-            iCH = Char.ToUpper(iCH)
-            If Char.IsDigit(iCH) Then
-                IDN += iCH
-            ElseIf Char.IsLetter(iCH) Then
-                IDN += (Convert.ToInt32(iCH) - Convert.ToInt32("A"c) + 1).ToString("D02")
-            ElseIf Char.IsWhiteSpace(iCH) Then
-            Else
-                IDN = ""
-            End If
-        Next
-        If IDN.Length <= 13 Then
-            strbldr.Append(IDN)
+        IDStation = ExtractIDStation(IDData)
+        IDNumber = ExtractIDNumber(IDData)
+        If IDNumber.Length <= 13 Then
+            strbldr.Append(IDNumber)
         Else
-            strbldr.Append(IDN.Substring(0, 13))
+            strbldr.Append(IDNumber.Substring(0, 13))
         End If
         strbldr.Append("=")
 
@@ -834,12 +821,12 @@ Public Class FullSupport
         Day = IDData.DOB.Day.ToString("D02")
         strbldr.Append(Year + Mo + Day)
 
-        If IDN.Length > 13 Then
-            IDN = IDN.Substring(13)
-            If IDN.Length > 5 Then
-                IDN = IDN.Substring(0, 5)
+        If IDNumber.Length > 13 Then
+            IDNumber = IDNumber.Substring(13)
+            If IDNumber.Length > 5 Then
+                IDNumber = IDNumber.Substring(0, 5)
             End If
-            strbldr.Append(IDN)
+            strbldr.Append(IDNumber)
         End If
 
 
@@ -1009,24 +996,52 @@ Public Class FullSupport
         End If
     End Sub
 
+    Public Shared Function ExtractIDStation(ByVal data As IDCardData) As String
+        Dim IDStation As String = ""
 
-    Public Shared Function ExtractNumber(ByVal serialNumber As String) As Double
-        If String.IsNullOrEmpty(serialNumber) Then Return 0
+        If Not String.IsNullOrEmpty(data.IdNumber) Then
+            Dim IDNums() As String = data.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
+            If IDNums.Length > 1 Then
+                IDStation = IDNums(0)
+            End If
+        End If
+        Return IDStation
+    End Function
 
-        Dim IDNumber As String = serialNumber.ToUpper
-        Dim IDNums() As String = IDNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
-        If IDNums.Length = 1 Then
-            IDNumber = IDNums(0)
-        ElseIf IDNums.Length = 2 Then
-            IDNumber = IDNums(1)
+    Public Shared Function ExtractIDNumber(ByVal data As IDCardData) As String
+        Dim IDNumber As String = ""
+        If String.IsNullOrEmpty(data.DLData) Then
+            Dim IDNums() As String = data.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
+            If IDNums.Length > 1 Then
+                IDNumber = IDNums(1)
+            Else
+                IDNumber = data.IdNumber
+            End If
+        Else
+            IDNumber = data.DLData
         End If
 
         Dim IDN As String = ""
         For Each iCH As Char In IDNumber
+            iCH = Char.ToUpper(iCH)
             If Char.IsDigit(iCH) Then
                 IDN += iCH
             ElseIf Char.IsLetter(iCH) Then
                 IDN += (Convert.ToInt32(iCH) - Convert.ToInt32("A"c) + 1).ToString("D02")
+            Else
+                ' Skip it
+            End If
+        Next
+        Return IDN
+    End Function
+
+    Public Shared Function ExtractNumber(ByVal serialNumber As String) As Double
+        If String.IsNullOrEmpty(serialNumber) Then Return 0
+
+        Dim IDN As String = ""
+        For Each iCH As Char In serialNumber
+            If Char.IsDigit(iCH) Then
+                IDN += iCH
             Else
                 '  Just skip it
             End If

@@ -106,38 +106,6 @@ Public Class Support
         Return New Date((century * 100) + year, month, day) ' YYYYMMDD
     End Function
 
-    Public Shared Function ExtractNumber(ByVal serialNumber As String) As Double
-        If String.IsNullOrEmpty(serialNumber) Then Return 0
-
-        Dim IDNumber As String = serialNumber.ToUpper
-        Dim IDNums() As String = IDNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
-        If IDNums.Length = 1 Then
-            IDNumber = IDNums(0)
-        ElseIf IDNums.Length = 2 Then
-            IDNumber = IDNums(1)
-        ElseIf IDNums.Length = 3 Then
-            IDNumber = serialNumber
-        End If
-
-        Dim IDN As String = ""
-        For Each iCH As Char In IDNumber
-            If Char.IsDigit(iCH) Then
-                IDN += iCH
-            ElseIf Char.IsLetter(iCH) Then
-                IDN += (Convert.ToInt32(iCH) - Convert.ToInt32("A"c) + 1).ToString("D02")
-            Else
-                '  Just skip it
-            End If
-        Next
-
-        Dim ret As Double = 0
-        If Not Double.TryParse(IDN, ret) Then
-            ret = 0
-        End If
-
-        Return ret
-    End Function
-
 
     Public Shared rxCityStateZip As New Regex("\s*(?<City>.+?)\s*,*\s*CA\s*(?<ZIP>\d{5}[- ]\d{4}|\d{9}|\d{5})\s*", RegexOptions.IgnoreCase Or RegexOptions.Multiline Or RegexOptions.Compiled)
 
@@ -210,36 +178,13 @@ Public Class Support
 
         strbldr = New StringBuilder()
         strbldr.Append("636014")    ' ISO Code for California
-        IDStation = ""
-        IDNumber = ""
+        IDStation = ExtractIDStation(IDData)
+        IDNumber = ExtractIDNumber(IDData)
 
-        If String.IsNullOrEmpty(IDData.DLData) Then
-            Dim IDNums() As String = IDData.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
-            If IDNums.Length > 1 Then
-                IDStation = IDNums(0)
-                IDNumber = IDNums(1)
-            Else
-                IDNumber = IDData.IdNumber
-            End If
+        If IDNumber.Length <= 13 Then
+            strbldr.Append(IDNumber)
         Else
-            IDNumber = IDData.DLData
-        End If
-
-        Dim IDN As String = ""
-        For Each iCH As Char In IDNumber
-            iCH = Char.ToUpper(iCH)
-            If Char.IsDigit(iCH) Then
-                IDN += iCH
-            ElseIf Char.IsLetter(iCH) Then
-                IDN += (Convert.ToInt32(iCH) - Convert.ToInt32("A"c) + 1).ToString("D02")
-            Else
-                ' Skip it
-            End If
-        Next
-        If IDN.Length <= 13 Then
-            strbldr.Append(IDN)
-        Else
-            strbldr.Append(IDN.Substring(0, 13))
+            strbldr.Append(IDNumber.Substring(0, 13))
         End If
         strbldr.Append("=")
 
@@ -255,12 +200,12 @@ Public Class Support
         Day = IDData.DOB.Day.ToString("D02")
         strbldr.Append(Year + Mo + Day)
 
-        If IDN.Length > 13 Then
-            IDN = IDN.Substring(13)
-            If IDN.Length > 5 Then
-                IDN = IDN.Substring(0, 5)
+        If IDNumber.Length > 13 Then
+            IDNumber = IDNumber.Substring(13)
+            If IDNumber.Length > 5 Then
+                IDNumber = IDNumber.Substring(0, 5)
             End If
-            strbldr.Append(IDN)
+            strbldr.Append(IDNumber)
         End If
 
         trackData += ";" + strbldr.ToString().ToUpper + "?"
@@ -331,24 +276,20 @@ Public Class Support
         Return Mo + Day + Year
     End Function
 
-    Public Shared Function EncodeCACPDF417Data(ByVal data As IDCardData) As String
-        Dim Result As String = String.Empty
-        Dim txt As String
-        Dim Num As Double
 
-        If data Is Nothing Then Return String.Empty
+    Public Shared Function ExtractIDStation(ByVal data As IDCardData) As String
+        Dim IDStation As String = ""
 
-        ' Start with the Code version - currently it is N
-        Result += "N"
+        If Not String.IsNullOrEmpty(data.IdNumber) Then
+            Dim IDNums() As String = data.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
+            If IDNums.Length > 1 Then
+                IDStation = IDNums(0)
+            End If
+        End If
+        Return IDStation
+    End Function
 
-        ' Second field - encoded SSN, 6 chars
-        Num = ExtractNumber(data.SSN)
-        Result += BintoB32(Num, 6)
-
-        ' Designator code - S - Social Security
-        Result += "S"
-
-        ' Person DEERS Code - get it from DL
+    Public Shared Function ExtractIDNumber(ByVal data As IDCardData) As String
         Dim IDNumber As String = ""
         If String.IsNullOrEmpty(data.DLData) Then
             Dim IDNums() As String = data.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
@@ -372,8 +313,50 @@ Public Class Support
                 ' Skip it
             End If
         Next
+        Return IDN
+    End Function
 
-        Num = ExtractNumber(IDN)
+    Public Shared Function ExtractNumber(ByVal serialNumber As String) As Double
+        If String.IsNullOrEmpty(serialNumber) Then Return 0
+
+        Dim IDN As String = ""
+        For Each iCH As Char In serialNumber
+            If Char.IsDigit(iCH) Then
+                IDN += iCH
+            Else
+                '  Just skip it
+            End If
+        Next
+
+        Dim ret As Double = 0
+        If Not Double.TryParse(IDN, ret) Then
+            ret = 0
+        End If
+
+        Return ret
+    End Function
+
+
+    Public Shared Function EncodeCACPDF417Data(ByVal data As IDCardData) As String
+        Dim Result As String = String.Empty
+        Dim txt As String
+        Dim Num As Double
+
+        If data Is Nothing Then Return String.Empty
+
+        ' Start with the Code version - currently it is N
+        Result += "N"
+
+        ' Second field - encoded SSN, 6 chars
+        Num = ExtractNumber(data.SSN)
+        Result += BintoB32(Num, 6)
+
+        ' Designator code - S - Social Security
+        Result += "S"
+
+        ' Person DEERS Code - get it from DL
+        Dim IDNumber As String = ExtractIDNumber(data)
+        Num = ExtractNumber(IDNumber)
         Result += BintoB32(Num, 7)
 
         ' First name limited and/or padded to 20 chars
@@ -442,7 +425,7 @@ Public Class Support
         With Data
             Subf1.Append("DL")
             Subf1.Append("DCA" + "I" + VB.vbLf)
-            Subf1.Append("DAQ" + .IdNumber + VB.vbLf)
+            Subf1.Append("DAQ" + ExtractIDNumber(Data) + VB.vbLf)
             Subf1.Append("DAA" + .LastName)
             If Not String.IsNullOrEmpty(.FirstName) Then Subf1.Append(", " + .FirstName)
             If Not String.IsNullOrEmpty(.MI) Then Subf1.Append(", " + .MI)
@@ -504,7 +487,7 @@ Public Class Support
             Subf2.Append("ZC")
             Subf2.Append("ZCM" + "CSMR" + VB.vbLf)
             Dim SSN As Double = ExtractNumber(.SSN)
-            Subf2.Append("ZCN" + Support.BintoB32(SSN, 6) + VB.vbLf)
+            Subf2.Append("ZCN" + BintoB32(SSN, 6) + VB.vbLf)
             Subf2.Append("ZCO" + .Rank + VB.vbLf)
             Subf2.Append("ZCP" + .PayGrade + VB.vbLf)
             Subf2.Append("ZCQ" + .BloodType + VB.vbLf)
