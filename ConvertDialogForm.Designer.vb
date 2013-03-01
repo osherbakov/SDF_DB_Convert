@@ -85,9 +85,10 @@ Partial Class ConvertDialogForm
         Me.H_ZIPTextBox = New System.Windows.Forms.TextBox
         Me.DOBDateTimePicker = New System.Windows.Forms.DateTimePicker
         Me.TabPage_ID_CARDS = New System.Windows.Forms.TabPage
-        Me.RankComboBox_ID = New System.Windows.Forms.ComboBox
+        Me.BloodTypeComboBox = New System.Windows.Forms.ComboBox
         Me.ID_CARDSBindingSource = New System.Windows.Forms.BindingSource(Me.components)
         Me.ID_CARDS_DataSet = New CSMR_DB_Convert.ID_CARDS_DataSet
+        Me.RankComboBox_ID = New System.Windows.Forms.ComboBox
         Me.EyesComboBox = New System.Windows.Forms.ComboBox
         Me.HairComboBox = New System.Windows.Forms.ComboBox
         Me.ID_CARDSBindingNavigator = New System.Windows.Forms.BindingNavigator(Me.components)
@@ -113,7 +114,6 @@ Partial Class ConvertDialogForm
         Me.IssueDateDateTimePicker = New System.Windows.Forms.DateTimePicker
         Me.ExpirationDateDateTimePicker = New System.Windows.Forms.DateTimePicker
         Me.PhotoPictureBox = New System.Windows.Forms.PictureBox
-        Me.BloodTypeTextBox = New System.Windows.Forms.TextBox
         Me.PayGradeTextBox = New System.Windows.Forms.TextBox
         Me.HeightTextBox = New System.Windows.Forms.TextBox
         Me.WeightTextBox = New System.Windows.Forms.TextBox
@@ -128,6 +128,8 @@ Partial Class ConvertDialogForm
         Me.CSMR_ID_OpenFileDialog = New System.Windows.Forms.OpenFileDialog
         Me.Form_error = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.ConvertDialogFormBindingSource = New System.Windows.Forms.BindingSource(Me.components)
+        Me.Label1 = New System.Windows.Forms.Label
+        Me.IssuingStation = New System.Windows.Forms.TextBox
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -458,6 +460,8 @@ Partial Class ConvertDialogForm
         'TabPage_CSMR_ID
         '
         Me.TabPage_CSMR_ID.AutoScroll = True
+        Me.TabPage_CSMR_ID.Controls.Add(Me.IssuingStation)
+        Me.TabPage_CSMR_ID.Controls.Add(Me.Label1)
         Me.TabPage_CSMR_ID.Controls.Add(Me.RANKComboBox)
         Me.TabPage_CSMR_ID.Controls.Add(Me.Convert)
         Me.TabPage_CSMR_ID.Controls.Add(Me.CSMR_IDBindingNavigator)
@@ -732,6 +736,7 @@ Partial Class ConvertDialogForm
         'TabPage_ID_CARDS
         '
         Me.TabPage_ID_CARDS.AutoScroll = True
+        Me.TabPage_ID_CARDS.Controls.Add(Me.BloodTypeComboBox)
         Me.TabPage_ID_CARDS.Controls.Add(Me.RankComboBox_ID)
         Me.TabPage_ID_CARDS.Controls.Add(Me.EyesComboBox)
         Me.TabPage_ID_CARDS.Controls.Add(Me.HairComboBox)
@@ -757,7 +762,6 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS.Controls.Add(HairLabel)
         Me.TabPage_ID_CARDS.Controls.Add(EyesLabel)
         Me.TabPage_ID_CARDS.Controls.Add(BloodTypeLabel)
-        Me.TabPage_ID_CARDS.Controls.Add(Me.BloodTypeTextBox)
         Me.TabPage_ID_CARDS.Controls.Add(RankLabel1)
         Me.TabPage_ID_CARDS.Controls.Add(PayGradeLabel)
         Me.TabPage_ID_CARDS.Controls.Add(Me.PayGradeTextBox)
@@ -780,16 +784,19 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS.Text = "ID_CARDS"
         Me.TabPage_ID_CARDS.UseVisualStyleBackColor = True
         '
-        'RankComboBox_ID
+        'BloodTypeComboBox
         '
-        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDSBindingSource, "Rank", True))
-        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "Rank", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Rank", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.RankComboBox_ID.FormattingEnabled = True
-        Me.RankComboBox_ID.Location = New System.Drawing.Point(375, 174)
-        Me.RankComboBox_ID.Name = "RankComboBox_ID"
-        Me.RankComboBox_ID.Size = New System.Drawing.Size(51, 21)
-        Me.RankComboBox_ID.TabIndex = 44
+        Me.BloodTypeComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDSBindingSource, "BloodType", True))
+        Me.BloodTypeComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "BloodType", True))
+        Me.BloodTypeComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "BloodType", True))
+        Me.BloodTypeComboBox.DataSource = Me.ID_CARDSBindingSource
+        Me.BloodTypeComboBox.DisplayMember = "BloodType"
+        Me.BloodTypeComboBox.FormattingEnabled = True
+        Me.BloodTypeComboBox.Location = New System.Drawing.Point(568, 233)
+        Me.BloodTypeComboBox.Name = "BloodTypeComboBox"
+        Me.BloodTypeComboBox.Size = New System.Drawing.Size(55, 21)
+        Me.BloodTypeComboBox.TabIndex = 45
+        Me.BloodTypeComboBox.ValueMember = "BloodType"
         '
         'ID_CARDSBindingSource
         '
@@ -802,27 +809,44 @@ Partial Class ConvertDialogForm
         Me.ID_CARDS_DataSet.EnforceConstraints = False
         Me.ID_CARDS_DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
         '
+        'RankComboBox_ID
+        '
+        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDSBindingSource, "Rank", True))
+        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "Rank", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Rank", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.RankComboBox_ID.FormattingEnabled = True
+        Me.RankComboBox_ID.Location = New System.Drawing.Point(375, 174)
+        Me.RankComboBox_ID.Name = "RankComboBox_ID"
+        Me.RankComboBox_ID.Size = New System.Drawing.Size(51, 21)
+        Me.RankComboBox_ID.TabIndex = 44
+        '
         'EyesComboBox
         '
         Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDSBindingSource, "Eyes", True))
-        Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "Eyes", True))
         Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Eyes", True))
+        Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "Eyes", True))
+        Me.EyesComboBox.DataSource = Me.ID_CARDSBindingSource
+        Me.EyesComboBox.DisplayMember = "Eyes"
         Me.EyesComboBox.FormattingEnabled = True
         Me.EyesComboBox.Location = New System.Drawing.Point(568, 204)
         Me.EyesComboBox.Name = "EyesComboBox"
         Me.EyesComboBox.Size = New System.Drawing.Size(55, 21)
         Me.EyesComboBox.TabIndex = 43
+        Me.EyesComboBox.ValueMember = "Eyes"
         '
         'HairComboBox
         '
         Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDSBindingSource, "Hair", True))
-        Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "Hair", True))
         Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Hair", True))
+        Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "Hair", True))
+        Me.HairComboBox.DataSource = Me.ID_CARDSBindingSource
+        Me.HairComboBox.DisplayMember = "Hair"
         Me.HairComboBox.FormattingEnabled = True
         Me.HairComboBox.Location = New System.Drawing.Point(568, 177)
         Me.HairComboBox.Name = "HairComboBox"
         Me.HairComboBox.Size = New System.Drawing.Size(55, 21)
         Me.HairComboBox.TabIndex = 42
+        Me.HairComboBox.ValueMember = "Hair"
         '
         'ID_CARDSBindingNavigator
         '
@@ -942,6 +966,7 @@ Partial Class ConvertDialogForm
         Me.IDNumberTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "IDNumber", True))
         Me.IDNumberTextBox.Location = New System.Drawing.Point(141, 330)
         Me.IDNumberTextBox.Name = "IDNumberTextBox"
+        Me.IDNumberTextBox.ReadOnly = True
         Me.IDNumberTextBox.Size = New System.Drawing.Size(138, 20)
         Me.IDNumberTextBox.TabIndex = 2
         '
@@ -1026,14 +1051,6 @@ Partial Class ConvertDialogForm
         Me.PhotoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.PhotoPictureBox.TabIndex = 20
         Me.PhotoPictureBox.TabStop = False
-        '
-        'BloodTypeTextBox
-        '
-        Me.BloodTypeTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "BloodType", True))
-        Me.BloodTypeTextBox.Location = New System.Drawing.Point(568, 230)
-        Me.BloodTypeTextBox.Name = "BloodTypeTextBox"
-        Me.BloodTypeTextBox.Size = New System.Drawing.Size(55, 20)
-        Me.BloodTypeTextBox.TabIndex = 26
         '
         'PayGradeTextBox
         '
@@ -1127,6 +1144,23 @@ Partial Class ConvertDialogForm
         '
         Me.ConvertDialogFormBindingSource.DataSource = GetType(CSMR_DB_Convert.ConvertDialogForm)
         '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(52, 328)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(104, 13)
+        Me.Label1.TabIndex = 27
+        Me.Label1.Text = "ISSUING STATION:"
+        '
+        'IssuingStation
+        '
+        Me.IssuingStation.Location = New System.Drawing.Point(188, 325)
+        Me.IssuingStation.Name = "IssuingStation"
+        Me.IssuingStation.Size = New System.Drawing.Size(100, 20)
+        Me.IssuingStation.TabIndex = 28
+        Me.IssuingStation.Text = "CAB005"
+        '
         'ConvertDialogForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1199,7 +1233,6 @@ Partial Class ConvertDialogForm
     Friend WithEvents IssueDateDateTimePicker As System.Windows.Forms.DateTimePicker
     Friend WithEvents ExpirationDateDateTimePicker As System.Windows.Forms.DateTimePicker
     Friend WithEvents PhotoPictureBox As System.Windows.Forms.PictureBox
-    Friend WithEvents BloodTypeTextBox As System.Windows.Forms.TextBox
     Friend WithEvents PayGradeTextBox As System.Windows.Forms.TextBox
     Friend WithEvents HeightTextBox As System.Windows.Forms.TextBox
     Friend WithEvents WeightTextBox As System.Windows.Forms.TextBox
@@ -1230,5 +1263,8 @@ Partial Class ConvertDialogForm
     Friend WithEvents HairComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents EyesComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents RankComboBox_ID As System.Windows.Forms.ComboBox
+    Friend WithEvents BloodTypeComboBox As System.Windows.Forms.ComboBox
+    Friend WithEvents IssuingStation As System.Windows.Forms.TextBox
+    Friend WithEvents Label1 As System.Windows.Forms.Label
 
 End Class

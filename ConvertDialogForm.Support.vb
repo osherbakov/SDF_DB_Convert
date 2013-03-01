@@ -17,6 +17,7 @@ Partial Public Class ConvertDialogForm
 
     Private Shared EyesColors() As String = {"BLK", "BLU", "BRO", "BRN", "GRY", "GRN", "HAZ", "MAR", "PNK", "DIC", "UNK"}
     Private Shared HairColors() As String = {"BAL", "BLK", "BLN", "BRO", "BRN", "GRY", "RED", "SDY", "WHI", "UNK"}
+    Private Shared BloodTypes() As String = {"AB NEG", "AB POS", "A NEG", "A POS", "B NEG", "B POS", "O NEG", "O POS", "UNK"}
     Private Shared Ranks As New List(Of String)
 
     Private Sub InitLists()
@@ -29,6 +30,8 @@ Partial Public Class ConvertDialogForm
         HairComboBox.DataSource = HairColors
         EyesComboBox.DataSource = EyesColors
         RankComboBox_ID.DataSource = Ranks
+        BloodTypeComboBox.DataSource = BloodTypes
+
     End Sub
 
     Private Sub CheckInputRecords()
@@ -43,15 +46,18 @@ Partial Public Class ConvertDialogForm
                 dr.MIDDLE_NAME = m.Groups("MI").Value
             End If
 
+            ' Make MiddleName Valid
             If dr.IsMIDDLE_NAMENull Then
                 dr.MIDDLE_NAME = String.Empty
             End If
+
             ' If NAME_IND is not provided - make it
             If dr.IsNAME_INDNull And _
                 Not (dr.IsFIRST_NAMENull AndAlso dr.IsLAST_NAMENull) Then
                 dr.NAME_IND = dr.LAST_NAME.ToUpper() + ", " + dr.FIRST_NAME.ToUpper() + " " + dr.MIDDLE_NAME
             End If
 
+            ' Rank cannot be Null
             If dr.IsRANKNull Then
                 dr.RANK = String.Empty
             End If
@@ -64,6 +70,42 @@ Partial Public Class ConvertDialogForm
                     End If
                 Next
             End If
+
+            If dr.IsBLOOD_TYPENull Then
+                dr.BLOOD_TYPE = "UNK"
+            End If
+
+            If dr.IsDL_NUMBERNull Then
+                dr.DL_NUMBER = String.Empty
+            End If
+
+            If dr.IsEYESNull Then
+                dr.EYES = "UNK"
+            End If
+
+            If dr.IsHAIRNull Then
+                dr.HAIR = "UNK"
+            End If
+
+            If dr.IsWEIGHTNull Then
+                dr.WEIGHT = String.Empty
+            End If
+
+            If dr.IsHEIGHTNull Then
+                dr.HEIGHT = String.Empty
+            End If
         Next
     End Sub
+
+    Private Function MakeIDNumber(ByVal data As IDCardData) As String
+        Dim hash As New System.Security.Cryptography.HMACSHA256(System.Text.Encoding.UTF8.GetBytes("Sollecon, Inc. 2013 - Oleg Sherbakov"))
+        hash.Initialize()
+        Dim BattleRosterNum = data.LastName.ToUpper().Substring(0, 1) + data.SSN.Substring(data.SSN.Length() - 4, 4)
+        BattleRosterNum += Date.Today.Year.ToString()
+        Dim idn() As Byte = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(BattleRosterNum))
+        Dim byte_result() As Byte = {idn(5), idn(0), idn(1), idn(11)}
+        Dim int_result As UInt32 = BitConverter.ToUInt32(byte_result, 0)
+        Return IssuingStation.Text + "-" + "CSMR" + (int_result Mod 100000000).ToString("D00000000")
+    End Function
+
 End Class

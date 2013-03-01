@@ -44,27 +44,36 @@ Public Class ConvertDialogForm
             Exit Sub
         End If
 
-        '        CSMR_IDBindingSource.EndEdit()
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
             With id_card
                 .Address = dr.H_ADDR + VB.vbCrLf + dr.H_CITY + ", CA " + dr.H_ZIP
+
                 .FirstName = dr.FIRST_NAME
                 .LastName = dr.LAST_NAME.ToUpper()
                 .MI = dr.MIDDLE_NAME.ToUpper()
 
                 .Sex = dr.GENDER.ToUpper()
                 .DOB = dr.DOB
+                .BloodType = dr.BLOOD_TYPE
+                .SSN = dr.SSN.ToString("000-00-0000")
 
                 .Rank = dr.RANK
                 .PayGrade = dr.PAY_GR.ToUpper()
 
-                .SSN = dr.SSN.ToString("000-00-0000")
-                .IdNumber = "CAB01-" + "0001AB"
-
                 .IssueDate = Date.Today()
                 .ExpirationDate = .IssueDate.AddYears(3)
 
+                .Hair = dr.HAIR
+                .Eyes = dr.EYES
+
+                .Height = dr.HEIGHT
+                .Weight = dr.WEIGHT
+
+                .DLData = dr.DL_NUMBER
+
+                '
                 ' See if photo exists - use LAST nams, then LAST_FIRST, then FIRST_LAST
+                '
                 Dim CurrDir As String = IO.Path.GetDirectoryName(CSMR_ID_OpenFileDialog.FileName())
                 Dim FileName As String = IO.Path.Combine(CurrDir, .LastName) + ".jpg"
                 If Not IO.File.Exists(FileName) Then
@@ -95,16 +104,20 @@ Public Class ConvertDialogForm
                     photo = Nothing
                 End If
             End With
-
+            id_card.IdNumber = MakeIDNumber(id_card)
 
             id_row = ID_CARDS_DataSet.ID_CARDS.NewID_CARDSRow()
             With id_row
+                .Address = id_card.Address
                 .H_Address = dr.H_ADDR
                 .H_City = dr.H_CITY
                 .H_ZIP = dr.H_ZIP
-                .Address = id_card.Address
 
                 .DOB = id_card.DOB
+                .Sex = id_card.Sex
+                .SSN = id_card.SSN
+                .BloodType = id_card.BloodType
+
                 .FirstName = id_card.FirstName
                 .LastName = id_card.LastName
                 .MI = id_card.MI
@@ -115,8 +128,11 @@ Public Class ConvertDialogForm
                 .PayGrade = id_card.PayGrade
                 .Rank = id_card.Rank
 
-                .Sex = id_card.Sex
-                .SSN = id_card.SSN
+                .Hair = id_card.Hair
+                .Eyes = id_card.Eyes
+
+                .Height = id_card.Height
+                .Weight = id_card.Weight
 
                 .IDNumber = id_card.IdNumber
                 .SerialNumber = id_card.SerialNumber
