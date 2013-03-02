@@ -98,14 +98,13 @@ Partial Public Class ConvertDialogForm
     End Sub
 
     Private Function MakeIDNumber(ByVal data As IDCardData) As String
-        Dim hash As New System.Security.Cryptography.HMACSHA256(System.Text.Encoding.UTF8.GetBytes("Sollecon, Inc. 2013 - Oleg Sherbakov"))
+        Dim hash As New System.Security.Cryptography.HMACSHA256(System.Text.Encoding.UTF8.GetBytes("California State Military Reserve"))
         hash.Initialize()
-        Dim BattleRosterNum = data.LastName.ToUpper().Substring(0, 1) + data.SSN.Substring(data.SSN.Length() - 4, 4)
-        BattleRosterNum += Date.Today.Year.ToString()
-        Dim idn() As Byte = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(BattleRosterNum))
+        Dim BattleRosterNumber As String = data.LastName.ToUpper().Substring(0, 1) + data.SSN.Substring(data.SSN.Length() - 4, 4)
+        Dim idn() As Byte = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(BattleRosterNumber))
         Dim byte_result() As Byte = {idn(5), idn(0), idn(1), idn(11)}
         Dim int_result As UInt32 = BitConverter.ToUInt32(byte_result, 0)
-        Return IssuingStation.Text + "-" + "CSMR" + (int_result Mod 100000000).ToString("D00000000")
+        Return IssuingStation.Text + "-" + (int_result Mod 100000000).ToString("D00000000")
     End Function
 
 End Class

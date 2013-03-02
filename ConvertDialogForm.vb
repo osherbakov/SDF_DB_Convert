@@ -92,6 +92,21 @@ Public Class ConvertDialogForm
                     FileName = IO.Path.Combine(CurrDir, .FirstName) + "_" + .LastName + ".jpeg"
                 End If
 
+                ' Try with a Middle Initial
+                If Not IO.File.Exists(FileName) AndAlso Not String.IsNullOrEmpty(.MI) Then
+                    FileName = IO.Path.Combine(CurrDir, .FirstName) + "_" + .LastName + "_" + .MI.Substring(0, 1) + ".jpg"
+                End If
+                If Not IO.File.Exists(FileName) AndAlso Not String.IsNullOrEmpty(.MI) Then
+                    FileName = IO.Path.Combine(CurrDir, .FirstName) + "_" + .LastName + "_" + .MI.Substring(0, 1) + ".jpeg"
+                End If
+
+                If Not IO.File.Exists(FileName) AndAlso Not String.IsNullOrEmpty(.MI) Then
+                    FileName = IO.Path.Combine(CurrDir, .LastName) + "_" + .FirstName + "_" + .MI.Substring(0, 1) + ".jpg"
+                End If
+                If Not IO.File.Exists(FileName) AndAlso Not String.IsNullOrEmpty(.MI) Then
+                    FileName = IO.Path.Combine(CurrDir, .LastName) + "_" + .FirstName + "_" + .MI.Substring(0, 1) + ".jpeg"
+                End If
+
                 If IO.File.Exists(FileName) Then
                     Dim fi As IO.FileInfo = New IO.FileInfo(FileName)
                     Dim stream As New IO.FileStream(FileName, IO.FileMode.Open)
@@ -157,6 +172,9 @@ Public Class ConvertDialogForm
 
         Me.Validate()
 
+        Dim timestamp As Date = Date.Today()
+
+        ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + timestamp.ToString("ddMMMMyyyy"), "mdb")
         If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Support.CreateAccessDatabase(ID_CARDS_SaveFileDialog.FileName)
             Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + ID_CARDS_SaveFileDialog.FileName
