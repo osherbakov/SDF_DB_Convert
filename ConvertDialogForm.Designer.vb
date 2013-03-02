@@ -1113,6 +1113,7 @@ Partial Class ConvertDialogForm
         Me.SerialNumberTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "SerialNumber", True))
         Me.SerialNumberTextBox.Location = New System.Drawing.Point(375, 330)
         Me.SerialNumberTextBox.Name = "SerialNumberTextBox"
+        Me.SerialNumberTextBox.ReadOnly = True
         Me.SerialNumberTextBox.Size = New System.Drawing.Size(96, 20)
         Me.SerialNumberTextBox.TabIndex = 40
         '

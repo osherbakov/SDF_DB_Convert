@@ -120,6 +120,7 @@ Public Class ConvertDialogForm
                 End If
             End With
             id_card.IdNumber = MakeIDNumber(id_card)
+            id_card.SerialNumber = MakeSerial()
 
             id_row = ID_CARDS_DataSet.ID_CARDS.NewID_CARDSRow()
             With id_row
@@ -213,7 +214,7 @@ Public Class ConvertDialogForm
                 dr.CACPDF = Support.EncodeCACPDF417Data(id_card)
                 With dr
                     Me.ID_CARDSTableAdapter.Insert(.IDNumber, .LastName, .FirstName, .MI, _
-                                                   .DOB, .SSN, .Address, .H_Address, .H_City, .H_ZIP, _
+                                                   .DOB, "XXX-XX-" + .SSN.Substring(.SSN.Length() - 4, 4), .Address, .H_Address, .H_City, .H_ZIP, _
                                                    .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
                                                    .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
                                                    .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _

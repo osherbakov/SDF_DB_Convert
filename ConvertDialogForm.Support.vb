@@ -104,7 +104,14 @@ Partial Public Class ConvertDialogForm
         Dim idn() As Byte = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(BattleRosterNumber))
         Dim byte_result() As Byte = {idn(5), idn(0), idn(1), idn(11)}
         Dim int_result As UInt32 = BitConverter.ToUInt32(byte_result, 0)
-        Return IssuingStation.Text + "-" + (int_result Mod 100000000).ToString("D00000000")
+        Return IssuingStation.Text + "-" + (int_result Mod 100000000).ToString("D8")
+    End Function
+
+    Private Function MakeSerial() As String
+        Dim g() As Byte = Guid.NewGuid.ToByteArray()
+        Dim byte_result() As Byte = {g(11), g(1), g(13), g(2)}
+        Dim int_result As UInt32 = BitConverter.ToUInt32(byte_result, 0)
+        Return (int_result Mod 10000000000).ToString("D10")
     End Function
 
 End Class

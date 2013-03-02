@@ -616,6 +616,11 @@ Partial Public Class ID_CARDS_DataSet
         End Function
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
+        Public Function FindByIDNumber(ByVal IDNumber As String) As ID_CARDSRow
+            Return CType(Me.Rows.Find(New Object() {IDNumber}),ID_CARDSRow)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
         Public Overrides Function Clone() As Global.System.Data.DataTable
             Dim cln As ID_CARDSDataTable = CType(MyBase.Clone,ID_CARDSDataTable)
             cln.InitVars
@@ -717,6 +722,9 @@ Partial Public Class ID_CARDS_DataSet
             MyBase.Columns.Add(Me.columnAAMVACode39)
             Me.columnCACCode39 = New Global.System.Data.DataColumn("CACCode39", GetType(String), Nothing, Global.System.Data.MappingType.Element)
             MyBase.Columns.Add(Me.columnCACCode39)
+            Me.Constraints.Add(New Global.System.Data.UniqueConstraint("Constraint1", New Global.System.Data.DataColumn() {Me.columnIDNumber}, true))
+            Me.columnIDNumber.AllowDBNull = false
+            Me.columnIDNumber.Unique = true
             Me.columnIDNumber.MaxLength = 255
             Me.columnLastName.MaxLength = 255
             Me.columnFirstName.MaxLength = 255
@@ -879,11 +887,7 @@ Partial Public Class ID_CARDS_DataSet
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
         Public Property IDNumber() As String
             Get
-                Try 
-                    Return CType(Me(Me.tableID_CARDS.IDNumberColumn),String)
-                Catch e As Global.System.InvalidCastException
-                    Throw New Global.System.Data.StrongTypingException("The value for column 'IDNumber' in table 'ID_CARDS' is DBNull.", e)
-                End Try
+                Return CType(Me(Me.tableID_CARDS.IDNumberColumn),String)
             End Get
             Set
                 Me(Me.tableID_CARDS.IDNumberColumn) = value
@@ -1267,16 +1271,6 @@ Partial Public Class ID_CARDS_DataSet
                 Me(Me.tableID_CARDS.CACCode39Column) = value
             End Set
         End Property
-        
-        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-        Public Function IsIDNumberNull() As Boolean
-            Return Me.IsNull(Me.tableID_CARDS.IDNumberColumn)
-        End Function
-        
-        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-        Public Sub SetIDNumberNull()
-            Me(Me.tableID_CARDS.IDNumberColumn) = Global.System.Convert.DBNull
-        End Sub
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
         Public Function IsLastNameNull() As Boolean
@@ -1871,7 +1865,7 @@ Namespace ID_CARDS_DataSetTableAdapters
                     ByVal AAMVACode39 As String,  _
                     ByVal CACCode39 As String) As Integer
             If (IDNumber Is Nothing) Then
-                Me.Adapter.InsertCommand.Parameters(0).Value = Global.System.DBNull.Value
+                Throw New Global.System.ArgumentNullException("IDNumber")
             Else
                 Me.Adapter.InsertCommand.Parameters(0).Value = CType(IDNumber,String)
             End If
