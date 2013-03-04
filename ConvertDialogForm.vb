@@ -44,17 +44,26 @@ Public Class ConvertDialogForm
             Exit Sub
         End If
 
+        ProgressBar1.Minimum = 0
+        ProgressBar1.Maximum = CSMR_ID_DataSet.CSMR_ID.Count()
+
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
+            id_card = New IDCardData()
+            id_row = ID_CARDS_DataSet.ID_CARDS.NewID_CARDSRow()
             With id_card
                 .Address = dr.H_ADDR + VB.vbCrLf + dr.H_CITY + ", CA " + dr.H_ZIP
 
                 .FirstName = dr.FIRST_NAME
                 .LastName = dr.LAST_NAME.ToUpper()
-                .MI = dr.MIDDLE_NAME.ToUpper()
+                If Not String.IsNullOrEmpty(dr.MIDDLE_NAME) Then
+                    .MI = dr.MIDDLE_NAME.ToUpper().Substring(0, 1)
+                End If
 
-                .Sex = dr.GENDER.ToUpper()
+                If Not String.IsNullOrEmpty(dr.GENDER) Then
+                    .Sex = dr.GENDER.ToUpper().Substring(0, 1)
+                End If
                 .DOB = dr.DOB
-                .BloodType = dr.BLOOD_TYPE
+                .BloodType = dr.BLOOD_TYPE.ToUpper()
                 .SSN = dr.SSN.ToString("000-00-0000")
 
                 .Rank = dr.RANK
@@ -63,66 +72,19 @@ Public Class ConvertDialogForm
                 .IssueDate = Date.Today()
                 .ExpirationDate = .IssueDate.AddYears(3)
 
-                .Hair = dr.HAIR
-                .Eyes = dr.EYES
+                .Hair = dr.HAIR.ToUpper()
+                .Eyes = dr.EYES.ToUpper()
 
                 .Height = dr.HEIGHT
                 .Weight = dr.WEIGHT
 
-                .DLData = dr.DL_NUMBER
+                .DLData = dr.DL_NUMBER.ToUpper()
 
-                '
-                ' See if photo exists - use LAST nams, then LAST_FIRST, then FIRST_LAST
-                '
-                Dim CurrDir As String = IO.Path.GetDirectoryName(CSMR_ID_OpenFileDialog.FileName())
-                Dim FileName As String = IO.Path.Combine(CurrDir, .LastName) + ".jpg"
-                If Not IO.File.Exists(FileName) Then
-                    FileName = IO.Path.Combine(CurrDir, .LastName) + ".jpeg"
-                End If
-                If Not IO.File.Exists(FileName) Then
-                    FileName = IO.Path.Combine(CurrDir, .LastName) + "_" + .FirstName + ".jpg"
-                End If
-                If Not IO.File.Exists(FileName) Then
-                    FileName = IO.Path.Combine(CurrDir, .LastName) + "_" + .FirstName + ".jpeg"
-                End If
-                If Not IO.File.Exists(FileName) Then
-                    FileName = IO.Path.Combine(CurrDir, .FirstName) + "_" + .LastName + ".jpg"
-                End If
-                If Not IO.File.Exists(FileName) Then
-                    FileName = IO.Path.Combine(CurrDir, .FirstName) + "_" + .LastName + ".jpeg"
-                End If
-
-                ' Try with a Middle Initial
-                If Not IO.File.Exists(FileName) AndAlso Not String.IsNullOrEmpty(.MI) Then
-                    FileName = IO.Path.Combine(CurrDir, .FirstName) + "_" + .LastName + "_" + .MI.Substring(0, 1) + ".jpg"
-                End If
-                If Not IO.File.Exists(FileName) AndAlso Not String.IsNullOrEmpty(.MI) Then
-                    FileName = IO.Path.Combine(CurrDir, .FirstName) + "_" + .LastName + "_" + .MI.Substring(0, 1) + ".jpeg"
-                End If
-
-                If Not IO.File.Exists(FileName) AndAlso Not String.IsNullOrEmpty(.MI) Then
-                    FileName = IO.Path.Combine(CurrDir, .LastName) + "_" + .FirstName + "_" + .MI.Substring(0, 1) + ".jpg"
-                End If
-                If Not IO.File.Exists(FileName) AndAlso Not String.IsNullOrEmpty(.MI) Then
-                    FileName = IO.Path.Combine(CurrDir, .LastName) + "_" + .FirstName + "_" + .MI.Substring(0, 1) + ".jpeg"
-                End If
-
-                If IO.File.Exists(FileName) Then
-                    Dim fi As IO.FileInfo = New IO.FileInfo(FileName)
-                    Dim stream As New IO.FileStream(FileName, IO.FileMode.Open)
-                    Dim photo(fi.Length) As Byte
-                    stream.Read(photo, 0, fi.Length())
-                    .Photo = photo
-                    stream.Close()
-                    stream = Nothing
-                    fi = Nothing
-                    photo = Nothing
-                End If
+                .Photo = GetImageFile(.LastName, .FirstName, .MI)
+                .IdNumber = MakeFullNumber(id_card)
+                .SerialNumber = MakeSerial()
             End With
-            id_card.IdNumber = MakeIDNumber(id_card)
-            id_card.SerialNumber = MakeSerial()
 
-            id_row = ID_CARDS_DataSet.ID_CARDS.NewID_CARDSRow()
             With id_row
                 .Address = id_card.Address
                 .H_Address = dr.H_ADDR
@@ -133,6 +95,7 @@ Public Class ConvertDialogForm
                 .Sex = id_card.Sex
                 .SSN = id_card.SSN
                 .BloodType = id_card.BloodType
+                .DLData = id_card.DLData
 
                 .FirstName = id_card.FirstName
                 .LastName = id_card.LastName
@@ -153,14 +116,10 @@ Public Class ConvertDialogForm
                 .IDNumber = id_card.IdNumber
                 .SerialNumber = id_card.SerialNumber
 
-                .AAMVAMAG = ""
-                .AAMVAPDF = ""
-                .CACPDF = ""
-                .AAMVACode39 = ""
-                .CACCode39 = ""
                 .Photo = id_card.Photo
             End With
             ID_CARDS_DataSet.ID_CARDS.AddID_CARDSRow(id_row)
+            ProgressBar1.PerformStep()
         Next
         TabControl_ID.TabPages(0).Hide()
         TabControl_ID.TabPages(1).Show()
@@ -169,7 +128,7 @@ Public Class ConvertDialogForm
 
     Private Sub Button_CreateDB_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button_CreateDB.Click
 
-        Dim id_card As New IDCardData()
+        Dim card_data As New IDCardData()
 
         Me.Validate()
 
@@ -182,7 +141,7 @@ Public Class ConvertDialogForm
             Me.ID_CARDSTableAdapter.Connection.Open()
 
             For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
-                With id_card
+                With card_data
                     .Address = dr.Address
 
                     .FirstName = dr.FirstName
@@ -208,17 +167,20 @@ Public Class ConvertDialogForm
                     .DLData = dr.DLData
                     .SerialNumber = dr.SerialNumber
                 End With
-                ' Update all MAG and PDF field
-                dr.AAMVAMAG = Support.EncodeAAMVAMagData(id_card)
-                dr.AAMVAPDF = Support.EncodeAAMVAPDF417Data(id_card)
-                dr.CACPDF = Support.EncodeCACPDF417Data(id_card)
+
                 With dr
-                    Me.ID_CARDSTableAdapter.Insert(.IDNumber, .LastName, .FirstName, .MI, _
-                                                   .DOB, "XXX-XX-" + .SSN.Substring(.SSN.Length() - 4, 4), .Address, .H_Address, .H_City, .H_ZIP, _
-                                                   .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
-                                                   .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
-                                                   .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
-                                                   .AAMVACode39, .CACCode39)
+                    ' Update all MAG and PDF field
+                    .AAMVAMAG = Support.EncodeAAMVAMagData(card_data)
+                    .AAMVAPDF = Support.EncodeAAMVAPDF417Data(card_data)
+                    .CACPDF = Support.EncodeCACPDF417Data(card_data)
+                    .AAMVACode39 = ""
+                    .CACCode39 = ""
+                    Me.ID_CARDSTableAdapter.Insert(MakeIDNumber(.SSN, .LastName), .LastName, .FirstName, .MI, _
+                                                    .DOB, "XXX-XX-" + .SSN.Substring(.SSN.Length() - 4, 4), .Address, .H_Address, .H_City, .H_ZIP, _
+                                                    .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
+                                                    .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
+                                                    .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
+                                                    .AAMVACode39, .CACCode39)
                 End With
             Next
             Me.ID_CARDSTableAdapter.Connection.Close()
@@ -226,34 +188,21 @@ Public Class ConvertDialogForm
         End If
     End Sub
 
-    Private Sub RANKComboBox_SelectedValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RANKComboBox.SelectedValueChanged, RANKComboBox.SelectedIndexChanged
+    Private Sub RANKComboBox_SelectionChangeCommitted(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RANKComboBox.SelectedIndexChanged
+        Dim new_rank = RANKComboBox.SelectedValue
         For Each rankgrade As String In RankToGrade
-            If rankgrade.Contains(RANKComboBox.Text) Then
+            If Not String.IsNullOrEmpty(new_rank) AndAlso rankgrade.Contains(new_rank) Then
                 PAY_GRTextBox.Text = rankgrade.Substring(6)
-                PAY_GRTextBox.Modified = True
-                Exit For
             End If
         Next
     End Sub
 
-    Private Sub TextBoxNotEmpty_Validating(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles LAST_NAMETextBox.Validating, SSNTextBox.Validating, NAME_INDTextBox.Validating, H_ADDRTextBox.Validating, GENDERTextBox.Validating, FIRST_NAMETextBox.Validating, WeightTextBox.Validating, SSNTextBox1.Validating, LastNameTextBox.Validating, HeightTextBox.Validating, SexTextBox.Validating, SerialNumberTextBox.Validating, PayGradeTextBox.Validating, IDNumberTextBox.Validating, FirstNameTextBox.Validating, DLDataTextBox.Validating, AddressTextBox.Validating, RANKComboBox.Validating, RankComboBox_ID.Validating, HairComboBox.Validating, EyesComboBox.Validating
-        Dim wc As Windows.Forms.Control = CType(sender, Windows.Forms.Control)
-        If String.IsNullOrEmpty(wc.Text) Then
-            Form_error.SetError(sender, "Cannot be empty")
-            e.Cancel = True
-        Else
-            Form_error.SetError(sender, String.Empty)
-        End If
-    End Sub
-
-    Private Sub RankComboBox_ID_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RankComboBox_ID.SelectedIndexChanged, RankComboBox_ID.SelectedValueChanged
+    Private Sub RankComboBox_ID_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RankComboBox_ID.SelectedIndexChanged
+        Dim new_rank = RankComboBox_ID.SelectedValue
         For Each rankgrade As String In RankToGrade
-            If rankgrade.Contains(RankComboBox_ID.Text) Then
+            If Not String.IsNullOrEmpty(new_rank) AndAlso rankgrade.Contains(new_rank) Then
                 PayGradeTextBox.Text = rankgrade.Substring(6)
-                PayGradeTextBox.Modified = True
-                Exit For
             End If
         Next
     End Sub
-
 End Class

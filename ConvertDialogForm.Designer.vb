@@ -28,7 +28,6 @@ Partial Class ConvertDialogForm
         Dim LAST_NAMELabel As System.Windows.Forms.Label
         Dim FIRST_NAMELabel As System.Windows.Forms.Label
         Dim MIDDLE_NAMELabel As System.Windows.Forms.Label
-        Dim RANKLabel As System.Windows.Forms.Label
         Dim PAY_GRLabel As System.Windows.Forms.Label
         Dim H_ADDRLabel As System.Windows.Forms.Label
         Dim H_CITYLabel As System.Windows.Forms.Label
@@ -46,21 +45,22 @@ Partial Class ConvertDialogForm
         Dim HairLabel As System.Windows.Forms.Label
         Dim EyesLabel As System.Windows.Forms.Label
         Dim BloodTypeLabel As System.Windows.Forms.Label
-        Dim RankLabel1 As System.Windows.Forms.Label
         Dim PayGradeLabel As System.Windows.Forms.Label
         Dim HeightLabel As System.Windows.Forms.Label
         Dim WeightLabel As System.Windows.Forms.Label
-        Dim DLDataLabel As System.Windows.Forms.Label
         Dim SexLabel As System.Windows.Forms.Label
         Dim SerialNumberLabel As System.Windows.Forms.Label
+        Dim DLDataLabel As System.Windows.Forms.Label
+        Dim RankLabel1 As System.Windows.Forms.Label
+        Dim RANKLabel As System.Windows.Forms.Label
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ConvertDialogForm))
         Me.TabControl_ID = New System.Windows.Forms.TabControl
         Me.TabPage_CSMR_ID = New System.Windows.Forms.TabPage
-        Me.IssuingStation = New System.Windows.Forms.TextBox
-        Me.Label1 = New System.Windows.Forms.Label
         Me.RANKComboBox = New System.Windows.Forms.ComboBox
         Me.CSMR_IDBindingSource = New System.Windows.Forms.BindingSource(Me.components)
         Me.CSMR_ID_DataSet = New CSMR_DB_Convert.CSMR_ID_DataSet
+        Me.IssuingStation = New System.Windows.Forms.TextBox
+        Me.Label1 = New System.Windows.Forms.Label
         Me.Convert = New System.Windows.Forms.Button
         Me.CSMR_IDBindingNavigator = New System.Windows.Forms.BindingNavigator(Me.components)
         Me.BindingNavigatorAddNewItem = New System.Windows.Forms.ToolStripButton
@@ -87,10 +87,11 @@ Partial Class ConvertDialogForm
         Me.H_ZIPTextBox = New System.Windows.Forms.TextBox
         Me.DOBDateTimePicker = New System.Windows.Forms.DateTimePicker
         Me.TabPage_ID_CARDS = New System.Windows.Forms.TabPage
-        Me.BloodTypeComboBox = New System.Windows.Forms.ComboBox
+        Me.RankComboBox_ID = New System.Windows.Forms.ComboBox
         Me.ID_CARDSBindingSource = New System.Windows.Forms.BindingSource(Me.components)
         Me.ID_CARDS_DataSet = New CSMR_DB_Convert.ID_CARDS_DataSet
-        Me.RankComboBox_ID = New System.Windows.Forms.ComboBox
+        Me.DLDataTextBox = New System.Windows.Forms.TextBox
+        Me.BloodTypeComboBox = New System.Windows.Forms.ComboBox
         Me.EyesComboBox = New System.Windows.Forms.ComboBox
         Me.HairComboBox = New System.Windows.Forms.ComboBox
         Me.ID_CARDSBindingNavigator = New System.Windows.Forms.BindingNavigator(Me.components)
@@ -119,7 +120,6 @@ Partial Class ConvertDialogForm
         Me.PayGradeTextBox = New System.Windows.Forms.TextBox
         Me.HeightTextBox = New System.Windows.Forms.TextBox
         Me.WeightTextBox = New System.Windows.Forms.TextBox
-        Me.DLDataTextBox = New System.Windows.Forms.TextBox
         Me.SexTextBox = New System.Windows.Forms.TextBox
         Me.SerialNumberTextBox = New System.Windows.Forms.TextBox
         Me.Button_CreateDB = New System.Windows.Forms.Button
@@ -130,12 +130,12 @@ Partial Class ConvertDialogForm
         Me.CSMR_ID_OpenFileDialog = New System.Windows.Forms.OpenFileDialog
         Me.Form_error = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.ID_CARDS_SaveFileDialog = New System.Windows.Forms.SaveFileDialog
+        Me.ProgressBar1 = New System.Windows.Forms.ProgressBar
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
         FIRST_NAMELabel = New System.Windows.Forms.Label
         MIDDLE_NAMELabel = New System.Windows.Forms.Label
-        RANKLabel = New System.Windows.Forms.Label
         PAY_GRLabel = New System.Windows.Forms.Label
         H_ADDRLabel = New System.Windows.Forms.Label
         H_CITYLabel = New System.Windows.Forms.Label
@@ -153,13 +153,14 @@ Partial Class ConvertDialogForm
         HairLabel = New System.Windows.Forms.Label
         EyesLabel = New System.Windows.Forms.Label
         BloodTypeLabel = New System.Windows.Forms.Label
-        RankLabel1 = New System.Windows.Forms.Label
         PayGradeLabel = New System.Windows.Forms.Label
         HeightLabel = New System.Windows.Forms.Label
         WeightLabel = New System.Windows.Forms.Label
-        DLDataLabel = New System.Windows.Forms.Label
         SexLabel = New System.Windows.Forms.Label
         SerialNumberLabel = New System.Windows.Forms.Label
+        DLDataLabel = New System.Windows.Forms.Label
+        RankLabel1 = New System.Windows.Forms.Label
+        RANKLabel = New System.Windows.Forms.Label
         Me.TabControl_ID.SuspendLayout()
         Me.TabPage_CSMR_ID.SuspendLayout()
         CType(Me.CSMR_IDBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -220,15 +221,6 @@ Partial Class ConvertDialogForm
         MIDDLE_NAMELabel.TabIndex = 8
         MIDDLE_NAMELabel.Text = "MIDDLE NAME:"
         '
-        'RANKLabel
-        '
-        RANKLabel.AutoSize = True
-        RANKLabel.Location = New System.Drawing.Point(53, 162)
-        RANKLabel.Name = "RANKLabel"
-        RANKLabel.Size = New System.Drawing.Size(40, 13)
-        RANKLabel.TabIndex = 10
-        RANKLabel.Text = "RANK:"
-        '
         'PAY_GRLabel
         '
         PAY_GRLabel.AutoSize = True
@@ -277,7 +269,7 @@ Partial Class ConvertDialogForm
         'GENDERLabel
         '
         GENDERLabel.AutoSize = True
-        GENDERLabel.Location = New System.Drawing.Point(49, 282)
+        GENDERLabel.Location = New System.Drawing.Point(480, 161)
         GENDERLabel.Name = "GENDERLabel"
         GENDERLabel.Size = New System.Drawing.Size(56, 13)
         GENDERLabel.TabIndex = 22
@@ -382,15 +374,6 @@ Partial Class ConvertDialogForm
         BloodTypeLabel.TabIndex = 25
         BloodTypeLabel.Text = "Blood Type:"
         '
-        'RankLabel1
-        '
-        RankLabel1.AutoSize = True
-        RankLabel1.Location = New System.Drawing.Point(285, 181)
-        RankLabel1.Name = "RankLabel1"
-        RankLabel1.Size = New System.Drawing.Size(36, 13)
-        RankLabel1.TabIndex = 27
-        RankLabel1.Text = "Rank:"
-        '
         'PayGradeLabel
         '
         PayGradeLabel.AutoSize = True
@@ -418,23 +401,14 @@ Partial Class ConvertDialogForm
         WeightLabel.TabIndex = 33
         WeightLabel.Text = "Weight:"
         '
-        'DLDataLabel
-        '
-        DLDataLabel.AutoSize = True
-        DLDataLabel.Location = New System.Drawing.Point(285, 271)
-        DLDataLabel.Name = "DLDataLabel"
-        DLDataLabel.Size = New System.Drawing.Size(47, 13)
-        DLDataLabel.TabIndex = 35
-        DLDataLabel.Text = "DLData:"
-        '
         'SexLabel
         '
         SexLabel.AutoSize = True
         SexLabel.Location = New System.Drawing.Point(285, 233)
         SexLabel.Name = "SexLabel"
-        SexLabel.Size = New System.Drawing.Size(28, 13)
+        SexLabel.Size = New System.Drawing.Size(45, 13)
         SexLabel.TabIndex = 37
-        SexLabel.Text = "Sex:"
+        SexLabel.Text = "Gender:"
         '
         'SerialNumberLabel
         '
@@ -444,6 +418,33 @@ Partial Class ConvertDialogForm
         SerialNumberLabel.Size = New System.Drawing.Size(76, 13)
         SerialNumberLabel.TabIndex = 39
         SerialNumberLabel.Text = "Serial Number:"
+        '
+        'DLDataLabel
+        '
+        DLDataLabel.AutoSize = True
+        DLDataLabel.Location = New System.Drawing.Point(285, 291)
+        DLDataLabel.Name = "DLDataLabel"
+        DLDataLabel.Size = New System.Drawing.Size(47, 13)
+        DLDataLabel.TabIndex = 45
+        DLDataLabel.Text = "DLData:"
+        '
+        'RankLabel1
+        '
+        RankLabel1.AutoSize = True
+        RankLabel1.Location = New System.Drawing.Point(285, 178)
+        RankLabel1.Name = "RankLabel1"
+        RankLabel1.Size = New System.Drawing.Size(36, 13)
+        RankLabel1.TabIndex = 46
+        RankLabel1.Text = "Rank:"
+        '
+        'RANKLabel
+        '
+        RANKLabel.AutoSize = True
+        RANKLabel.Location = New System.Drawing.Point(53, 161)
+        RANKLabel.Name = "RANKLabel"
+        RANKLabel.Size = New System.Drawing.Size(40, 13)
+        RANKLabel.TabIndex = 28
+        RANKLabel.Text = "RANK:"
         '
         'TabControl_ID
         '
@@ -459,9 +460,11 @@ Partial Class ConvertDialogForm
         'TabPage_CSMR_ID
         '
         Me.TabPage_CSMR_ID.AutoScroll = True
+        Me.TabPage_CSMR_ID.Controls.Add(Me.ProgressBar1)
+        Me.TabPage_CSMR_ID.Controls.Add(RANKLabel)
+        Me.TabPage_CSMR_ID.Controls.Add(Me.RANKComboBox)
         Me.TabPage_CSMR_ID.Controls.Add(Me.IssuingStation)
         Me.TabPage_CSMR_ID.Controls.Add(Me.Label1)
-        Me.TabPage_CSMR_ID.Controls.Add(Me.RANKComboBox)
         Me.TabPage_CSMR_ID.Controls.Add(Me.Convert)
         Me.TabPage_CSMR_ID.Controls.Add(Me.CSMR_IDBindingNavigator)
         Me.TabPage_CSMR_ID.Controls.Add(GENDERLabel)
@@ -476,7 +479,6 @@ Partial Class ConvertDialogForm
         Me.TabPage_CSMR_ID.Controls.Add(Me.FIRST_NAMETextBox)
         Me.TabPage_CSMR_ID.Controls.Add(MIDDLE_NAMELabel)
         Me.TabPage_CSMR_ID.Controls.Add(Me.MIDDLE_NAMETextBox)
-        Me.TabPage_CSMR_ID.Controls.Add(RANKLabel)
         Me.TabPage_CSMR_ID.Controls.Add(PAY_GRLabel)
         Me.TabPage_CSMR_ID.Controls.Add(Me.PAY_GRTextBox)
         Me.TabPage_CSMR_ID.Controls.Add(H_ADDRLabel)
@@ -495,6 +497,26 @@ Partial Class ConvertDialogForm
         Me.TabPage_CSMR_ID.Text = "CSMR_ID"
         Me.TabPage_CSMR_ID.UseVisualStyleBackColor = True
         '
+        'RANKComboBox
+        '
+        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "RANK", True))
+        Me.RANKComboBox.FormattingEnabled = True
+        Me.RANKComboBox.Location = New System.Drawing.Point(144, 158)
+        Me.RANKComboBox.Name = "RANKComboBox"
+        Me.RANKComboBox.Size = New System.Drawing.Size(80, 21)
+        Me.RANKComboBox.TabIndex = 29
+        '
+        'CSMR_IDBindingSource
+        '
+        Me.CSMR_IDBindingSource.DataMember = "CSMR_ID"
+        Me.CSMR_IDBindingSource.DataSource = Me.CSMR_ID_DataSet
+        '
+        'CSMR_ID_DataSet
+        '
+        Me.CSMR_ID_DataSet.DataSetName = "CSMR_ID_DataSet"
+        Me.CSMR_ID_DataSet.EnforceConstraints = False
+        Me.CSMR_ID_DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
         'IssuingStation
         '
         Me.IssuingStation.Location = New System.Drawing.Point(188, 325)
@@ -511,31 +533,6 @@ Partial Class ConvertDialogForm
         Me.Label1.Size = New System.Drawing.Size(104, 13)
         Me.Label1.TabIndex = 27
         Me.Label1.Text = "ISSUING STATION:"
-        '
-        'RANKComboBox
-        '
-        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.CSMR_IDBindingSource, "RANK", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.CSMR_IDBindingSource, "RANK", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "RANK", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.RANKComboBox.DataSource = Me.CSMR_IDBindingSource
-        Me.RANKComboBox.DisplayMember = "RANK"
-        Me.RANKComboBox.FormattingEnabled = True
-        Me.RANKComboBox.Location = New System.Drawing.Point(144, 162)
-        Me.RANKComboBox.Name = "RANKComboBox"
-        Me.RANKComboBox.Size = New System.Drawing.Size(68, 21)
-        Me.RANKComboBox.TabIndex = 26
-        Me.RANKComboBox.ValueMember = "RANK"
-        '
-        'CSMR_IDBindingSource
-        '
-        Me.CSMR_IDBindingSource.DataMember = "CSMR_ID"
-        Me.CSMR_IDBindingSource.DataSource = Me.CSMR_ID_DataSet
-        '
-        'CSMR_ID_DataSet
-        '
-        Me.CSMR_ID_DataSet.DataSetName = "CSMR_ID_DataSet"
-        Me.CSMR_ID_DataSet.EnforceConstraints = False
-        Me.CSMR_ID_DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
         '
         'Convert
         '
@@ -661,9 +658,9 @@ Partial Class ConvertDialogForm
         'GENDERTextBox
         '
         Me.GENDERTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "GENDER", True))
-        Me.GENDERTextBox.Location = New System.Drawing.Point(144, 279)
+        Me.GENDERTextBox.Location = New System.Drawing.Point(571, 158)
         Me.GENDERTextBox.Name = "GENDERTextBox"
-        Me.GENDERTextBox.Size = New System.Drawing.Size(68, 20)
+        Me.GENDERTextBox.Size = New System.Drawing.Size(72, 20)
         Me.GENDERTextBox.TabIndex = 23
         '
         'SSNTextBox
@@ -752,8 +749,11 @@ Partial Class ConvertDialogForm
         'TabPage_ID_CARDS
         '
         Me.TabPage_ID_CARDS.AutoScroll = True
-        Me.TabPage_ID_CARDS.Controls.Add(Me.BloodTypeComboBox)
+        Me.TabPage_ID_CARDS.Controls.Add(RankLabel1)
         Me.TabPage_ID_CARDS.Controls.Add(Me.RankComboBox_ID)
+        Me.TabPage_ID_CARDS.Controls.Add(DLDataLabel)
+        Me.TabPage_ID_CARDS.Controls.Add(Me.DLDataTextBox)
+        Me.TabPage_ID_CARDS.Controls.Add(Me.BloodTypeComboBox)
         Me.TabPage_ID_CARDS.Controls.Add(Me.EyesComboBox)
         Me.TabPage_ID_CARDS.Controls.Add(Me.HairComboBox)
         Me.TabPage_ID_CARDS.Controls.Add(Me.ID_CARDSBindingNavigator)
@@ -778,15 +778,12 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS.Controls.Add(HairLabel)
         Me.TabPage_ID_CARDS.Controls.Add(EyesLabel)
         Me.TabPage_ID_CARDS.Controls.Add(BloodTypeLabel)
-        Me.TabPage_ID_CARDS.Controls.Add(RankLabel1)
         Me.TabPage_ID_CARDS.Controls.Add(PayGradeLabel)
         Me.TabPage_ID_CARDS.Controls.Add(Me.PayGradeTextBox)
         Me.TabPage_ID_CARDS.Controls.Add(HeightLabel)
         Me.TabPage_ID_CARDS.Controls.Add(Me.HeightTextBox)
         Me.TabPage_ID_CARDS.Controls.Add(WeightLabel)
         Me.TabPage_ID_CARDS.Controls.Add(Me.WeightTextBox)
-        Me.TabPage_ID_CARDS.Controls.Add(DLDataLabel)
-        Me.TabPage_ID_CARDS.Controls.Add(Me.DLDataTextBox)
         Me.TabPage_ID_CARDS.Controls.Add(SexLabel)
         Me.TabPage_ID_CARDS.Controls.Add(Me.SexTextBox)
         Me.TabPage_ID_CARDS.Controls.Add(SerialNumberLabel)
@@ -799,6 +796,34 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS.TabIndex = 1
         Me.TabPage_ID_CARDS.Text = "ID_CARDS"
         Me.TabPage_ID_CARDS.UseVisualStyleBackColor = True
+        '
+        'RankComboBox_ID
+        '
+        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Rank", True))
+        Me.RankComboBox_ID.FormattingEnabled = True
+        Me.RankComboBox_ID.Location = New System.Drawing.Point(375, 175)
+        Me.RankComboBox_ID.Name = "RankComboBox_ID"
+        Me.RankComboBox_ID.Size = New System.Drawing.Size(51, 21)
+        Me.RankComboBox_ID.TabIndex = 47
+        '
+        'ID_CARDSBindingSource
+        '
+        Me.ID_CARDSBindingSource.DataMember = "ID_CARDS"
+        Me.ID_CARDSBindingSource.DataSource = Me.ID_CARDS_DataSet
+        '
+        'ID_CARDS_DataSet
+        '
+        Me.ID_CARDS_DataSet.DataSetName = "ID_CARDS_DataSet"
+        Me.ID_CARDS_DataSet.EnforceConstraints = False
+        Me.ID_CARDS_DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
+        'DLDataTextBox
+        '
+        Me.DLDataTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "DLData", True))
+        Me.DLDataTextBox.Location = New System.Drawing.Point(375, 284)
+        Me.DLDataTextBox.Name = "DLDataTextBox"
+        Me.DLDataTextBox.Size = New System.Drawing.Size(96, 20)
+        Me.DLDataTextBox.TabIndex = 46
         '
         'BloodTypeComboBox
         '
@@ -813,28 +838,6 @@ Partial Class ConvertDialogForm
         Me.BloodTypeComboBox.Size = New System.Drawing.Size(55, 21)
         Me.BloodTypeComboBox.TabIndex = 45
         Me.BloodTypeComboBox.ValueMember = "BloodType"
-        '
-        'ID_CARDSBindingSource
-        '
-        Me.ID_CARDSBindingSource.DataMember = "ID_CARDS"
-        Me.ID_CARDSBindingSource.DataSource = Me.ID_CARDS_DataSet
-        '
-        'ID_CARDS_DataSet
-        '
-        Me.ID_CARDS_DataSet.DataSetName = "ID_CARDS_DataSet"
-        Me.ID_CARDS_DataSet.EnforceConstraints = False
-        Me.ID_CARDS_DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
-        '
-        'RankComboBox_ID
-        '
-        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDSBindingSource, "Rank", True))
-        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "Rank", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Rank", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.RankComboBox_ID.FormattingEnabled = True
-        Me.RankComboBox_ID.Location = New System.Drawing.Point(375, 174)
-        Me.RankComboBox_ID.Name = "RankComboBox_ID"
-        Me.RankComboBox_ID.Size = New System.Drawing.Size(51, 21)
-        Me.RankComboBox_ID.TabIndex = 44
         '
         'EyesComboBox
         '
@@ -1061,6 +1064,8 @@ Partial Class ConvertDialogForm
         'PhotoPictureBox
         '
         Me.PhotoPictureBox.DataBindings.Add(New System.Windows.Forms.Binding("Image", Me.ID_CARDSBindingSource, "Photo", True))
+        Me.PhotoPictureBox.ErrorImage = Global.CSMR_DB_Convert.My.Resources.Resources.Empty
+        Me.PhotoPictureBox.Image = CType(resources.GetObject("PhotoPictureBox.Image"), System.Drawing.Image)
         Me.PhotoPictureBox.Location = New System.Drawing.Point(141, 171)
         Me.PhotoPictureBox.Name = "PhotoPictureBox"
         Me.PhotoPictureBox.Size = New System.Drawing.Size(138, 153)
@@ -1091,14 +1096,6 @@ Partial Class ConvertDialogForm
         Me.WeightTextBox.Name = "WeightTextBox"
         Me.WeightTextBox.Size = New System.Drawing.Size(55, 20)
         Me.WeightTextBox.TabIndex = 34
-        '
-        'DLDataTextBox
-        '
-        Me.DLDataTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "DLData", True))
-        Me.DLDataTextBox.Location = New System.Drawing.Point(375, 268)
-        Me.DLDataTextBox.Name = "DLDataTextBox"
-        Me.DLDataTextBox.Size = New System.Drawing.Size(90, 20)
-        Me.DLDataTextBox.TabIndex = 36
         '
         'SexTextBox
         '
@@ -1163,6 +1160,14 @@ Partial Class ConvertDialogForm
         Me.ID_CARDS_SaveFileDialog.FileName = "ID_CARDS.mdb"
         Me.ID_CARDS_SaveFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
         Me.ID_CARDS_SaveFileDialog.InitialDirectory = "."
+        '
+        'ProgressBar1
+        '
+        Me.ProgressBar1.Location = New System.Drawing.Point(55, 293)
+        Me.ProgressBar1.Name = "ProgressBar1"
+        Me.ProgressBar1.Size = New System.Drawing.Size(751, 23)
+        Me.ProgressBar1.Step = 1
+        Me.ProgressBar1.TabIndex = 30
         '
         'ConvertDialogForm
         '
@@ -1238,7 +1243,6 @@ Partial Class ConvertDialogForm
     Friend WithEvents PayGradeTextBox As System.Windows.Forms.TextBox
     Friend WithEvents HeightTextBox As System.Windows.Forms.TextBox
     Friend WithEvents WeightTextBox As System.Windows.Forms.TextBox
-    Friend WithEvents DLDataTextBox As System.Windows.Forms.TextBox
     Friend WithEvents SexTextBox As System.Windows.Forms.TextBox
     Friend WithEvents SerialNumberTextBox As System.Windows.Forms.TextBox
     Friend WithEvents ID_CARDSBindingNavigator As System.Windows.Forms.BindingNavigator
@@ -1260,13 +1264,15 @@ Partial Class ConvertDialogForm
     Private WithEvents TableAdapterManager1 As CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.TableAdapterManager
     Friend WithEvents CSMR_ID_OpenFileDialog As System.Windows.Forms.OpenFileDialog
     Friend WithEvents Form_error As System.Windows.Forms.ErrorProvider
-    Friend WithEvents RANKComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents HairComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents EyesComboBox As System.Windows.Forms.ComboBox
-    Friend WithEvents RankComboBox_ID As System.Windows.Forms.ComboBox
     Friend WithEvents BloodTypeComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents IssuingStation As System.Windows.Forms.TextBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents ID_CARDS_SaveFileDialog As System.Windows.Forms.SaveFileDialog
+    Friend WithEvents RankComboBox_ID As System.Windows.Forms.ComboBox
+    Friend WithEvents DLDataTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents RANKComboBox As System.Windows.Forms.ComboBox
+    Friend WithEvents ProgressBar1 As System.Windows.Forms.ProgressBar
 
 End Class

@@ -18,13 +18,15 @@ Partial Public Class ConvertDialogForm
     Private Shared EyesColors() As String = {"BLK", "BLU", "BRO", "BRN", "GRY", "GRN", "HAZ", "MAR", "PNK", "DIC", "UNK"}
     Private Shared HairColors() As String = {"BAL", "BLK", "BLN", "BRO", "BRN", "GRY", "RED", "SDY", "WHI", "UNK"}
     Private Shared BloodTypes() As String = {"AB NEG", "AB POS", "A NEG", "A POS", "B NEG", "B POS", "O NEG", "O POS", "UNK"}
-    Private Shared Ranks As New List(Of String)
+    Private Shared Ranks() As String
 
     Private Sub InitLists()
         ' Populate the Ranks list to be used in comboBoxes
+        Dim r As New List(Of String)
         For Each rankgrade As String In RankToGrade
-            Ranks.Add(rankgrade.Substring(0, 6))
+            r.Add(rankgrade.Substring(0, 6))
         Next
+        Ranks = r.ToArray()
 
         RANKComboBox.DataSource = Ranks
         HairComboBox.DataSource = HairColors
@@ -51,11 +53,24 @@ Partial Public Class ConvertDialogForm
                 dr.MIDDLE_NAME = String.Empty
             End If
 
+            ' Remove all dots from the names and addresses
+            dr.MIDDLE_NAME = dr.MIDDLE_NAME.Replace(".", "")
+            dr.H_ADDR = dr.H_ADDR.Replace(".", "").Replace(",", "")
+
             ' If NAME_IND is not provided - make it
             If dr.IsNAME_INDNull And _
                 Not (dr.IsFIRST_NAMENull AndAlso dr.IsLAST_NAMENull) Then
                 dr.NAME_IND = dr.LAST_NAME.ToUpper() + ", " + dr.FIRST_NAME.ToUpper() + " " + dr.MIDDLE_NAME
             End If
+
+            ' Capitalize all letters in the address and First-last  names
+            Dim ti As System.Globalization.TextInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo
+            dr.H_ADDR = ti.ToTitleCase(dr.H_ADDR.ToLower())
+            dr.H_CITY = ti.ToTitleCase(dr.H_CITY.ToLower())
+
+            dr.FIRST_NAME = ti.ToTitleCase(dr.FIRST_NAME.ToLower())
+            dr.LAST_NAME = ti.ToTitleCase(dr.LAST_NAME.ToLower())
+            dr.MIDDLE_NAME = ti.ToTitleCase(dr.MIDDLE_NAME.ToLower())
 
             ' Rank cannot be Null
             If dr.IsRANKNull Then
@@ -97,21 +112,80 @@ Partial Public Class ConvertDialogForm
         Next
     End Sub
 
-    Private Function MakeIDNumber(ByVal data As IDCardData) As String
+    Private Function MakeFullNumber(ByVal data As IDCardData) As String
+        Return IssuingStation.Text + "-" + MakeIDNumber(data.SSN, data.LastName)
+    End Function
+
+    Private Function MakeIDNumber(ByVal SSN As String, ByVal LastName As String) As String
         Dim hash As New System.Security.Cryptography.HMACSHA256(System.Text.Encoding.UTF8.GetBytes("California State Military Reserve"))
         hash.Initialize()
-        Dim BattleRosterNumber As String = data.LastName.ToUpper().Substring(0, 1) + data.SSN.Substring(data.SSN.Length() - 4, 4)
+        Dim BattleRosterNumber As String = LastName.ToUpper().Substring(0, 1) + SSN.Substring(SSN.Length() - 4, 4)
         Dim idn() As Byte = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(BattleRosterNumber))
-        Dim byte_result() As Byte = {idn(5), idn(0), idn(1), idn(11)}
-        Dim int_result As UInt32 = BitConverter.ToUInt32(byte_result, 0)
-        Return IssuingStation.Text + "-" + (int_result Mod 100000000).ToString("D8")
+        Dim byte_result1() As Byte = {idn(5), idn(0), idn(1), idn(11)}
+        Dim byte_result2() As Byte = {idn(15), idn(3), idn(22), idn(19)}
+        Dim int_result As UInt32 = BitConverter.ToUInt32(byte_result1, 0)
+        int_result = int_result Xor BitConverter.ToUInt32(byte_result2, 0)
+        Return (int_result Mod 100000000).ToString("D8")
     End Function
 
     Private Function MakeSerial() As String
         Dim g() As Byte = Guid.NewGuid.ToByteArray()
-        Dim byte_result() As Byte = {g(11), g(1), g(13), g(2)}
-        Dim int_result As UInt32 = BitConverter.ToUInt32(byte_result, 0)
+        Dim int_result As UInt32 = BitConverter.ToUInt32(g, 0)
+        int_result = int_result Xor BitConverter.ToUInt32(g, 4)
+        int_result = int_result Xor BitConverter.ToUInt32(g, 8)
+        int_result = int_result Xor BitConverter.ToUInt32(g, 12)
         Return (int_result Mod 10000000000).ToString("D10")
     End Function
 
+    Private Function GetImageFile(ByVal LastName As String, ByVal FirstName As String, ByVal MI As String) As Byte()
+        '
+        ' See if photo exists - use LAST nams, then LAST_FIRST, then FIRST_LAST
+        '
+        Dim FileFound As Boolean = False
+        Dim CurrDir As String = IO.Path.GetDirectoryName(CSMR_ID_OpenFileDialog.FileName())
+        Dim FileName As String = ""
+        Dim PossibleFiles As New List(Of String)
+        Dim result() As Byte
+
+        PossibleFiles.Add(IO.Path.Combine(CurrDir, LastName) + ".jpg")
+        PossibleFiles.Add(IO.Path.Combine(CurrDir, LastName) + ".jpeg")
+        PossibleFiles.Add(IO.Path.Combine(CurrDir, LastName) + "_" + FirstName + ".jpg")
+        PossibleFiles.Add(IO.Path.Combine(CurrDir, LastName) + "_" + FirstName + ".jpeg")
+        PossibleFiles.Add(IO.Path.Combine(CurrDir, LastName) + "_" + FirstName(0) + ".jpg")
+        PossibleFiles.Add(IO.Path.Combine(CurrDir, LastName) + "_" + FirstName(0) + ".jpeg")
+        PossibleFiles.Add(IO.Path.Combine(CurrDir, FirstName) + "_" + LastName + ".jpg")
+        PossibleFiles.Add(IO.Path.Combine(CurrDir, FirstName) + "_" + LastName + ".jpeg")
+        If Not String.IsNullOrEmpty(MI) Then
+            PossibleFiles.Add(IO.Path.Combine(CurrDir, FirstName) + "_" + LastName + "_" + MI.Substring(0, 1) + ".jpg")
+            PossibleFiles.Add(IO.Path.Combine(CurrDir, FirstName) + "_" + LastName + "_" + MI.Substring(0, 1) + ".jpeg")
+            PossibleFiles.Add(IO.Path.Combine(CurrDir, LastName) + "_" + FirstName + "_" + MI.Substring(0, 1) + ".jpg")
+            PossibleFiles.Add(IO.Path.Combine(CurrDir, LastName) + "_" + FirstName + "_" + MI.Substring(0, 1) + ".jpeg")
+        End If
+
+        For Each FileName In PossibleFiles
+            If IO.File.Exists(FileName) Then
+                FileFound = True
+                Exit For
+            End If
+        Next
+
+        If FileFound Then
+            Dim fi As IO.FileInfo = New IO.FileInfo(FileName)
+            Dim stream As New IO.FileStream(FileName, IO.FileMode.Open)
+            Dim photo(fi.Length) As Byte
+            stream.Read(photo, 0, fi.Length())
+            result = photo
+            stream.Close()
+            stream = Nothing
+            fi = Nothing
+            photo = Nothing
+        Else
+            Dim ms As System.IO.MemoryStream = New System.IO.MemoryStream()
+            My.Resources.Empty.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg)
+            result = ms.ToArray()
+            ms.Close()
+        End If
+
+        Return result
+    End Function
 End Class

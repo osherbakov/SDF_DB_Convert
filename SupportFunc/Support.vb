@@ -687,7 +687,7 @@ Public Class FullSupport
             If (Grade(0) = "O" Or Grade(0) = "E") AndAlso Grade(1) > "1" AndAlso Grade(1) <= "9" Then
                 IDData.PayGrade = Grade(0) & " " & Grade(1)
                 IDData.Rank = tm.Groups("Rank").Value
-                IDData.SSN = String.Format("{0:###-##-####}", B32toBin(tm.Groups("SSN").Value))
+                IDData.SSN = String.Format("{0:000-00-0000}", B32toBin(tm.Groups("SSN").Value))
             End If
 
             With IDData
