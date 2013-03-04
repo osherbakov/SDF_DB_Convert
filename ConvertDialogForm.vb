@@ -37,7 +37,7 @@ Public Class ConvertDialogForm
 
     Private Sub Convert_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Convert.Click
         ' Start converting data into ID_CARDS format
-        Dim id_card As New IDCardData()
+        '        Dim id_card As New IDCardData()
         Dim id_row As ID_CARDS_DataSet.ID_CARDSRow
 
         If Not Me.Validate() Then
@@ -48,11 +48,14 @@ Public Class ConvertDialogForm
         ProgressBar1.Maximum = CSMR_ID_DataSet.CSMR_ID.Count()
 
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
-            id_card = New IDCardData()
+            '           id_card = New IDCardData()
             id_row = ID_CARDS_DataSet.ID_CARDS.NewID_CARDSRow()
-            With id_card
-                .Address = dr.H_ADDR + VB.vbCrLf + dr.H_CITY + ", CA " + dr.H_ZIP
 
+            With id_row
+                .Address = dr.H_ADDR + VB.vbCrLf + dr.H_CITY + ", CA " + dr.H_ZIP
+                .H_Address = dr.H_ADDR
+                .H_City = dr.H_CITY
+                .H_ZIP = dr.H_ZIP
                 .FirstName = dr.FIRST_NAME
                 .LastName = dr.LAST_NAME.ToUpper()
                 If Not String.IsNullOrEmpty(dr.MIDDLE_NAME) Then
@@ -65,6 +68,7 @@ Public Class ConvertDialogForm
                 .DOB = dr.DOB
                 .BloodType = dr.BLOOD_TYPE.ToUpper()
                 .SSN = dr.SSN.ToString("000-00-0000")
+                .DLData = dr.DL_NUMBER.ToUpper()
 
                 .Rank = dr.RANK
                 .PayGrade = dr.PAY_GR.ToUpper()
@@ -78,46 +82,11 @@ Public Class ConvertDialogForm
                 .Height = dr.HEIGHT
                 .Weight = dr.WEIGHT
 
-                .DLData = dr.DL_NUMBER.ToUpper()
-
                 .Photo = GetImageFile(.LastName, .FirstName, .MI)
-                .IdNumber = MakeFullNumber(id_card)
+                .IDNumber = MakeFullNumber(IssuingStation.Text, .SSN, .LastName)
                 .SerialNumber = MakeSerial()
             End With
 
-            With id_row
-                .Address = id_card.Address
-                .H_Address = dr.H_ADDR
-                .H_City = dr.H_CITY
-                .H_ZIP = dr.H_ZIP
-
-                .DOB = id_card.DOB
-                .Sex = id_card.Sex
-                .SSN = id_card.SSN
-                .BloodType = id_card.BloodType
-                .DLData = id_card.DLData
-
-                .FirstName = id_card.FirstName
-                .LastName = id_card.LastName
-                .MI = id_card.MI
-
-                .IssueDate = id_card.IssueDate
-                .ExpirationDate = id_card.ExpirationDate
-
-                .PayGrade = id_card.PayGrade
-                .Rank = id_card.Rank
-
-                .Hair = id_card.Hair
-                .Eyes = id_card.Eyes
-
-                .Height = id_card.Height
-                .Weight = id_card.Weight
-
-                .IDNumber = id_card.IdNumber
-                .SerialNumber = id_card.SerialNumber
-
-                .Photo = id_card.Photo
-            End With
             ID_CARDS_DataSet.ID_CARDS.AddID_CARDSRow(id_row)
             ProgressBar1.PerformStep()
         Next
@@ -128,19 +97,16 @@ Public Class ConvertDialogForm
 
     Private Sub Button_CreateDB_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button_CreateDB.Click
 
-        Dim card_data As New IDCardData()
-
         Me.Validate()
 
-        Dim timestamp As Date = Date.Today()
-
-        ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + timestamp.ToString("ddMMMMyyyy"), "mdb")
+        ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + Date.Today().ToString("ddMMMMyyyy"), "mdb")
         If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Support.CreateAccessDatabase(ID_CARDS_SaveFileDialog.FileName)
             Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + ID_CARDS_SaveFileDialog.FileName
             Me.ID_CARDSTableAdapter.Connection.Open()
 
             For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
+                Dim card_data As New IDCardData()
                 With card_data
                     .Address = dr.Address
 

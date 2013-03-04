@@ -112,8 +112,8 @@ Partial Public Class ConvertDialogForm
         Next
     End Sub
 
-    Private Function MakeFullNumber(ByVal data As IDCardData) As String
-        Return IssuingStation.Text + "-" + MakeIDNumber(data.SSN, data.LastName)
+    Private Function MakeFullNumber(ByVal Station As String, ByVal SSN As String, ByVal LastName As String) As String
+        Return IssuingStation.Text + "-" + MakeIDNumber(SSN, LastName)
     End Function
 
     Private Function MakeIDNumber(ByVal SSN As String, ByVal LastName As String) As String
