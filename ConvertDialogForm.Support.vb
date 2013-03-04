@@ -20,6 +20,10 @@ Partial Public Class ConvertDialogForm
     Private Shared BloodTypes() As String = {"AB NEG", "AB POS", "A NEG", "A POS", "B NEG", "B POS", "O NEG", "O POS", "UNK"}
     Private Shared Ranks() As String
 
+    ' Regex to extract the First, Last names from the comma-separated list
+    Private Shared np_rx As New Regex("\s*(?<LN>[a-zA-Z\-\(\)]+)\s*(,|\s+)\s*(?<FN>[a-zA-Z\-\(\)]+)\s*(,*|\s+)\s*(?<MI>[a-zA-Z\-\(\)]*)", _
+                                      RegexOptions.Compiled Or RegexOptions.IgnoreCase)
+
     Private Sub InitLists()
         ' Populate the Ranks list to be used in comboBoxes
         Dim r As New List(Of String)
@@ -37,6 +41,9 @@ Partial Public Class ConvertDialogForm
     End Sub
 
     Private Sub CheckInputRecords()
+        ' We need this TextInfo to do proper capitalizing
+        Dim ti As System.Globalization.TextInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo
+
         ' Do some data checking and formatting
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
 
@@ -57,14 +64,18 @@ Partial Public Class ConvertDialogForm
             dr.MIDDLE_NAME = dr.MIDDLE_NAME.Replace(".", "")
             dr.H_ADDR = dr.H_ADDR.Replace(".", "").Replace(",", "")
 
+            ' Remove NMN (No Middle Name) abbreviation 
+            If dr.MIDDLE_NAME.Contains("NMN") Then
+                dr.MIDDLE_NAME = String.Empty
+            End If
+
             ' If NAME_IND is not provided - make it
             If dr.IsNAME_INDNull And _
                 Not (dr.IsFIRST_NAMENull AndAlso dr.IsLAST_NAMENull) Then
-                dr.NAME_IND = dr.LAST_NAME.ToUpper() + ", " + dr.FIRST_NAME.ToUpper() + " " + dr.MIDDLE_NAME
+                dr.NAME_IND = dr.LAST_NAME.ToUpper() + ", " + dr.FIRST_NAME.ToUpper() + " " + dr.MIDDLE_NAME.ToUpper()
             End If
 
             ' Capitalize all letters in the address and First-last  names
-            Dim ti As System.Globalization.TextInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo
             dr.H_ADDR = ti.ToTitleCase(dr.H_ADDR.ToLower())
             dr.H_CITY = ti.ToTitleCase(dr.H_CITY.ToLower())
 
@@ -77,6 +88,7 @@ Partial Public Class ConvertDialogForm
                 dr.RANK = String.Empty
             End If
             ' If rank is provided - fill the Paygrade
+            ' If not provided - make a civilian
             If Not String.IsNullOrEmpty(dr.RANK) Then
                 For Each rankgrade As String In RankToGrade
                     If rankgrade.Contains(dr.RANK.Trim()) Then
@@ -84,6 +96,9 @@ Partial Public Class ConvertDialogForm
                         Exit For
                     End If
                 Next
+            Else
+                dr.RANK = RankToGrade(0).Substring(0, 6)
+                dr.PAY_GR = RankToGrade(0).Substring(6)
             End If
 
             If dr.IsBLOOD_TYPENull Then

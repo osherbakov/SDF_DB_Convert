@@ -360,11 +360,11 @@ Public Class Support
         Result += BintoB32(Num, 7)
 
         ' First name limited and/or padded to 20 chars
-        txt = data.FirstName.PadRight(20, " "c).Substring(0, 20)
+        txt = data.FirstName.PadRight(20, " "c).Substring(0, 20).ToUpper()
         Result += txt
 
         ' Last name limited and/or padded to 26 chars
-        txt = data.LastName.PadRight(26, " "c).Substring(0, 26)
+        txt = data.LastName.PadRight(26, " "c).Substring(0, 26).ToUpper()
         Result += txt
 
         ' Date of birth - in days, encoded
@@ -390,7 +390,7 @@ Public Class Support
         Else
             txt = data.PayGrade.PadRight(4).Substring(0, 4)
         End If
-        Result += txt.ToUpper
+        Result += txt.ToUpper()
 
         ' Card issue date - in days, encoded
         txt = BintoB32((data.IssueDate - RefDate).TotalDays, 4)
@@ -408,7 +408,7 @@ Public Class Support
         txt = data.MI.PadRight(1, " "c).Substring(0, 1).ToUpper
         Result += txt
 
-        Return Result
+        Return Result.ToUpper()
     End Function
 
     Public Shared Function EncodeAAMVAPDF417Data(ByVal Data As IDCardData) As String
@@ -502,7 +502,7 @@ Public Class Support
             result.Append("0400")       '  Version
             result.Append(nSubFields.ToString("D02"))     ' Number of subfields
 
-            SubfieldStart = result.Length + nSubFields * 10
+            SubfieldStart = result.Length + nSubFields * 10 ' "DL" + "D04" + "D04" = 10
             result.Append("DL")     ' Subfield DL
             result.Append(SubfieldStart.ToString("D04"))     ' Start
             result.Append(Subf1.Length.ToString("D04"))     ' Size

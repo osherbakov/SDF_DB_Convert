@@ -4,10 +4,6 @@ Imports VB = Microsoft.VisualBasic
 
 
 Public Class ConvertDialogForm
-    ' Regex to extract the First, Last names from the comma-separated list
-    Private Shared np_rx As New Regex("\s*(?<LN>[a-zA-Z]+)\s*(,|\s+)\s*(?<FN>[a-zA-Z]+)\s*(,*|\s+)\s*(?<MI>[a-zA-Z]*)", _
-                                      RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-
 
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
