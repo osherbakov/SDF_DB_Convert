@@ -26,6 +26,10 @@ Partial Public Class ConvertDialogForm
     End Sub
 
 
+    Private Sub ID_CARDSBindingSource_PositionChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ID_CARDSBindingSource.PositionChanged
+        MSR206_Enc.Cancel()
+    End Sub
+
     Private Shared rx_Split_Tracks As New Regex("%(?<Track1>.+?)\?;(?<Track2>.+?)\?%(?<Track3>.+?)\?", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
 
     Private Sub ConvertToMAG(ByVal sender As Object, ByVal cevent As ConvertEventArgs)
@@ -114,6 +118,8 @@ Partial Public Class ConvertDialogForm
                 Result += MSR206_Enc.CMD_WriteRaw(g1, g2, g3)
                 If Result = 0 Then
                     ID_CARDSBindingSource.MoveNext()
+                Else
+                    Exit Do
                 End If
             Loop While True
         Loop While True

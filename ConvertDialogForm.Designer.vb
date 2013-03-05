@@ -1217,7 +1217,7 @@ Partial Class ConvertDialogForm
         'BindingNavigator_Enc
         '
         Me.BindingNavigator_Enc.AddNewItem = Nothing
-        Me.BindingNavigator_Enc.BindingSource = Me.CSMR_IDBindingSource
+        Me.BindingNavigator_Enc.BindingSource = Me.ID_CARDSBindingSource
         Me.BindingNavigator_Enc.CountItem = Me.BindingNavigatorCountItem1
         Me.BindingNavigator_Enc.DeleteItem = Nothing
         Me.BindingNavigator_Enc.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
@@ -1549,7 +1549,6 @@ Partial Class ConvertDialogForm
     Friend WithEvents ProgressBar1 As System.Windows.Forms.ProgressBar
     Friend WithEvents TabPage_Encoder As System.Windows.Forms.TabPage
     Friend WithEvents TabPage_Scanner As System.Windows.Forms.TabPage
-    Friend WithEvents MSR206_Enc As MSR206
     Friend WithEvents MagEncoder_Status As System.Windows.Forms.Label
     Friend WithEvents BackgroundWorkerThread As System.ComponentModel.BackgroundWorker
     Friend WithEvents PhotoPicture_Enc As System.Windows.Forms.PictureBox
@@ -1572,5 +1571,6 @@ Partial Class ConvertDialogForm
     Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents AAMVAMAGTextBox_Enc As System.Windows.Forms.TextBox
+    Friend WithEvents MSR206_Enc As MSR206
 
 End Class
