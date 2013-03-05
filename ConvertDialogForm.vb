@@ -146,7 +146,9 @@ Public Class ConvertDialogForm
                 End With
             Next
             Me.ID_CARDSTableAdapter.Connection.Close()
-
+            TabControl_ID.TabPages(1).Hide()
+            TabControl_ID.TabPages(2).Show()
+            TabControl_ID.SelectTab(2)
         End If
     End Sub
 
@@ -167,4 +169,5 @@ Public Class ConvertDialogForm
             End If
         Next
     End Sub
+
 End Class

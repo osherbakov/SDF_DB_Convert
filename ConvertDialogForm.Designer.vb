@@ -56,6 +56,7 @@ Partial Class ConvertDialogForm
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ConvertDialogForm))
         Me.TabControl_ID = New System.Windows.Forms.TabControl
         Me.TabPage_CSMR_ID = New System.Windows.Forms.TabPage
+        Me.ProgressBar1 = New System.Windows.Forms.ProgressBar
         Me.RANKComboBox = New System.Windows.Forms.ComboBox
         Me.CSMR_IDBindingSource = New System.Windows.Forms.BindingSource(Me.components)
         Me.CSMR_ID_DataSet = New CSMR_DB_Convert.CSMR_ID_DataSet
@@ -123,6 +124,9 @@ Partial Class ConvertDialogForm
         Me.SexTextBox = New System.Windows.Forms.TextBox
         Me.SerialNumberTextBox = New System.Windows.Forms.TextBox
         Me.Button_CreateDB = New System.Windows.Forms.Button
+        Me.TabPage_Encoder = New System.Windows.Forms.TabPage
+        Me.MagEncoder_Status = New System.Windows.Forms.Label
+        Me.TabPage_Scanner = New System.Windows.Forms.TabPage
         Me.CSMR_IDTableAdapter = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
         Me.TableAdapterManager = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
         Me.ID_CARDSTableAdapter = New CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.ID_CARDSTableAdapter
@@ -130,7 +134,8 @@ Partial Class ConvertDialogForm
         Me.CSMR_ID_OpenFileDialog = New System.Windows.Forms.OpenFileDialog
         Me.Form_error = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.ID_CARDS_SaveFileDialog = New System.Windows.Forms.SaveFileDialog
-        Me.ProgressBar1 = New System.Windows.Forms.ProgressBar
+        Me.MSR206_Enc = New MSR206(Me.components)
+        Me.BackgroundWorkerThread = New System.ComponentModel.BackgroundWorker
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -173,6 +178,7 @@ Partial Class ConvertDialogForm
         CType(Me.ID_CARDSBindingNavigator, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ID_CARDSBindingNavigator.SuspendLayout()
         CType(Me.PhotoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage_Encoder.SuspendLayout()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -450,6 +456,8 @@ Partial Class ConvertDialogForm
         '
         Me.TabControl_ID.Controls.Add(Me.TabPage_CSMR_ID)
         Me.TabControl_ID.Controls.Add(Me.TabPage_ID_CARDS)
+        Me.TabControl_ID.Controls.Add(Me.TabPage_Encoder)
+        Me.TabControl_ID.Controls.Add(Me.TabPage_Scanner)
         Me.TabControl_ID.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabControl_ID.Location = New System.Drawing.Point(0, 0)
         Me.TabControl_ID.Name = "TabControl_ID"
@@ -496,6 +504,14 @@ Partial Class ConvertDialogForm
         Me.TabPage_CSMR_ID.TabIndex = 0
         Me.TabPage_CSMR_ID.Text = "CSMR_ID"
         Me.TabPage_CSMR_ID.UseVisualStyleBackColor = True
+        '
+        'ProgressBar1
+        '
+        Me.ProgressBar1.Location = New System.Drawing.Point(55, 293)
+        Me.ProgressBar1.Name = "ProgressBar1"
+        Me.ProgressBar1.Size = New System.Drawing.Size(751, 23)
+        Me.ProgressBar1.Step = 1
+        Me.ProgressBar1.TabIndex = 30
         '
         'RANKComboBox
         '
@@ -1123,6 +1139,39 @@ Partial Class ConvertDialogForm
         Me.Button_CreateDB.Text = "Create Database"
         Me.Button_CreateDB.UseVisualStyleBackColor = True
         '
+        'TabPage_Encoder
+        '
+        Me.TabPage_Encoder.Controls.Add(Me.MagEncoder_Status)
+        Me.TabPage_Encoder.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage_Encoder.Name = "TabPage_Encoder"
+        Me.TabPage_Encoder.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage_Encoder.Size = New System.Drawing.Size(814, 367)
+        Me.TabPage_Encoder.TabIndex = 2
+        Me.TabPage_Encoder.Text = "Encoder"
+        Me.TabPage_Encoder.UseVisualStyleBackColor = True
+        '
+        'MagEncoder_Status
+        '
+        Me.MagEncoder_Status.AutoSize = True
+        Me.MagEncoder_Status.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.MagEncoder_Status.ForeColor = System.Drawing.SystemColors.Highlight
+        Me.MagEncoder_Status.Location = New System.Drawing.Point(105, 17)
+        Me.MagEncoder_Status.Name = "MagEncoder_Status"
+        Me.MagEncoder_Status.Size = New System.Drawing.Size(592, 20)
+        Me.MagEncoder_Status.TabIndex = 0
+        Me.MagEncoder_Status.Text = "Please select the printed ID Card and Swipe it thru the MSR206 Encoder"
+        Me.MagEncoder_Status.TextAlign = System.Drawing.ContentAlignment.TopCenter
+        '
+        'TabPage_Scanner
+        '
+        Me.TabPage_Scanner.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage_Scanner.Name = "TabPage_Scanner"
+        Me.TabPage_Scanner.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage_Scanner.Size = New System.Drawing.Size(814, 367)
+        Me.TabPage_Scanner.TabIndex = 3
+        Me.TabPage_Scanner.Text = "Scanner"
+        Me.TabPage_Scanner.UseVisualStyleBackColor = True
+        '
         'CSMR_IDTableAdapter
         '
         Me.CSMR_IDTableAdapter.ClearBeforeFill = True
@@ -1161,13 +1210,9 @@ Partial Class ConvertDialogForm
         Me.ID_CARDS_SaveFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
         Me.ID_CARDS_SaveFileDialog.InitialDirectory = "."
         '
-        'ProgressBar1
+        'BackgroundWorkerThread
         '
-        Me.ProgressBar1.Location = New System.Drawing.Point(55, 293)
-        Me.ProgressBar1.Name = "ProgressBar1"
-        Me.ProgressBar1.Size = New System.Drawing.Size(751, 23)
-        Me.ProgressBar1.Step = 1
-        Me.ProgressBar1.TabIndex = 30
+        Me.BackgroundWorkerThread.WorkerSupportsCancellation = True
         '
         'ConvertDialogForm
         '
@@ -1193,6 +1238,8 @@ Partial Class ConvertDialogForm
         Me.ID_CARDSBindingNavigator.ResumeLayout(False)
         Me.ID_CARDSBindingNavigator.PerformLayout()
         CType(Me.PhotoPictureBox, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage_Encoder.ResumeLayout(False)
+        Me.TabPage_Encoder.PerformLayout()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
@@ -1274,5 +1321,10 @@ Partial Class ConvertDialogForm
     Friend WithEvents DLDataTextBox As System.Windows.Forms.TextBox
     Friend WithEvents RANKComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents ProgressBar1 As System.Windows.Forms.ProgressBar
+    Friend WithEvents TabPage_Encoder As System.Windows.Forms.TabPage
+    Friend WithEvents TabPage_Scanner As System.Windows.Forms.TabPage
+    Friend WithEvents MSR206_Enc As MSR206
+    Friend WithEvents MagEncoder_Status As System.Windows.Forms.Label
+    Friend WithEvents BackgroundWorkerThread As System.ComponentModel.BackgroundWorker
 
 End Class
