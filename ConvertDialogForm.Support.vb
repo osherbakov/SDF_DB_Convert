@@ -152,6 +152,37 @@ Partial Public Class ConvertDialogForm
         Return (int_result Mod 10000000000).ToString("D10")
     End Function
 
+    Private Function GetIDCardData(ByVal dr As CSMR_DB_Convert.ID_CARDS_DataSet.ID_CARDSRow) As IDCardData
+        Dim card_data As New IDCardData()
+        With card_data
+            .Address = dr.Address
+
+            .FirstName = dr.FirstName
+            .LastName = dr.LastName
+            .MI = dr.MI
+            .DOB = dr.DOB
+
+            .IssueDate = dr.IssueDate
+            .ExpirationDate = dr.ExpirationDate
+
+            .PayGrade = dr.PayGrade
+            .Rank = dr.Rank
+            .Sex = dr.Sex(0)
+
+            .BloodType = dr.BloodType
+            .Eyes = dr.Eyes
+            .Hair = dr.Hair
+            .Height = dr.Height
+            .Weight = dr.Weight
+
+            .SSN = dr.SSN
+            .IdNumber = dr.IDNumber
+            .DLData = dr.DLData
+            .SerialNumber = dr.SerialNumber
+        End With
+        Return card_data
+    End Function
+
     Private Function GetImageFile(ByVal LastName As String, ByVal FirstName As String, ByVal MI As String) As Byte()
         '
         ' See if photo exists - use LAST nams, then LAST_FIRST, then FIRST_LAST

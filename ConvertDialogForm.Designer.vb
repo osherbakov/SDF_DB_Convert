@@ -125,6 +125,26 @@ Partial Class ConvertDialogForm
         Me.SerialNumberTextBox = New System.Windows.Forms.TextBox
         Me.Button_CreateDB = New System.Windows.Forms.Button
         Me.TabPage_Encoder = New System.Windows.Forms.TabPage
+        Me.AAMVAMAGTextBox_Enc = New System.Windows.Forms.TextBox
+        Me.Label4 = New System.Windows.Forms.Label
+        Me.Label2 = New System.Windows.Forms.Label
+        Me.BindingNavigator_Enc = New System.Windows.Forms.BindingNavigator(Me.components)
+        Me.BindingNavigatorCountItem1 = New System.Windows.Forms.ToolStripLabel
+        Me.BindingNavigatorMoveFirstItem1 = New System.Windows.Forms.ToolStripButton
+        Me.BindingNavigatorMovePreviousItem1 = New System.Windows.Forms.ToolStripButton
+        Me.BindingNavigatorSeparator3 = New System.Windows.Forms.ToolStripSeparator
+        Me.BindingNavigatorPositionItem1 = New System.Windows.Forms.ToolStripTextBox
+        Me.BindingNavigatorSeparator4 = New System.Windows.Forms.ToolStripSeparator
+        Me.BindingNavigatorMoveNextItem1 = New System.Windows.Forms.ToolStripButton
+        Me.BindingNavigatorMoveLastItem1 = New System.Windows.Forms.ToolStripButton
+        Me.BindingNavigatorSeparator5 = New System.Windows.Forms.ToolStripSeparator
+        Me.FirstName_Enc = New System.Windows.Forms.Label
+        Me.LastName_Enc = New System.Windows.Forms.Label
+        Me.Label3 = New System.Windows.Forms.Label
+        Me.PayGrade_Enc = New System.Windows.Forms.Label
+        Me.ExpirationDate_Enc = New System.Windows.Forms.Label
+        Me.Rank_Enc = New System.Windows.Forms.Label
+        Me.PhotoPicture_Enc = New System.Windows.Forms.PictureBox
         Me.MagEncoder_Status = New System.Windows.Forms.Label
         Me.TabPage_Scanner = New System.Windows.Forms.TabPage
         Me.CSMR_IDTableAdapter = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
@@ -134,8 +154,8 @@ Partial Class ConvertDialogForm
         Me.CSMR_ID_OpenFileDialog = New System.Windows.Forms.OpenFileDialog
         Me.Form_error = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.ID_CARDS_SaveFileDialog = New System.Windows.Forms.SaveFileDialog
-        Me.MSR206_Enc = New MSR206(Me.components)
         Me.BackgroundWorkerThread = New System.ComponentModel.BackgroundWorker
+        Me.MSR206_Enc = New MSR206(Me.components)
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -179,6 +199,9 @@ Partial Class ConvertDialogForm
         Me.ID_CARDSBindingNavigator.SuspendLayout()
         CType(Me.PhotoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage_Encoder.SuspendLayout()
+        CType(Me.BindingNavigator_Enc, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.BindingNavigator_Enc.SuspendLayout()
+        CType(Me.PhotoPicture_Enc, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -1141,6 +1164,17 @@ Partial Class ConvertDialogForm
         '
         'TabPage_Encoder
         '
+        Me.TabPage_Encoder.Controls.Add(Me.AAMVAMAGTextBox_Enc)
+        Me.TabPage_Encoder.Controls.Add(Me.Label4)
+        Me.TabPage_Encoder.Controls.Add(Me.Label2)
+        Me.TabPage_Encoder.Controls.Add(Me.BindingNavigator_Enc)
+        Me.TabPage_Encoder.Controls.Add(Me.FirstName_Enc)
+        Me.TabPage_Encoder.Controls.Add(Me.LastName_Enc)
+        Me.TabPage_Encoder.Controls.Add(Me.Label3)
+        Me.TabPage_Encoder.Controls.Add(Me.PayGrade_Enc)
+        Me.TabPage_Encoder.Controls.Add(Me.ExpirationDate_Enc)
+        Me.TabPage_Encoder.Controls.Add(Me.Rank_Enc)
+        Me.TabPage_Encoder.Controls.Add(Me.PhotoPicture_Enc)
         Me.TabPage_Encoder.Controls.Add(Me.MagEncoder_Status)
         Me.TabPage_Encoder.Location = New System.Drawing.Point(4, 22)
         Me.TabPage_Encoder.Name = "TabPage_Encoder"
@@ -1150,12 +1184,200 @@ Partial Class ConvertDialogForm
         Me.TabPage_Encoder.Text = "Encoder"
         Me.TabPage_Encoder.UseVisualStyleBackColor = True
         '
+        'AAMVAMAGTextBox_Enc
+        '
+        Me.AAMVAMAGTextBox_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "AAMVAMAG", True))
+        Me.AAMVAMAGTextBox_Enc.Location = New System.Drawing.Point(281, 72)
+        Me.AAMVAMAGTextBox_Enc.Multiline = True
+        Me.AAMVAMAGTextBox_Enc.Name = "AAMVAMAGTextBox_Enc"
+        Me.AAMVAMAGTextBox_Enc.ReadOnly = True
+        Me.AAMVAMAGTextBox_Enc.Size = New System.Drawing.Size(512, 130)
+        Me.AAMVAMAGTextBox_Enc.TabIndex = 16
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label4.Location = New System.Drawing.Point(339, 309)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(37, 13)
+        Me.Label4.TabIndex = 15
+        Me.Label4.Text = "Rank"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label2.Location = New System.Drawing.Point(278, 309)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(41, 13)
+        Me.Label2.TabIndex = 14
+        Me.Label2.Text = "Grade"
+        '
+        'BindingNavigator_Enc
+        '
+        Me.BindingNavigator_Enc.AddNewItem = Nothing
+        Me.BindingNavigator_Enc.BindingSource = Me.CSMR_IDBindingSource
+        Me.BindingNavigator_Enc.CountItem = Me.BindingNavigatorCountItem1
+        Me.BindingNavigator_Enc.DeleteItem = Nothing
+        Me.BindingNavigator_Enc.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
+        Me.BindingNavigator_Enc.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BindingNavigatorMoveFirstItem1, Me.BindingNavigatorMovePreviousItem1, Me.BindingNavigatorSeparator3, Me.BindingNavigatorPositionItem1, Me.BindingNavigatorCountItem1, Me.BindingNavigatorSeparator4, Me.BindingNavigatorMoveNextItem1, Me.BindingNavigatorMoveLastItem1, Me.BindingNavigatorSeparator5})
+        Me.BindingNavigator_Enc.Location = New System.Drawing.Point(3, 3)
+        Me.BindingNavigator_Enc.MoveFirstItem = Me.BindingNavigatorMoveFirstItem1
+        Me.BindingNavigator_Enc.MoveLastItem = Me.BindingNavigatorMoveLastItem1
+        Me.BindingNavigator_Enc.MoveNextItem = Me.BindingNavigatorMoveNextItem1
+        Me.BindingNavigator_Enc.MovePreviousItem = Me.BindingNavigatorMovePreviousItem1
+        Me.BindingNavigator_Enc.Name = "BindingNavigator_Enc"
+        Me.BindingNavigator_Enc.PositionItem = Me.BindingNavigatorPositionItem1
+        Me.BindingNavigator_Enc.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
+        Me.BindingNavigator_Enc.Size = New System.Drawing.Size(808, 25)
+        Me.BindingNavigator_Enc.Stretch = True
+        Me.BindingNavigator_Enc.TabIndex = 13
+        Me.BindingNavigator_Enc.Text = "BindingNavigator_Enc"
+        '
+        'BindingNavigatorCountItem1
+        '
+        Me.BindingNavigatorCountItem1.Name = "BindingNavigatorCountItem1"
+        Me.BindingNavigatorCountItem1.Size = New System.Drawing.Size(35, 22)
+        Me.BindingNavigatorCountItem1.Text = "of {0}"
+        Me.BindingNavigatorCountItem1.ToolTipText = "Total number of items"
+        '
+        'BindingNavigatorMoveFirstItem1
+        '
+        Me.BindingNavigatorMoveFirstItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.BindingNavigatorMoveFirstItem1.Image = CType(resources.GetObject("BindingNavigatorMoveFirstItem1.Image"), System.Drawing.Image)
+        Me.BindingNavigatorMoveFirstItem1.Name = "BindingNavigatorMoveFirstItem1"
+        Me.BindingNavigatorMoveFirstItem1.RightToLeftAutoMirrorImage = True
+        Me.BindingNavigatorMoveFirstItem1.Size = New System.Drawing.Size(23, 22)
+        Me.BindingNavigatorMoveFirstItem1.Text = "Move first"
+        '
+        'BindingNavigatorMovePreviousItem1
+        '
+        Me.BindingNavigatorMovePreviousItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.BindingNavigatorMovePreviousItem1.Image = CType(resources.GetObject("BindingNavigatorMovePreviousItem1.Image"), System.Drawing.Image)
+        Me.BindingNavigatorMovePreviousItem1.Name = "BindingNavigatorMovePreviousItem1"
+        Me.BindingNavigatorMovePreviousItem1.RightToLeftAutoMirrorImage = True
+        Me.BindingNavigatorMovePreviousItem1.Size = New System.Drawing.Size(23, 22)
+        Me.BindingNavigatorMovePreviousItem1.Text = "Move previous"
+        '
+        'BindingNavigatorSeparator3
+        '
+        Me.BindingNavigatorSeparator3.Name = "BindingNavigatorSeparator3"
+        Me.BindingNavigatorSeparator3.Size = New System.Drawing.Size(6, 25)
+        '
+        'BindingNavigatorPositionItem1
+        '
+        Me.BindingNavigatorPositionItem1.AccessibleName = "Position"
+        Me.BindingNavigatorPositionItem1.AutoSize = False
+        Me.BindingNavigatorPositionItem1.Name = "BindingNavigatorPositionItem1"
+        Me.BindingNavigatorPositionItem1.Size = New System.Drawing.Size(50, 23)
+        Me.BindingNavigatorPositionItem1.Text = "0"
+        Me.BindingNavigatorPositionItem1.ToolTipText = "Current position"
+        '
+        'BindingNavigatorSeparator4
+        '
+        Me.BindingNavigatorSeparator4.Name = "BindingNavigatorSeparator4"
+        Me.BindingNavigatorSeparator4.Size = New System.Drawing.Size(6, 25)
+        '
+        'BindingNavigatorMoveNextItem1
+        '
+        Me.BindingNavigatorMoveNextItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.BindingNavigatorMoveNextItem1.Image = CType(resources.GetObject("BindingNavigatorMoveNextItem1.Image"), System.Drawing.Image)
+        Me.BindingNavigatorMoveNextItem1.Name = "BindingNavigatorMoveNextItem1"
+        Me.BindingNavigatorMoveNextItem1.RightToLeftAutoMirrorImage = True
+        Me.BindingNavigatorMoveNextItem1.Size = New System.Drawing.Size(23, 22)
+        Me.BindingNavigatorMoveNextItem1.Text = "Move next"
+        '
+        'BindingNavigatorMoveLastItem1
+        '
+        Me.BindingNavigatorMoveLastItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.BindingNavigatorMoveLastItem1.Image = CType(resources.GetObject("BindingNavigatorMoveLastItem1.Image"), System.Drawing.Image)
+        Me.BindingNavigatorMoveLastItem1.Name = "BindingNavigatorMoveLastItem1"
+        Me.BindingNavigatorMoveLastItem1.RightToLeftAutoMirrorImage = True
+        Me.BindingNavigatorMoveLastItem1.Size = New System.Drawing.Size(23, 22)
+        Me.BindingNavigatorMoveLastItem1.Text = "Move last"
+        '
+        'BindingNavigatorSeparator5
+        '
+        Me.BindingNavigatorSeparator5.Name = "BindingNavigatorSeparator5"
+        Me.BindingNavigatorSeparator5.Size = New System.Drawing.Size(6, 25)
+        '
+        'FirstName_Enc
+        '
+        Me.FirstName_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "FirstName", True))
+        Me.FirstName_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.FirstName_Enc.Location = New System.Drawing.Point(106, 272)
+        Me.FirstName_Enc.Name = "FirstName_Enc"
+        Me.FirstName_Enc.Size = New System.Drawing.Size(237, 20)
+        Me.FirstName_Enc.TabIndex = 12
+        Me.FirstName_Enc.Text = "FirstName"
+        '
+        'LastName_Enc
+        '
+        Me.LastName_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "LastName", True))
+        Me.LastName_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LastName_Enc.Location = New System.Drawing.Point(106, 252)
+        Me.LastName_Enc.Name = "LastName_Enc"
+        Me.LastName_Enc.Size = New System.Drawing.Size(272, 20)
+        Me.LastName_Enc.TabIndex = 11
+        Me.LastName_Enc.Text = "LastName"
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label3.Location = New System.Drawing.Point(278, 218)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(48, 13)
+        Me.Label3.TabIndex = 10
+        Me.Label3.Text = "Expires"
+        '
+        'PayGrade_Enc
+        '
+        Me.PayGrade_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "PayGrade", True))
+        Me.PayGrade_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.PayGrade_Enc.Location = New System.Drawing.Point(278, 322)
+        Me.PayGrade_Enc.Name = "PayGrade_Enc"
+        Me.PayGrade_Enc.Size = New System.Drawing.Size(55, 19)
+        Me.PayGrade_Enc.TabIndex = 8
+        Me.PayGrade_Enc.Text = "Grade"
+        '
+        'ExpirationDate_Enc
+        '
+        Me.ExpirationDate_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "ExpirationDate", True, System.Windows.Forms.DataSourceUpdateMode.OnValidation, Nothing, "yyyyMMMdd"))
+        Me.ExpirationDate_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ExpirationDate_Enc.Location = New System.Drawing.Point(278, 231)
+        Me.ExpirationDate_Enc.Name = "ExpirationDate_Enc"
+        Me.ExpirationDate_Enc.Size = New System.Drawing.Size(100, 18)
+        Me.ExpirationDate_Enc.TabIndex = 7
+        Me.ExpirationDate_Enc.Text = "ExpDate"
+        '
+        'Rank_Enc
+        '
+        Me.Rank_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Rank", True))
+        Me.Rank_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Rank_Enc.Location = New System.Drawing.Point(339, 322)
+        Me.Rank_Enc.Name = "Rank_Enc"
+        Me.Rank_Enc.Size = New System.Drawing.Size(65, 19)
+        Me.Rank_Enc.TabIndex = 6
+        Me.Rank_Enc.Text = "Rank"
+        '
+        'PhotoPicture_Enc
+        '
+        Me.PhotoPicture_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Image", Me.ID_CARDSBindingSource, "Photo", True))
+        Me.PhotoPicture_Enc.Location = New System.Drawing.Point(109, 72)
+        Me.PhotoPicture_Enc.Name = "PhotoPicture_Enc"
+        Me.PhotoPicture_Enc.Size = New System.Drawing.Size(152, 177)
+        Me.PhotoPicture_Enc.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.PhotoPicture_Enc.TabIndex = 2
+        Me.PhotoPicture_Enc.TabStop = False
+        '
         'MagEncoder_Status
         '
         Me.MagEncoder_Status.AutoSize = True
         Me.MagEncoder_Status.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
         Me.MagEncoder_Status.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.MagEncoder_Status.Location = New System.Drawing.Point(105, 17)
+        Me.MagEncoder_Status.Location = New System.Drawing.Point(105, 38)
         Me.MagEncoder_Status.Name = "MagEncoder_Status"
         Me.MagEncoder_Status.Size = New System.Drawing.Size(592, 20)
         Me.MagEncoder_Status.TabIndex = 0
@@ -1240,6 +1462,10 @@ Partial Class ConvertDialogForm
         CType(Me.PhotoPictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage_Encoder.ResumeLayout(False)
         Me.TabPage_Encoder.PerformLayout()
+        CType(Me.BindingNavigator_Enc, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.BindingNavigator_Enc.ResumeLayout(False)
+        Me.BindingNavigator_Enc.PerformLayout()
+        CType(Me.PhotoPicture_Enc, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
@@ -1326,5 +1552,25 @@ Partial Class ConvertDialogForm
     Friend WithEvents MSR206_Enc As MSR206
     Friend WithEvents MagEncoder_Status As System.Windows.Forms.Label
     Friend WithEvents BackgroundWorkerThread As System.ComponentModel.BackgroundWorker
+    Friend WithEvents PhotoPicture_Enc As System.Windows.Forms.PictureBox
+    Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents PayGrade_Enc As System.Windows.Forms.Label
+    Friend WithEvents ExpirationDate_Enc As System.Windows.Forms.Label
+    Friend WithEvents Rank_Enc As System.Windows.Forms.Label
+    Friend WithEvents FirstName_Enc As System.Windows.Forms.Label
+    Friend WithEvents LastName_Enc As System.Windows.Forms.Label
+    Friend WithEvents BindingNavigator_Enc As System.Windows.Forms.BindingNavigator
+    Friend WithEvents BindingNavigatorCountItem1 As System.Windows.Forms.ToolStripLabel
+    Friend WithEvents BindingNavigatorMoveFirstItem1 As System.Windows.Forms.ToolStripButton
+    Friend WithEvents BindingNavigatorMovePreviousItem1 As System.Windows.Forms.ToolStripButton
+    Friend WithEvents BindingNavigatorSeparator3 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents BindingNavigatorPositionItem1 As System.Windows.Forms.ToolStripTextBox
+    Friend WithEvents BindingNavigatorSeparator4 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents BindingNavigatorMoveNextItem1 As System.Windows.Forms.ToolStripButton
+    Friend WithEvents BindingNavigatorMoveLastItem1 As System.Windows.Forms.ToolStripButton
+    Friend WithEvents BindingNavigatorSeparator5 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents Label4 As System.Windows.Forms.Label
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents AAMVAMAGTextBox_Enc As System.Windows.Forms.TextBox
 
 End Class

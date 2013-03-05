@@ -5,9 +5,26 @@ Imports VB = Microsoft.VisualBasic
 
 Public Class ConvertDialogForm
 
+    Private Sub ConvertToUpper(ByVal sender As Object, ByVal cevent As ConvertEventArgs)
+        If cevent.DesiredType Is GetType(String) Then
+            cevent.Value = cevent.Value.ToString.ToUpper
+        End If
+    End Sub
+
+    Private Sub ConvertToMILDate(ByVal sender As Object, ByVal cevent As ConvertEventArgs)
+        If cevent.DesiredType Is GetType(String) Then
+            Dim d As Date = CType(cevent.Value, Date)
+            cevent.Value = d.ToString("yyyyMMMdd").ToUpper
+        End If
+    End Sub
+
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Me.InitLists()
+        AddHandler LastName_Enc.DataBindings(0).Format, AddressOf ConvertToUpper
+        AddHandler FirstName_Enc.DataBindings(0).Format, AddressOf ConvertToUpper
+        AddHandler ExpirationDate_Enc.DataBindings(0).Format, AddressOf ConvertToMILDate
+        AddHandler AAMVAMAGTextBox_Enc.DataBindings(0).Format, AddressOf ConvertToMAG
 
         '
         ' On start present the FileOpen dialog and get the Database File
@@ -81,6 +98,11 @@ Public Class ConvertDialogForm
                 .Photo = GetImageFile(.LastName, .FirstName, .MI)
                 .IDNumber = MakeFullNumber(IssuingStation.Text, .SSN, .LastName)
                 .SerialNumber = MakeSerial()
+
+                Dim card_data As IDCardData = GetIDCardData(id_row)
+                .AAMVAMAG = Support.EncodeAAMVAMagData(card_data)
+                .AAMVAPDF = Support.EncodeAAMVAPDF417Data(card_data)
+                .CACPDF = Support.EncodeCACPDF417Data(card_data)
             End With
 
             ID_CARDS_DataSet.ID_CARDS.AddID_CARDSRow(id_row)
@@ -102,34 +124,8 @@ Public Class ConvertDialogForm
             Me.ID_CARDSTableAdapter.Connection.Open()
 
             For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
-                Dim card_data As New IDCardData()
-                With card_data
-                    .Address = dr.Address
 
-                    .FirstName = dr.FirstName
-                    .LastName = dr.LastName
-                    .MI = dr.MI
-                    .DOB = dr.DOB
-
-                    .IssueDate = dr.IssueDate
-                    .ExpirationDate = dr.ExpirationDate
-
-                    .PayGrade = dr.PayGrade
-                    .Rank = dr.Rank
-                    .Sex = dr.Sex(0)
-
-                    .BloodType = dr.BloodType
-                    .Eyes = dr.Eyes
-                    .Hair = dr.Hair
-                    .Height = dr.Height
-                    .Weight = dr.Weight
-
-                    .SSN = dr.SSN
-                    .IdNumber = dr.IDNumber
-                    .DLData = dr.DLData
-                    .SerialNumber = dr.SerialNumber
-                End With
-
+                Dim card_data As IDCardData = GetIDCardData(dr)
                 With dr
                     ' Update all MAG and PDF field
                     .AAMVAMAG = Support.EncodeAAMVAMagData(card_data)
