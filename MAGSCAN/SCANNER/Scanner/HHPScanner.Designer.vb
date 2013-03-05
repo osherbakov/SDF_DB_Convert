@@ -1,4 +1,4 @@
-Partial Class Printing
+Partial Class HHPScanner
     Inherits System.ComponentModel.Component
 
     <System.Diagnostics.DebuggerNonUserCode()> _
@@ -41,7 +41,10 @@ Partial Class Printing
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        components = New System.ComponentModel.Container()
+        Me.components = New System.ComponentModel.Container
+        Me.m_SerialPort = New System.IO.Ports.SerialPort(Me.components)
+
     End Sub
+    Friend WithEvents m_SerialPort As System.IO.Ports.SerialPort
 
 End Class

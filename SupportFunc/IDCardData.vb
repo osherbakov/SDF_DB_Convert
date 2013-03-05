@@ -11,13 +11,13 @@ Public Class IDCardData
     Private m_Address As New String("")
     Private m_DOB As New Date
     Private m_IssueDate As New Date
-    Private m_ExpirationDate As Date
+    Private m_ExpirationDate As New Date
     Private m_Hair As New String("")
     Private m_Eyes As New String("")
     Private m_Height As New String("")
     Private m_Weight As New String("")
     Private m_BloodType As New String("")
-    Private m_Photo As System.Drawing.Bitmap
+    Private m_Photo() As Byte
     Private m_DLData As New String("")
     Private m_Sex As Char = "M"c
     Private m_SerialNumber As New String("")
@@ -50,15 +50,6 @@ Public Class IDCardData
     Public Sub New()
         m_IssueDate = Date.Today()
         m_ExpirationDate = m_IssueDate.AddYears(3)
-    End Sub
-
-    Public Sub New(ByVal photoData As Byte())
-        Try
-            Using stream As System.IO.MemoryStream = New System.IO.MemoryStream(photoData)
-                m_Photo = New System.Drawing.Bitmap(System.Drawing.Image.FromStream(stream))
-            End Using
-        Catch ex As Exception
-        End Try
     End Sub
 
     Public Property Address() As String
@@ -186,12 +177,20 @@ Public Class IDCardData
         End Set
     End Property
 
-    Public Property Photo() As System.Drawing.Bitmap
+    Public Property Photo() As Byte()
         Get
-            Return m_Photo
+            If m_Photo Is Nothing Then
+                Return m_Photo
+            Else
+                Return m_Photo.Clone()
+            End If
         End Get
-        Set(ByVal value As System.Drawing.Bitmap)
-            m_Photo = New System.Drawing.Bitmap(value)
+        Set(ByVal value As Byte())
+            If value Is Nothing Then
+                m_Photo = value
+            Else
+                m_Photo = value.Clone()
+            End If
         End Set
     End Property
 
@@ -252,38 +251,3 @@ Public Class IDCardData
 
 End Class
 
-
-Public Interface ICardData
-    Property Data() As IDCardData
-End Interface
-
-Public Class IDToPrint
-    Private m_CardID As Long
-    Private m_ID As IDCardData
-    Private m_Position As Integer
-
-    Sub New(ByVal CardID As Long, ByVal IDData As IDCardData, ByVal position As Integer)
-        m_CardID = CardID
-        m_ID = IDData
-        m_Position = position
-    End Sub
-
-    Public ReadOnly Property Data() As IDCardData
-        Get
-            Return m_ID
-        End Get
-    End Property
-
-    Public ReadOnly Property Position() As Integer
-        Get
-            Return m_Position
-        End Get
-    End Property
-
-    Public ReadOnly Property CardID() As Long
-        Get
-            Return m_CardID
-        End Get
-    End Property
-
-End Class

@@ -360,11 +360,11 @@ Public Class Support
         Result += BintoB32(Num, 7)
 
         ' First name limited and/or padded to 20 chars
-        txt = data.FirstName.PadRight(20, " "c).Substring(0, 20).ToUpper()
+        txt = data.FirstName.PadRight(20, " "c).Substring(0, 20)
         Result += txt
 
         ' Last name limited and/or padded to 26 chars
-        txt = data.LastName.PadRight(26, " "c).Substring(0, 26).ToUpper()
+        txt = data.LastName.PadRight(26, " "c).Substring(0, 26)
         Result += txt
 
         ' Date of birth - in days, encoded
@@ -405,7 +405,7 @@ Public Class Support
         Result += txt
 
         ' Middle initial
-        txt = data.MI.PadRight(1, " "c).Substring(0, 1).ToUpper
+        txt = data.MI.PadRight(1, " "c).Substring(0, 1)
         Result += txt
 
         Return Result.ToUpper()
@@ -552,85 +552,5 @@ Public Class Support
         End If
 
         Return ret
-    End Function
-
-    Public Shared Function CreateAccessDatabase(ByVal DatabaseFullPath As String) As Boolean
-        Dim bAns As Boolean
-        Dim cat As New ADOX.Catalog()
-        Dim tName As String = "ID_CARDS"
-        Dim sqlCommand1 As String = "CREATE TABLE ["
-        Dim sqlCommand2 As String = "] (" + _
-        "[IDNumber]       TEXT (255), " + _
-        "[LastName]       TEXT(255), " + _
-        "[FirstName]      TEXT (255)," + _
-        "[MI]             TEXT (255)," + _
-        "[DOB]            DATETIME,  " + _
-        "[SSN]            TEXT (255)," + _
-        "[Address]        TEXT (255)," + _
-        "[H_Address]      TEXT (255)," + _
-        "[H_City]         TEXT (255)," + _
-        "[H_ZIP]          TEXT (255)," + _
-        "[IssueDate]      DATETIME,  " + _
-        "[ExpirationDate] DATETIME,  " + _
-        "[Photo]          IMAGE,     " + _
-        "[Hair]           TEXT (255)," + _
-        "[Eyes]           TEXT (255)," + _
-        "[BloodType]      TEXT (255)," + _
-        "[Rank]           TEXT (255)," + _
-        "[PayGrade]       TEXT (255)," + _
-        "[Height]         TEXT (255)," + _
-        "[Weight]         TEXT (255)," + _
-        "[DLData]         TEXT (255)," + _
-        "[Sex]            TEXT (255)," + _
-        "[SerialNumber]   TEXT (255)," + _
-        "[CACPDF]         MEMO,     " + _
-        "[AAMVAPDF]       MEMO,     " + _
-        "[AAMVAMAG]       MEMO,     " + _
-        "[AAMVACode39]    MEMO,     " + _
-        "[CACCode39]      MEMO);"
-
-        Try
-
-            'Make sure the folder
-            'provided in the path exists. If file name w/o path 
-            'is  specified,  the database will be created in your
-            'application folder.
-
-            ' FIRST - Create the database file
-            Dim sCreateString As String
-            sCreateString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + DatabaseFullPath
-            sCreateString = sCreateString + ";Jet OLEDB:Engine Type=5"
-            cat.Create(sCreateString)
-
-            ' SECOND - Create the Table
-            Dim con As New OleDb.OleDbConnection("PROVIDER=Microsoft.Jet.OLEDB.4.0;Data Source =" + DatabaseFullPath)
-            con.Open()
-            'Get database schema
-            Dim dbSchema As DataTable = con.GetOleDbSchemaTable(OleDb.OleDbSchemaGuid.Tables, New Object() {Nothing, Nothing, tName, "TABLE"})
-            con.Close()
-
-            ' If the table exists, the count = 1
-            If dbSchema.Rows.Count > 0 Then
-                ' do whatever you want to do if the table exists
-            Else
-                'do whatever you want to do if the table does not exist
-                ' e.g. create a table
-                Dim cmd As New OleDb.OleDbCommand(sqlCommand1 + tName + sqlCommand2, con)
-                con.Open()
-                cmd.ExecuteNonQuery()
-                con.Close()
-            End If
-
-            bAns = True
-
-        Catch Excep As System.Runtime.InteropServices.COMException
-            bAns = False
-            'do whatever else you need to do here, log, 
-            'msgbox etc.
-            MessageBox.Show(Excep.Message())
-        Finally
-            cat = Nothing
-        End Try
-        Return bAns
     End Function
 End Class
