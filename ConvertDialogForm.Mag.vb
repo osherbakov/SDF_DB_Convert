@@ -11,6 +11,7 @@ Partial Public Class ConvertDialogForm
     End Enum
 
     Private m_Status As STATUS
+    Private m_MSR206_Cancel As Boolean = True
 
     Private Sub TabPage_Encoder_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Encoder.Leave
         MSR206_Enc.Cancel()
@@ -32,7 +33,10 @@ Partial Public Class ConvertDialogForm
 
 
     Private Sub ID_CARDSBindingSource_PositionChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ID_CARDSBindingSource.PositionChanged
-        MSR206_Enc.Cancel()
+        If m_MSR206_Cancel Then
+            MSR206_Enc.Cancel()
+        End If
+        m_MSR206_Cancel = True
     End Sub
 
     Private Shared rx_Split_Tracks As New Regex("%(?<Track1>.+?)\?;(?<Track2>.+?)\?%(?<Track3>.+?)\?", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
@@ -62,8 +66,12 @@ Partial Public Class ConvertDialogForm
         End If
     End Sub
 
-    Private Sub BackgroundWorkerThread_DoWorkMAG(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs)
+    Private Sub MoveNextRecord()
+        m_MSR206_Cancel = False
+        ID_CARDSBindingSource.Position += 1
+    End Sub
 
+    Private Sub BackgroundWorkerThread_DoWorkMAG(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs)
         MSR206_Enc.InitComm()
         MSR206_Enc.CMD_Reset()
         Do
@@ -104,29 +112,21 @@ Partial Public Class ConvertDialogForm
                 g3 = rm.Groups("Track3").Value
             End If
 
-            Do
-                If BackgroundWorkerThread.CancellationPending Then
-                    e.Cancel = True
-                    Exit Sub
-                End If
-                ' Try to program the MAG stripe 
-                Dim Result As Integer = 0
-                Result += MSR206_Enc.CMD_SetCo(MSR206.Coercity.HIGH)
-                Result += MSR206_Enc.CMD_SetBPI(75)
-                Result += MSR206_Enc.CMD_SetBPC(8, 8, 8)
-                Result += MSR206_Enc.CMD_SetEncoding(MSR206.Encoding.BITS6, MSR206.Encoding.BITS4, MSR206.Encoding.BITS6)
-                Result += MSR206_Enc.CMD_SetParity(MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY)
-                Result += MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK1 Or MSR206.Tracks.TRACK3, "%", "?", "^")
-                Result += MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK2, ";", "?", "=")
+            ' Try to program the MAG stripe 
+            Dim Result As Integer = 0
+            Result += MSR206_Enc.CMD_SetCo(MSR206.Coercity.HIGH)
+            Result += MSR206_Enc.CMD_SetBPI(75)
+            Result += MSR206_Enc.CMD_SetBPC(8, 8, 8)
+            Result += MSR206_Enc.CMD_SetEncoding(MSR206.Encoding.BITS6, MSR206.Encoding.BITS4, MSR206.Encoding.BITS6)
+            Result += MSR206_Enc.CMD_SetParity(MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY)
+            Result += MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK1 Or MSR206.Tracks.TRACK3, "%", "?", "^")
+            Result += MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK2, ";", "?", "=")
 
-                Result += MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW)
-                Result += MSR206_Enc.CMD_WriteRaw(g1, g2, g3)
-                If Result = 0 Then
-                    ID_CARDSBindingSource.MoveNext()
-                Else
-                    Exit Do
-                End If
-            Loop While True
+            Result += MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW)
+            Result += MSR206_Enc.CMD_WriteRaw(g1, g2, g3)
+            If Result = 0 Then
+                Me.BeginInvoke(New MethodInvoker(AddressOf MoveNextRecord))
+            End If
         Loop While True
     End Sub
 
