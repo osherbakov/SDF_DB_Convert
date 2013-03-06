@@ -15,6 +15,10 @@ Partial Public Class ConvertDialogForm
     Private Sub TabPage_Encoder_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Encoder.Leave
         MSR206_Enc.Cancel()
         BackgroundWorkerThread.CancelAsync()
+        While BackgroundWorkerThread.IsBusy
+            Application.DoEvents()
+        End While
+        RemoveHandler BackgroundWorkerThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkMAG
     End Sub
 
     Private Sub TabPage_Encoder_Enter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Encoder.Enter
@@ -22,6 +26,7 @@ Partial Public Class ConvertDialogForm
         While BackgroundWorkerThread.IsBusy
             Application.DoEvents()
         End While
+        AddHandler BackgroundWorkerThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkMAG
         BackgroundWorkerThread.RunWorkerAsync()
     End Sub
 
@@ -57,13 +62,13 @@ Partial Public Class ConvertDialogForm
         End If
     End Sub
 
-    Private Sub BackgroundWorkerThread_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BackgroundWorkerThread.DoWork
+    Private Sub BackgroundWorkerThread_DoWorkMAG(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs)
 
         MSR206_Enc.InitComm()
         MSR206_Enc.CMD_Reset()
         Do
             ' Loop until the Mag Encoder is connected
-            If MSR206_Enc.CMD_Test(300) = -1 Then
+            If MSR206_Enc.CMD_Test(300) <> 0 Then
                 m_Status = STATUS.DISCONNECTED
                 UpdateStatus()
                 Do
