@@ -21,8 +21,11 @@ Public Class ConvertDialogForm
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Me.InitLists()
+
         AddHandler LastName_Enc.DataBindings(0).Format, AddressOf ConvertToUpper
         AddHandler FirstName_Enc.DataBindings(0).Format, AddressOf ConvertToUpper
+        AddHandler MI_Enc.DataBindings(0).Format, AddressOf ConvertToUpper
+
         AddHandler ExpirationDate_Enc.DataBindings(0).Format, AddressOf ConvertToMILDate
         AddHandler AAMVAMAGTextBox_Enc.DataBindings(0).Format, AddressOf ConvertToMAG
 
@@ -44,7 +47,7 @@ Public Class ConvertDialogForm
 
             Me.CheckInputRecords()
         End If
-
+        TabControl_ID.SelectTab(0)
     End Sub
 
 
@@ -108,8 +111,6 @@ Public Class ConvertDialogForm
             ID_CARDS_DataSet.ID_CARDS.AddID_CARDSRow(id_row)
             ProgressBar1.PerformStep()
         Next
-        TabControl_ID.TabPages(0).Hide()
-        TabControl_ID.TabPages(1).Show()
         TabControl_ID.SelectTab(1)
     End Sub
 
@@ -142,8 +143,6 @@ Public Class ConvertDialogForm
                 End With
             Next
             Me.ID_CARDSTableAdapter.Connection.Close()
-            TabControl_ID.TabPages(1).Hide()
-            TabControl_ID.TabPages(2).Show()
             TabControl_ID.SelectTab(2)
         End If
     End Sub

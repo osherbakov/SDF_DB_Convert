@@ -252,7 +252,8 @@ Public Class Support
         strbldr.Append(Support.BintoB32(SSN, 6))
         strbldr.Append(IDData.Rank.PadRight(3).Substring(0, 3))
 
-        If (IDData.PayGrade(0) = "O" Or IDData.PayGrade(0) = "E") AndAlso IDData.PayGrade(2) > "1" AndAlso IDData.PayGrade(2) <= "9" Then
+        If (IDData.PayGrade(0) = "O" Or IDData.PayGrade(0) = "E" Or IDData.PayGrade(0) = "W") _
+                AndAlso IDData.PayGrade(2) > "1" AndAlso IDData.PayGrade(2) <= "9" Then
             strbldr.Append(IDData.PayGrade.Substring(0, 1))
             strbldr.Append(IDData.PayGrade.Substring(2, 1))
         Else

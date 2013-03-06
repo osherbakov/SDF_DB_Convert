@@ -156,6 +156,7 @@ Partial Class ConvertDialogForm
         Me.ID_CARDS_SaveFileDialog = New System.Windows.Forms.SaveFileDialog
         Me.BackgroundWorkerThread = New System.ComponentModel.BackgroundWorker
         Me.MSR206_Enc = New MSR206(Me.components)
+        Me.MI_Enc = New System.Windows.Forms.Label
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -1164,6 +1165,7 @@ Partial Class ConvertDialogForm
         '
         'TabPage_Encoder
         '
+        Me.TabPage_Encoder.Controls.Add(Me.MI_Enc)
         Me.TabPage_Encoder.Controls.Add(Me.AAMVAMAGTextBox_Enc)
         Me.TabPage_Encoder.Controls.Add(Me.Label4)
         Me.TabPage_Encoder.Controls.Add(Me.Label2)
@@ -1308,7 +1310,7 @@ Partial Class ConvertDialogForm
         Me.FirstName_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.FirstName_Enc.Location = New System.Drawing.Point(106, 272)
         Me.FirstName_Enc.Name = "FirstName_Enc"
-        Me.FirstName_Enc.Size = New System.Drawing.Size(237, 20)
+        Me.FirstName_Enc.Size = New System.Drawing.Size(213, 20)
         Me.FirstName_Enc.TabIndex = 12
         Me.FirstName_Enc.Text = "FirstName"
         '
@@ -1435,6 +1437,16 @@ Partial Class ConvertDialogForm
         'BackgroundWorkerThread
         '
         Me.BackgroundWorkerThread.WorkerSupportsCancellation = True
+        '
+        'MI_Enc
+        '
+        Me.MI_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "MI", True))
+        Me.MI_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.MI_Enc.Location = New System.Drawing.Point(339, 272)
+        Me.MI_Enc.Name = "MI_Enc"
+        Me.MI_Enc.Size = New System.Drawing.Size(142, 23)
+        Me.MI_Enc.TabIndex = 17
+        Me.MI_Enc.Text = "MI"
         '
         'ConvertDialogForm
         '
@@ -1572,5 +1584,6 @@ Partial Class ConvertDialogForm
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents AAMVAMAGTextBox_Enc As System.Windows.Forms.TextBox
     Friend WithEvents MSR206_Enc As MSR206
+    Friend WithEvents MI_Enc As System.Windows.Forms.Label
 
 End Class

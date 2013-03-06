@@ -95,8 +95,8 @@ Partial Public Class ConvertDialogForm
             Dim rm As Match = rx_Split_Tracks.Match(curr_data.AAMVAMAG)
             If rm.Success Then
                 g1 = rm.Groups("Track1").Value
-                g1 = rm.Groups("Track2").Value
-                g1 = rm.Groups("Track3").Value
+                g2 = rm.Groups("Track2").Value
+                g3 = rm.Groups("Track3").Value
             End If
 
             Do
