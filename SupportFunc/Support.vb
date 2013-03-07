@@ -477,17 +477,36 @@ Public Class FullSupport
                     .FirstName = names(0)
                     .MI = names(1)
                 End If
+                If String.IsNullOrEmpty(.FirstName) Then
+                    .FirstName = ExtractAAMVATag(scannedString, "DL", "DAC")
+                End If
+                If String.IsNullOrEmpty(.MI) Then
+                    .MI = ExtractAAMVATag(scannedString, "DL", "DAD")
+                End If
+
                 .Sex = ExtractAAMVATag(scannedString, "DL", "DBC")
                 If .Sex = "1"c Then .Sex = "M"c
                 If .Sex = "2"c Then .Sex = "F"c
                 .Eyes = ExtractAAMVATag(scannedString, "DL", "DAY")
+                If String.IsNullOrEmpty(.Eyes) Then
+                    .Eyes = ExtractAAMVATag(scannedString, "ZC", "ZCC")
+                End If
+
                 .Hair = ExtractAAMVATag(scannedString, "DL", "DAZ")
+                If String.IsNullOrEmpty(.Hair) Then
+                    .Eyes = ExtractAAMVATag(scannedString, "ZC", "ZCD")
+                End If
 
                 .Address = ExtractAAMVATag(scannedString, "DL", "DAG") & VB.vbCrLf & _
                     ExtractAAMVATag(scannedString, "DL", "DAI") & ", " & _
                     ExtractAAMVATag(scannedString, "DL", "DAJ") & " " & ExtractAAMVATag(scannedString, "DL", "DAK")
 
-                .SSN = String.Format("{0:000-00-0000}", B32toBin(ExtractAAMVATag(scannedString, "ZC", "ZCN")))
+
+                .SSN = ""
+                Dim SSN As String = ExtractAAMVATag(scannedString, "ZC", "ZCN")
+                If Not String.IsNullOrEmpty(SSN) Then
+                    .SSN = String.Format("{0:000-00-0000}", B32toBin(SSN))
+                End If
 
                 .Rank = ExtractAAMVATag(scannedString, "ZC", "ZCO")
                 .PayGrade = ExtractAAMVATag(scannedString, "ZC", "ZCP")
@@ -496,6 +515,7 @@ Public Class FullSupport
                 .ExpirationDate = DecodeDate(ExtractAAMVATag(scannedString, "DL", "DBA"))
                 .DOB = DecodeDate(ExtractAAMVATag(scannedString, "DL", "DBB"))
                 .IssueDate = DecodeDate(ExtractAAMVATag(scannedString, "DL", "DBD"))
+                .SerialNumber = ExtractAAMVATag(scannedString, "DL", "DCK")
 
                 .Height = ExtractAAMVATag(scannedString, "DL", "DAU").Split(New Char() {" "c}, StringSplitOptions.RemoveEmptyEntries)(0)
                 .Weight = ExtractAAMVATag(scannedString, "DL", "DAW").Split(New Char() {" "c}, StringSplitOptions.RemoveEmptyEntries)(0)
@@ -521,16 +541,25 @@ Public Class FullSupport
         With Data
             Subf1.Append("DL")
             Subf1.Append("DAQ" + ExtractIDNumber(Data) + VB.vbLf)
+
             Subf1.Append("DAA" + .LastName)
             If Not String.IsNullOrEmpty(.FirstName) Then Subf1.Append(", " + .FirstName)
             If Not String.IsNullOrEmpty(.MI) Then Subf1.Append(", " + .MI)
             Subf1.Append(VB.vbLf)
+
             Subf1.Append("DCS" + .LastName + VB.vbLf)
+
             Subf1.Append("DCT" + .FirstName)
             If Not String.IsNullOrEmpty(.MI) Then
                 Subf1.Append(" " + .MI)
             End If
             Subf1.Append(VB.vbLf)
+
+            Subf1.Append("DAC" + .FirstName + VB.vbLf)
+
+            If Not String.IsNullOrEmpty(.MI) Then
+                Subf1.Append("DAD" + .MI + VB.vbLf)
+            End If
 
             Subf1.Append("DBC" + .Sex + VB.vbLf)
             Subf1.Append("DAY" + .Eyes + VB.vbLf)
@@ -573,6 +602,14 @@ Public Class FullSupport
             Subf1.Append("DAU" + ht.ToString("D03") + " IN" + VB.vbLf)
             Subf1.Append("DAW" + .Weight + " LB" + VB.vbLf)
             Subf1.Append("DCF" + .IdNumber + "/" + .SerialNumber + VB.vbLf)
+
+            Subf1.Append("DDE" + "U" + VB.vbLf)
+            Subf1.Append("DDF" + "U" + VB.vbLf)
+            Subf1.Append("DDG" + "U" + VB.vbLf)
+            Subf1.Append("DCK" + .SerialNumber + VB.vbLf)
+            Subf1.Append("DDB" + "03032013" + VB.vbLf)
+            Subf1.Append("DDD" + "0" + VB.vbLf)
+
             Subf1.Append(VB.vbCr)
 
             ' Start second subfile
@@ -584,6 +621,13 @@ Public Class FullSupport
             Subf2.Append("ZCP" + .PayGrade + VB.vbLf)
             Subf2.Append("ZCQ" + .BloodType + VB.vbLf)
 
+            Subf1.Append("ZCZ" + "CA" + VB.vbLf)
+            Subf1.Append("ZCB" + "NONE" + VB.vbLf)
+            Subf1.Append("ZCC" + .Eyes + VB.vbLf)
+            Subf1.Append("ZCD" + .Hair + VB.vbLf)
+            Subf1.Append("ZCE" + "" + VB.vbLf)
+            Subf1.Append("ZCF" + "" + VB.vbLf)
+
             Subf2.Append(VB.vbCr)
 
             Dim nSubFields As Integer = 2
@@ -591,7 +635,7 @@ Public Class FullSupport
 
             result.Append("@" + VB.vbLf + Chr(&H1E) + VB.vbCr)
             result.Append("ANSI " + "636014")
-            result.Append("0300")       '  Version
+            result.Append("0400")       '  Version
             result.Append(nSubFields.ToString("D02"))     ' Number of subfields
 
             SubfieldStart = result.Length + nSubFields * 10
@@ -680,8 +724,15 @@ Public Class FullSupport
                 Sex = "F"
             End If
             IDStation = tm.Groups("IDStation").Value
-            IDNumber = IDStation + "-" + IDNumber
             IssueDate = CInt(tm.Groups("IssueDate").Value)
+
+            IDData.DLData = IDNumber
+            IDData.IdNumber = IDStation + "-" + IDNumber
+
+            IDData.PayGrade = ""
+            IDData.Rank = ""
+            IDData.SSN = ""
+            IDData.SerialNumber = ""
 
             Dim Grade As String = tm.Groups("Grade").Value
             If (Grade(0) = "O" Or Grade(0) = "E") AndAlso Grade(1) > "1" AndAlso Grade(1) <= "9" Then
@@ -721,7 +772,6 @@ Public Class FullSupport
                 .Weight = Weight
                 .Height = Height
                 .Sex = Sex.Chars(0)
-                .IdNumber = IDNumber
             End With
             ret = True
         Catch ex As Exception

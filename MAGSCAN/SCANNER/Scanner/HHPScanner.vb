@@ -89,14 +89,18 @@ Public Class HHPScanner
 #End Region
 
     Private Sub TimerCallback(ByVal state As Object)
-        Dim ReceivedData As Byte()
-        ' Check if we got the full datablock - should end with {CR]
-        Dim term As Integer = m_SerialBuffer.LastIndexOf(CR)
-        If term <> -1 AndAlso term = (m_SerialBuffer.Count - 1) Then
-            SyncLock m_SerialBuffer
+        Dim ReceivedData As Byte() = {}
+        Dim Do_RaiseEvent As Boolean = False
+        SyncLock m_SerialBuffer
+            ' Check if we got the full datablock - should end with {CR]
+            Dim term As Integer = m_SerialBuffer.LastIndexOf(CR)
+            If term <> -1 AndAlso term = (m_SerialBuffer.Count - 1) Then
                 ReceivedData = m_SerialBuffer.ToArray()
                 m_SerialBuffer.Clear()
-            End SyncLock
+                Do_RaiseEvent = True
+            End If
+        End SyncLock
+        If Do_RaiseEvent Then
             RaiseEvent DataReceived(Me, New DataReceivedEventArgs(ReceivedData))
         End If
     End Sub
@@ -119,29 +123,48 @@ Public Class HHPScanner
         Return bFound
     End Function
 
+    Public Sub Close()
+        m_Timer.Change(Timeout.Infinite, Timeout.Infinite)
+        If m_SerialPort.IsOpen Then
+            m_SerialPort.DiscardInBuffer()
+            m_SerialPort.DiscardOutBuffer()
+            m_SerialPort.ReadExisting()
+            m_SerialPort.ReceivedBytesThreshold = 1
+            m_SerialPort.ReadTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+            m_SerialPort.WriteTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+            m_SerialPort.Close()
+        End If
+        m_ScannerFoundOnPort = Nothing
+    End Sub
+
+
     Public Function IsScannerDetected() As Boolean
         Return m_ScannerFoundOnPort IsNot Nothing
     End Function
 
     Public Sub InitComm()
+
         If String.IsNullOrEmpty(m_ScannerFoundOnPort) Then Exit Sub
+
         If m_SerialPort.IsOpen Then
-            m_SerialPort.DataBits = 8
-            m_SerialPort.Parity = IO.Ports.Parity.None
-            m_SerialPort.DiscardNull = False
-            m_SerialPort.DtrEnable = True
-            m_SerialPort.RtsEnable = True
-            m_SerialPort.Handshake = Handshake.None
-            m_SerialPort.BaudRate = 921600
-            m_CancelFlag = False
-            m_SerialBuffer.Clear()
-            m_SerialPort.DiscardInBuffer()
-            m_SerialPort.DiscardOutBuffer()
-            m_SerialPort.ReceivedBytesThreshold = 1
-            m_SerialPort.ReadTimeout = SerialPort.InfiniteTimeout
-            m_SerialPort.WriteTimeout = SerialPort.InfiniteTimeout
-            m_SerialPort.NewLine = Microsoft.VisualBasic.vbCr
-            m_SerialPort.ReadExisting()
+            SyncLock m_SerialBuffer
+                m_SerialPort.DataBits = 8
+                m_SerialPort.Parity = IO.Ports.Parity.None
+                m_SerialPort.DiscardNull = False
+                m_SerialPort.DtrEnable = True
+                m_SerialPort.RtsEnable = True
+                m_SerialPort.Handshake = Handshake.None
+                m_SerialPort.BaudRate = 921600
+                m_CancelFlag = False
+                m_SerialBuffer.Clear()
+                m_SerialPort.DiscardInBuffer()
+                m_SerialPort.DiscardOutBuffer()
+                m_SerialPort.ReceivedBytesThreshold = 1
+                m_SerialPort.ReadTimeout = SerialPort.InfiniteTimeout
+                m_SerialPort.WriteTimeout = SerialPort.InfiniteTimeout
+                m_SerialPort.NewLine = Microsoft.VisualBasic.vbCr
+                m_SerialPort.ReadExisting()
+            End SyncLock
         End If
     End Sub
 
@@ -152,38 +175,48 @@ Public Class HHPScanner
         End If
 
         m_SerialPort.PortName = Port
-        m_SerialPort.DataBits = 8
-        m_SerialPort.Parity = IO.Ports.Parity.None
-        m_SerialPort.DiscardNull = False
-        m_SerialPort.DtrEnable = True
-        m_SerialPort.RtsEnable = True
-        m_SerialPort.Handshake = Handshake.None
-        m_SerialPort.BaudRate = 9600
-        m_SerialPort.NewLine = Microsoft.VisualBasic.vbCr
         m_SerialPort.Open()
         If m_SerialPort.IsOpen Then
-            m_SerialBuffer.Clear()
-            m_CancelFlag = False
-            m_SerialPort.DiscardInBuffer()
-            m_SerialPort.DiscardOutBuffer()
-            m_SerialPort.ReceivedBytesThreshold = 1
-            m_SerialPort.ReadTimeout = 300
-            m_SerialPort.WriteTimeout = 300
-            m_SerialPort.ReadExisting()
+            SyncLock m_SerialBuffer
+                m_SerialPort.DataBits = 8
+                m_SerialPort.Parity = IO.Ports.Parity.None
+                m_SerialPort.DiscardNull = False
+                m_SerialPort.DtrEnable = True
+                m_SerialPort.RtsEnable = True
+                m_SerialPort.Handshake = Handshake.None
+                m_SerialPort.BaudRate = 9600
+                m_SerialPort.NewLine = Microsoft.VisualBasic.vbCr
+                m_SerialBuffer.Clear()
+                m_CancelFlag = False
+                m_SerialPort.DiscardInBuffer()
+                m_SerialPort.DiscardOutBuffer()
+                m_SerialPort.ReceivedBytesThreshold = 1
+                m_SerialPort.ReadTimeout = 300
+                m_SerialPort.WriteTimeout = 300
+                m_SerialPort.ReadExisting()
+            End SyncLock
         End If
     End Sub
 
     Public Function CMD_Send(ByVal ByteData() As Byte) As Integer
         m_SerialPort.DiscardInBuffer()
-        m_SerialBuffer.Clear()
-        m_SerialPort.Write(ByteData, 0, ByteData.Length)
+        SyncLock m_SerialBuffer
+            m_DataReady.Reset()
+            m_CancelFlag = False
+            m_SerialBuffer.Clear()
+            m_SerialPort.Write(ByteData, 0, ByteData.Length)
+        End SyncLock
     End Function
 
 
     Public Function CMD_Send(ByVal ByteData As SerialBuffer) As Integer
         m_SerialPort.DiscardInBuffer()
-        m_SerialBuffer.Clear()
-        m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
+        SyncLock m_SerialBuffer
+            m_DataReady.Reset()
+            m_CancelFlag = False
+            m_SerialBuffer.Clear()
+            m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
+        End SyncLock
     End Function
 
 
@@ -194,16 +227,16 @@ Public Class HHPScanner
 
         rdy = False
         Do
-            m_DataReady.Reset()
             m_DataReady.WaitOne()
             If m_CancelFlag Then Exit Do
-
-            idx = m_SerialBuffer.LastIndexOf(ACK)
-            If idx <> -1 Then
-                rdy = True
-                ret = m_SerialBuffer(idx)
-                m_SerialBuffer.Clear()
-            End If
+            SyncLock m_SerialBuffer
+                idx = m_SerialBuffer.LastIndexOf(ACK)
+                If idx <> -1 Then
+                    rdy = True
+                    ret = m_SerialBuffer(idx)
+                    m_SerialBuffer.Clear()
+                End If
+            End SyncLock
         Loop Until rdy
         Return ret
     End Function
@@ -215,17 +248,18 @@ Public Class HHPScanner
 
         rdy = False
         Do
-            m_DataReady.Reset()
             m_DataReady.WaitOne()
             If m_CancelFlag Then Exit Do
-            idx = m_SerialBuffer.LastIndexOf(ACK)
-            If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(NAK)
-            If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(ENQ)
-            If idx <> -1 Then
-                rdy = True
-                ret = m_SerialBuffer(idx)
-                m_SerialBuffer.Clear()
-            End If
+            SyncLock m_SerialBuffer
+                idx = m_SerialBuffer.LastIndexOf(ACK)
+                If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(NAK)
+                If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(ENQ)
+                If idx <> -1 Then
+                    rdy = True
+                    ret = m_SerialBuffer(idx)
+                    m_SerialBuffer.Clear()
+                End If
+            End SyncLock
         Loop Until rdy
         Return ret
     End Function
@@ -238,19 +272,20 @@ Public Class HHPScanner
 
         rdy = False
         Do
-            m_DataReady.Reset()
             Signalled = m_DataReady.WaitOne(Timeout, False)
             If m_CancelFlag OrElse Not Signalled Then
                 rdy = True
             Else
-                idx = m_SerialBuffer.LastIndexOf(ACK)
-                If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(NAK)
-                If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(ENQ)
-                If idx <> -1 Then
-                    rdy = True
-                    ret = m_SerialBuffer(idx)
-                    m_SerialBuffer.Clear()
-                End If
+                SyncLock m_SerialBuffer
+                    idx = m_SerialBuffer.LastIndexOf(ACK)
+                    If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(NAK)
+                    If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(ENQ)
+                    If idx <> -1 Then
+                        rdy = True
+                        ret = m_SerialBuffer(idx)
+                        m_SerialBuffer.Clear()
+                    End If
+                End SyncLock
             End If
         Loop Until rdy
         Return ret
@@ -325,8 +360,11 @@ Public Class HHPScanner
     End Sub
 
     Public Sub Cancel()
-        m_CancelFlag = True
-        m_DataReady.Set()
+        m_Timer.Change(Timeout.Infinite, Timeout.Infinite)
+        SyncLock m_SerialBuffer
+            m_CancelFlag = True
+            m_DataReady.Set()
+        End SyncLock
         Thread.Sleep(100)
     End Sub
 

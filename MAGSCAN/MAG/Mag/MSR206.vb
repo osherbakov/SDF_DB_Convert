@@ -124,7 +124,7 @@ Public Class MSR206
             Try
                 InitComm(iPort)
                 CMD_Reset()
-                If CMD_Test(200) <> -1 Then
+                If CMD_Test(300) <> -1 Then
                     m_EncoderFoundOnPort = iPort
                     bFound = True
                 End If
@@ -141,8 +141,24 @@ Public Class MSR206
         Return m_EncoderFoundOnPort IsNot Nothing
     End Function
 
+    Public Sub Close()
+        m_Timer.Change(Timeout.Infinite, Timeout.Infinite)
+        If m_SerialPort.IsOpen Then
+            m_SerialPort.DiscardInBuffer()
+            m_SerialPort.DiscardOutBuffer()
+            m_SerialPort.ReadExisting()
+            m_SerialPort.ReceivedBytesThreshold = 1
+            m_SerialPort.ReadTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+            m_SerialPort.WriteTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+            m_SerialPort.Close()
+        End If
+        m_EncoderFoundOnPort = Nothing
+    End Sub
+
     Public Sub InitComm()
+
         If String.IsNullOrEmpty(m_EncoderFoundOnPort) Then Exit Sub
+
         If m_SerialPort.IsOpen Then
             SyncLock m_SerialBuffer
                 m_SerialPort.BaudRate = 9600
@@ -447,6 +463,8 @@ Public Class MSR206
         m_SerialPort.DiscardInBuffer()
         m_SerialPort.ReadExisting()
         SyncLock m_SerialBuffer
+            m_DataReady.Reset()
+            m_CancelFlag = False
             m_SerialBuffer.Clear()
             m_SerialPort.Write(ByteData, 0, ByteData.Length)
         End SyncLock
@@ -457,6 +475,7 @@ Public Class MSR206
         m_SerialPort.DiscardInBuffer()
         m_SerialPort.ReadExisting()
         SyncLock m_SerialBuffer
+            m_DataReady.Reset()
             m_SerialBuffer.Clear()
             m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
         End SyncLock
@@ -470,7 +489,6 @@ Public Class MSR206
 
         rdy = False
         Do
-            m_DataReady.Reset()
             m_DataReady.WaitOne(Timeout.Infinite, False)
 
             SyncLock m_SerialBuffer
@@ -494,9 +512,8 @@ Public Class MSR206
 
         rdy = False
         Do
-            m_DataReady.Reset()
             Signalled = m_DataReady.WaitOne(Timeout, False)
-            If Not Signalled Then
+            If m_CancelFlag OrElse Not Signalled Then
                 rdy = True
             Else
                 SyncLock m_SerialBuffer
@@ -537,9 +554,7 @@ Public Class MSR206
 
         rdy = False
         Do
-            m_DataReady.Reset()
             m_DataReady.WaitOne()
-
             SyncLock m_SerialBuffer
                 If m_CancelFlag Then Return ret
                 idx = m_SerialBuffer.LastIndexOf(New Byte() {ASCII("?"), FS, ESC})
@@ -736,7 +751,6 @@ Public Class MSR206
 
         rdy = False
         Do
-            m_DataReady.Reset()
             m_DataReady.WaitOne(Timeout.Infinite, False)
 
             SyncLock m_SerialBuffer
@@ -963,6 +977,7 @@ Public Class MSR206
     End Sub
 
     Public Sub Cancel()
+        m_Timer.Change(Timeout.Infinite, Timeout.Infinite)
         SyncLock m_SerialBuffer
             m_CancelFlag = True
             m_DataReady.Set()

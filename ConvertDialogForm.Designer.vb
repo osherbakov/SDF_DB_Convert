@@ -165,6 +165,8 @@ Partial Class ConvertDialogForm
         Me.PhotoPicture_Enc = New System.Windows.Forms.PictureBox
         Me.MagEncoder_Status = New System.Windows.Forms.Label
         Me.TabPage_Scanner = New System.Windows.Forms.TabPage
+        Me.Barcode_Status = New System.Windows.Forms.Label
+        Me.MagReader_Status = New System.Windows.Forms.Label
         Me.DataSourceLabel = New System.Windows.Forms.Label
         Me.AddressTextBox1 = New System.Windows.Forms.TextBox
         Me.IDCardDataBindingSource = New System.Windows.Forms.BindingSource(Me.components)
@@ -196,8 +198,7 @@ Partial Class ConvertDialogForm
         Me.BackgroundWorkerThread = New System.ComponentModel.BackgroundWorker
         Me.MSR206_Enc = New MSR206(Me.components)
         Me.HHP4600_Scan = New HHPScanner(Me.components)
-        Me.MagReader_Status = New System.Windows.Forms.Label
-        Me.Barcode_Status = New System.Windows.Forms.Label
+        Me.Timer_Reader = New System.Windows.Forms.Timer(Me.components)
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -1604,9 +1605,9 @@ Partial Class ConvertDialogForm
         Me.MagEncoder_Status.ForeColor = System.Drawing.SystemColors.Highlight
         Me.MagEncoder_Status.Location = New System.Drawing.Point(105, 38)
         Me.MagEncoder_Status.Name = "MagEncoder_Status"
-        Me.MagEncoder_Status.Size = New System.Drawing.Size(592, 20)
+        Me.MagEncoder_Status.Size = New System.Drawing.Size(24, 20)
         Me.MagEncoder_Status.TabIndex = 0
-        Me.MagEncoder_Status.Text = "Please select the printed ID Card and Swipe it thru the MSR206 Encoder"
+        Me.MagEncoder_Status.Text = "..."
         Me.MagEncoder_Status.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
         'TabPage_Scanner
@@ -1658,6 +1659,31 @@ Partial Class ConvertDialogForm
         Me.TabPage_Scanner.TabIndex = 3
         Me.TabPage_Scanner.Text = "Scanner"
         Me.TabPage_Scanner.UseVisualStyleBackColor = True
+        '
+        'Barcode_Status
+        '
+        Me.Barcode_Status.AllowDrop = True
+        Me.Barcode_Status.AutoSize = True
+        Me.Barcode_Status.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.Barcode_Status.ForeColor = System.Drawing.SystemColors.Highlight
+        Me.Barcode_Status.Location = New System.Drawing.Point(432, 14)
+        Me.Barcode_Status.Name = "Barcode_Status"
+        Me.Barcode_Status.Size = New System.Drawing.Size(24, 20)
+        Me.Barcode_Status.TabIndex = 39
+        Me.Barcode_Status.Text = "..."
+        Me.Barcode_Status.TextAlign = System.Drawing.ContentAlignment.TopCenter
+        '
+        'MagReader_Status
+        '
+        Me.MagReader_Status.AutoSize = True
+        Me.MagReader_Status.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.MagReader_Status.ForeColor = System.Drawing.SystemColors.Highlight
+        Me.MagReader_Status.Location = New System.Drawing.Point(11, 14)
+        Me.MagReader_Status.Name = "MagReader_Status"
+        Me.MagReader_Status.Size = New System.Drawing.Size(24, 20)
+        Me.MagReader_Status.TabIndex = 39
+        Me.MagReader_Status.Text = "..."
+        Me.MagReader_Status.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
         'DataSourceLabel
         '
@@ -1888,30 +1914,9 @@ Partial Class ConvertDialogForm
         '
         Me.BackgroundWorkerThread.WorkerSupportsCancellation = True
         '
-        'MagReader_Status
+        'Timer_Reader
         '
-        Me.MagReader_Status.AutoSize = True
-        Me.MagReader_Status.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.MagReader_Status.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.MagReader_Status.Location = New System.Drawing.Point(11, 14)
-        Me.MagReader_Status.Name = "MagReader_Status"
-        Me.MagReader_Status.Size = New System.Drawing.Size(312, 20)
-        Me.MagReader_Status.TabIndex = 39
-        Me.MagReader_Status.Text = "Please swipe ID Card thru the Reader"
-        Me.MagReader_Status.TextAlign = System.Drawing.ContentAlignment.TopCenter
-        '
-        'Barcode_Status
-        '
-        Me.Barcode_Status.AllowDrop = True
-        Me.Barcode_Status.AutoSize = True
-        Me.Barcode_Status.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.Barcode_Status.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.Barcode_Status.Location = New System.Drawing.Point(432, 14)
-        Me.Barcode_Status.Name = "Barcode_Status"
-        Me.Barcode_Status.Size = New System.Drawing.Size(332, 20)
-        Me.Barcode_Status.TabIndex = 39
-        Me.Barcode_Status.Text = "Please scan ID Card by Barcode Reader"
-        Me.Barcode_Status.TextAlign = System.Drawing.ContentAlignment.TopCenter
+        Me.Timer_Reader.Interval = 1000
         '
         'ConvertDialogForm
         '
@@ -2077,5 +2082,6 @@ Partial Class ConvertDialogForm
     Friend WithEvents DataSourceLabel As System.Windows.Forms.Label
     Friend WithEvents MagReader_Status As System.Windows.Forms.Label
     Friend WithEvents Barcode_Status As System.Windows.Forms.Label
+    Friend WithEvents Timer_Reader As System.Windows.Forms.Timer
 
 End Class
