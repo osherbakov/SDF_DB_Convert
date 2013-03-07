@@ -53,6 +53,23 @@ Partial Class ConvertDialogForm
         Dim DLDataLabel As System.Windows.Forms.Label
         Dim RankLabel1 As System.Windows.Forms.Label
         Dim RANKLabel As System.Windows.Forms.Label
+        Dim AddressLabel1 As System.Windows.Forms.Label
+        Dim BloodTypeLabel1 As System.Windows.Forms.Label
+        Dim DLDataLabel1 As System.Windows.Forms.Label
+        Dim DOBLabel2 As System.Windows.Forms.Label
+        Dim ExpirationDateLabel1 As System.Windows.Forms.Label
+        Dim EyesLabel1 As System.Windows.Forms.Label
+        Dim FirstNameLabel As System.Windows.Forms.Label
+        Dim HairLabel1 As System.Windows.Forms.Label
+        Dim HeightLabel1 As System.Windows.Forms.Label
+        Dim IdNumberLabel1 As System.Windows.Forms.Label
+        Dim IssueDateLabel1 As System.Windows.Forms.Label
+        Dim PayGradeLabel1 As System.Windows.Forms.Label
+        Dim RankLabel2 As System.Windows.Forms.Label
+        Dim SerialNumberLabel1 As System.Windows.Forms.Label
+        Dim SexLabel1 As System.Windows.Forms.Label
+        Dim SSNLabel2 As System.Windows.Forms.Label
+        Dim WeightLabel1 As System.Windows.Forms.Label
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ConvertDialogForm))
         Me.TabControl_ID = New System.Windows.Forms.TabControl
         Me.TabPage_CSMR_ID = New System.Windows.Forms.TabPage
@@ -125,6 +142,7 @@ Partial Class ConvertDialogForm
         Me.SerialNumberTextBox = New System.Windows.Forms.TextBox
         Me.Button_CreateDB = New System.Windows.Forms.Button
         Me.TabPage_Encoder = New System.Windows.Forms.TabPage
+        Me.MI_Enc = New System.Windows.Forms.Label
         Me.AAMVAMAGTextBox_Enc = New System.Windows.Forms.TextBox
         Me.Label4 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
@@ -147,6 +165,27 @@ Partial Class ConvertDialogForm
         Me.PhotoPicture_Enc = New System.Windows.Forms.PictureBox
         Me.MagEncoder_Status = New System.Windows.Forms.Label
         Me.TabPage_Scanner = New System.Windows.Forms.TabPage
+        Me.DataSourceLabel = New System.Windows.Forms.Label
+        Me.AddressTextBox1 = New System.Windows.Forms.TextBox
+        Me.IDCardDataBindingSource = New System.Windows.Forms.BindingSource(Me.components)
+        Me.BloodTypeTextBox = New System.Windows.Forms.TextBox
+        Me.DLDataTextBox1 = New System.Windows.Forms.TextBox
+        Me.DOBDateTimePicker2 = New System.Windows.Forms.DateTimePicker
+        Me.ExpirationDateDateTimePicker1 = New System.Windows.Forms.DateTimePicker
+        Me.EyesTextBox = New System.Windows.Forms.TextBox
+        Me.FirstNameTextBox1 = New System.Windows.Forms.TextBox
+        Me.HairTextBox = New System.Windows.Forms.TextBox
+        Me.HeightTextBox1 = New System.Windows.Forms.TextBox
+        Me.IdNumberTextBox1 = New System.Windows.Forms.TextBox
+        Me.IssueDateDateTimePicker1 = New System.Windows.Forms.DateTimePicker
+        Me.LastNameTextBox1 = New System.Windows.Forms.TextBox
+        Me.MITextBox1 = New System.Windows.Forms.TextBox
+        Me.PayGradeTextBox1 = New System.Windows.Forms.TextBox
+        Me.RankTextBox = New System.Windows.Forms.TextBox
+        Me.SerialNumberTextBox1 = New System.Windows.Forms.TextBox
+        Me.SexTextBox1 = New System.Windows.Forms.TextBox
+        Me.SSNTextBox2 = New System.Windows.Forms.TextBox
+        Me.WeightTextBox1 = New System.Windows.Forms.TextBox
         Me.CSMR_IDTableAdapter = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
         Me.TableAdapterManager = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
         Me.ID_CARDSTableAdapter = New CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.ID_CARDSTableAdapter
@@ -156,7 +195,9 @@ Partial Class ConvertDialogForm
         Me.ID_CARDS_SaveFileDialog = New System.Windows.Forms.SaveFileDialog
         Me.BackgroundWorkerThread = New System.ComponentModel.BackgroundWorker
         Me.MSR206_Enc = New MSR206(Me.components)
-        Me.MI_Enc = New System.Windows.Forms.Label
+        Me.HHP4600_Scan = New HHPScanner(Me.components)
+        Me.MagReader_Status = New System.Windows.Forms.Label
+        Me.Barcode_Status = New System.Windows.Forms.Label
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -187,6 +228,23 @@ Partial Class ConvertDialogForm
         DLDataLabel = New System.Windows.Forms.Label
         RankLabel1 = New System.Windows.Forms.Label
         RANKLabel = New System.Windows.Forms.Label
+        AddressLabel1 = New System.Windows.Forms.Label
+        BloodTypeLabel1 = New System.Windows.Forms.Label
+        DLDataLabel1 = New System.Windows.Forms.Label
+        DOBLabel2 = New System.Windows.Forms.Label
+        ExpirationDateLabel1 = New System.Windows.Forms.Label
+        EyesLabel1 = New System.Windows.Forms.Label
+        FirstNameLabel = New System.Windows.Forms.Label
+        HairLabel1 = New System.Windows.Forms.Label
+        HeightLabel1 = New System.Windows.Forms.Label
+        IdNumberLabel1 = New System.Windows.Forms.Label
+        IssueDateLabel1 = New System.Windows.Forms.Label
+        PayGradeLabel1 = New System.Windows.Forms.Label
+        RankLabel2 = New System.Windows.Forms.Label
+        SerialNumberLabel1 = New System.Windows.Forms.Label
+        SexLabel1 = New System.Windows.Forms.Label
+        SSNLabel2 = New System.Windows.Forms.Label
+        WeightLabel1 = New System.Windows.Forms.Label
         Me.TabControl_ID.SuspendLayout()
         Me.TabPage_CSMR_ID.SuspendLayout()
         CType(Me.CSMR_IDBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -203,6 +261,8 @@ Partial Class ConvertDialogForm
         CType(Me.BindingNavigator_Enc, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.BindingNavigator_Enc.SuspendLayout()
         CType(Me.PhotoPicture_Enc, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage_Scanner.SuspendLayout()
+        CType(Me.IDCardDataBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -475,6 +535,159 @@ Partial Class ConvertDialogForm
         RANKLabel.Size = New System.Drawing.Size(40, 13)
         RANKLabel.TabIndex = 28
         RANKLabel.Text = "RANK:"
+        '
+        'AddressLabel1
+        '
+        AddressLabel1.AutoSize = True
+        AddressLabel1.Location = New System.Drawing.Point(12, 105)
+        AddressLabel1.Name = "AddressLabel1"
+        AddressLabel1.Size = New System.Drawing.Size(48, 13)
+        AddressLabel1.TabIndex = 0
+        AddressLabel1.Text = "Address:"
+        '
+        'BloodTypeLabel1
+        '
+        BloodTypeLabel1.AutoSize = True
+        BloodTypeLabel1.Location = New System.Drawing.Point(385, 146)
+        BloodTypeLabel1.Name = "BloodTypeLabel1"
+        BloodTypeLabel1.Size = New System.Drawing.Size(64, 13)
+        BloodTypeLabel1.TabIndex = 2
+        BloodTypeLabel1.Text = "Blood Type:"
+        '
+        'DLDataLabel1
+        '
+        DLDataLabel1.AutoSize = True
+        DLDataLabel1.Location = New System.Drawing.Point(12, 171)
+        DLDataLabel1.Name = "DLDataLabel1"
+        DLDataLabel1.Size = New System.Drawing.Size(47, 13)
+        DLDataLabel1.TabIndex = 4
+        DLDataLabel1.Text = "DLData:"
+        '
+        'DOBLabel2
+        '
+        DOBLabel2.AutoSize = True
+        DOBLabel2.Location = New System.Drawing.Point(385, 233)
+        DOBLabel2.Name = "DOBLabel2"
+        DOBLabel2.Size = New System.Drawing.Size(33, 13)
+        DOBLabel2.TabIndex = 6
+        DOBLabel2.Text = "DOB:"
+        '
+        'ExpirationDateLabel1
+        '
+        ExpirationDateLabel1.AutoSize = True
+        ExpirationDateLabel1.Location = New System.Drawing.Point(12, 309)
+        ExpirationDateLabel1.Name = "ExpirationDateLabel1"
+        ExpirationDateLabel1.Size = New System.Drawing.Size(82, 13)
+        ExpirationDateLabel1.TabIndex = 8
+        ExpirationDateLabel1.Text = "Expiration Date:"
+        '
+        'EyesLabel1
+        '
+        EyesLabel1.AutoSize = True
+        EyesLabel1.Location = New System.Drawing.Point(385, 172)
+        EyesLabel1.Name = "EyesLabel1"
+        EyesLabel1.Size = New System.Drawing.Size(33, 13)
+        EyesLabel1.TabIndex = 10
+        EyesLabel1.Text = "Eyes:"
+        '
+        'FirstNameLabel
+        '
+        FirstNameLabel.AutoSize = True
+        FirstNameLabel.Location = New System.Drawing.Point(12, 79)
+        FirstNameLabel.Name = "FirstNameLabel"
+        FirstNameLabel.Size = New System.Drawing.Size(38, 13)
+        FirstNameLabel.TabIndex = 12
+        FirstNameLabel.Text = "Name:"
+        '
+        'HairLabel1
+        '
+        HairLabel1.AutoSize = True
+        HairLabel1.Location = New System.Drawing.Point(385, 198)
+        HairLabel1.Name = "HairLabel1"
+        HairLabel1.Size = New System.Drawing.Size(29, 13)
+        HairLabel1.TabIndex = 14
+        HairLabel1.Text = "Hair:"
+        '
+        'HeightLabel1
+        '
+        HeightLabel1.AutoSize = True
+        HeightLabel1.Location = New System.Drawing.Point(582, 146)
+        HeightLabel1.Name = "HeightLabel1"
+        HeightLabel1.Size = New System.Drawing.Size(41, 13)
+        HeightLabel1.TabIndex = 16
+        HeightLabel1.Text = "Height:"
+        '
+        'IdNumberLabel1
+        '
+        IdNumberLabel1.AutoSize = True
+        IdNumberLabel1.Location = New System.Drawing.Point(12, 223)
+        IdNumberLabel1.Name = "IdNumberLabel1"
+        IdNumberLabel1.Size = New System.Drawing.Size(59, 13)
+        IdNumberLabel1.TabIndex = 18
+        IdNumberLabel1.Text = "Id Number:"
+        '
+        'IssueDateLabel1
+        '
+        IssueDateLabel1.AutoSize = True
+        IssueDateLabel1.Location = New System.Drawing.Point(12, 283)
+        IssueDateLabel1.Name = "IssueDateLabel1"
+        IssueDateLabel1.Size = New System.Drawing.Size(61, 13)
+        IssueDateLabel1.TabIndex = 20
+        IssueDateLabel1.Text = "Issue Date:"
+        '
+        'PayGradeLabel1
+        '
+        PayGradeLabel1.AutoSize = True
+        PayGradeLabel1.Location = New System.Drawing.Point(582, 171)
+        PayGradeLabel1.Name = "PayGradeLabel1"
+        PayGradeLabel1.Size = New System.Drawing.Size(60, 13)
+        PayGradeLabel1.TabIndex = 26
+        PayGradeLabel1.Text = "Pay Grade:"
+        '
+        'RankLabel2
+        '
+        RankLabel2.AutoSize = True
+        RankLabel2.Location = New System.Drawing.Point(582, 197)
+        RankLabel2.Name = "RankLabel2"
+        RankLabel2.Size = New System.Drawing.Size(36, 13)
+        RankLabel2.TabIndex = 28
+        RankLabel2.Text = "Rank:"
+        '
+        'SerialNumberLabel1
+        '
+        SerialNumberLabel1.AutoSize = True
+        SerialNumberLabel1.Location = New System.Drawing.Point(12, 249)
+        SerialNumberLabel1.Name = "SerialNumberLabel1"
+        SerialNumberLabel1.Size = New System.Drawing.Size(76, 13)
+        SerialNumberLabel1.TabIndex = 30
+        SerialNumberLabel1.Text = "Serial Number:"
+        '
+        'SexLabel1
+        '
+        SexLabel1.AutoSize = True
+        SexLabel1.Location = New System.Drawing.Point(385, 119)
+        SexLabel1.Name = "SexLabel1"
+        SexLabel1.Size = New System.Drawing.Size(28, 13)
+        SexLabel1.TabIndex = 32
+        SexLabel1.Text = "Sex:"
+        '
+        'SSNLabel2
+        '
+        SSNLabel2.AutoSize = True
+        SSNLabel2.Location = New System.Drawing.Point(12, 197)
+        SSNLabel2.Name = "SSNLabel2"
+        SSNLabel2.Size = New System.Drawing.Size(32, 13)
+        SSNLabel2.TabIndex = 34
+        SSNLabel2.Text = "SSN:"
+        '
+        'WeightLabel1
+        '
+        WeightLabel1.AutoSize = True
+        WeightLabel1.Location = New System.Drawing.Point(582, 119)
+        WeightLabel1.Name = "WeightLabel1"
+        WeightLabel1.Size = New System.Drawing.Size(44, 13)
+        WeightLabel1.TabIndex = 36
+        WeightLabel1.Text = "Weight:"
         '
         'TabControl_ID
         '
@@ -1186,6 +1399,16 @@ Partial Class ConvertDialogForm
         Me.TabPage_Encoder.Text = "Encoder"
         Me.TabPage_Encoder.UseVisualStyleBackColor = True
         '
+        'MI_Enc
+        '
+        Me.MI_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "MI", True))
+        Me.MI_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.MI_Enc.Location = New System.Drawing.Point(339, 272)
+        Me.MI_Enc.Name = "MI_Enc"
+        Me.MI_Enc.Size = New System.Drawing.Size(142, 23)
+        Me.MI_Enc.TabIndex = 17
+        Me.MI_Enc.Text = "MI"
+        '
         'AAMVAMAGTextBox_Enc
         '
         Me.AAMVAMAGTextBox_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "AAMVAMAG", True))
@@ -1388,6 +1611,46 @@ Partial Class ConvertDialogForm
         '
         'TabPage_Scanner
         '
+        Me.TabPage_Scanner.AutoScroll = True
+        Me.TabPage_Scanner.Controls.Add(Me.Barcode_Status)
+        Me.TabPage_Scanner.Controls.Add(Me.MagReader_Status)
+        Me.TabPage_Scanner.Controls.Add(Me.DataSourceLabel)
+        Me.TabPage_Scanner.Controls.Add(AddressLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.AddressTextBox1)
+        Me.TabPage_Scanner.Controls.Add(BloodTypeLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.BloodTypeTextBox)
+        Me.TabPage_Scanner.Controls.Add(DLDataLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.DLDataTextBox1)
+        Me.TabPage_Scanner.Controls.Add(DOBLabel2)
+        Me.TabPage_Scanner.Controls.Add(Me.DOBDateTimePicker2)
+        Me.TabPage_Scanner.Controls.Add(ExpirationDateLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.ExpirationDateDateTimePicker1)
+        Me.TabPage_Scanner.Controls.Add(EyesLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.EyesTextBox)
+        Me.TabPage_Scanner.Controls.Add(FirstNameLabel)
+        Me.TabPage_Scanner.Controls.Add(Me.FirstNameTextBox1)
+        Me.TabPage_Scanner.Controls.Add(HairLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.HairTextBox)
+        Me.TabPage_Scanner.Controls.Add(HeightLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.HeightTextBox1)
+        Me.TabPage_Scanner.Controls.Add(IdNumberLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.IdNumberTextBox1)
+        Me.TabPage_Scanner.Controls.Add(IssueDateLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.IssueDateDateTimePicker1)
+        Me.TabPage_Scanner.Controls.Add(Me.LastNameTextBox1)
+        Me.TabPage_Scanner.Controls.Add(Me.MITextBox1)
+        Me.TabPage_Scanner.Controls.Add(PayGradeLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.PayGradeTextBox1)
+        Me.TabPage_Scanner.Controls.Add(RankLabel2)
+        Me.TabPage_Scanner.Controls.Add(Me.RankTextBox)
+        Me.TabPage_Scanner.Controls.Add(SerialNumberLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.SerialNumberTextBox1)
+        Me.TabPage_Scanner.Controls.Add(SexLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.SexTextBox1)
+        Me.TabPage_Scanner.Controls.Add(SSNLabel2)
+        Me.TabPage_Scanner.Controls.Add(Me.SSNTextBox2)
+        Me.TabPage_Scanner.Controls.Add(WeightLabel1)
+        Me.TabPage_Scanner.Controls.Add(Me.WeightTextBox1)
         Me.TabPage_Scanner.Location = New System.Drawing.Point(4, 22)
         Me.TabPage_Scanner.Name = "TabPage_Scanner"
         Me.TabPage_Scanner.Padding = New System.Windows.Forms.Padding(3)
@@ -1395,6 +1658,193 @@ Partial Class ConvertDialogForm
         Me.TabPage_Scanner.TabIndex = 3
         Me.TabPage_Scanner.Text = "Scanner"
         Me.TabPage_Scanner.UseVisualStyleBackColor = True
+        '
+        'DataSourceLabel
+        '
+        Me.DataSourceLabel.AutoSize = True
+        Me.DataSourceLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.DataSourceLabel.Location = New System.Drawing.Point(218, 45)
+        Me.DataSourceLabel.Name = "DataSourceLabel"
+        Me.DataSourceLabel.Size = New System.Drawing.Size(176, 18)
+        Me.DataSourceLabel.TabIndex = 38
+        Me.DataSourceLabel.Text = "Data scanned from ...."
+        '
+        'AddressTextBox1
+        '
+        Me.AddressTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Address", True))
+        Me.AddressTextBox1.Location = New System.Drawing.Point(100, 102)
+        Me.AddressTextBox1.Multiline = True
+        Me.AddressTextBox1.Name = "AddressTextBox1"
+        Me.AddressTextBox1.ReadOnly = True
+        Me.AddressTextBox1.Size = New System.Drawing.Size(200, 60)
+        Me.AddressTextBox1.TabIndex = 1
+        '
+        'IDCardDataBindingSource
+        '
+        Me.IDCardDataBindingSource.AllowNew = False
+        Me.IDCardDataBindingSource.DataSource = GetType(IDCardData)
+        '
+        'BloodTypeTextBox
+        '
+        Me.BloodTypeTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "BloodType", True))
+        Me.BloodTypeTextBox.Location = New System.Drawing.Point(473, 143)
+        Me.BloodTypeTextBox.Name = "BloodTypeTextBox"
+        Me.BloodTypeTextBox.ReadOnly = True
+        Me.BloodTypeTextBox.Size = New System.Drawing.Size(61, 20)
+        Me.BloodTypeTextBox.TabIndex = 3
+        '
+        'DLDataTextBox1
+        '
+        Me.DLDataTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "DLData", True))
+        Me.DLDataTextBox1.Location = New System.Drawing.Point(100, 168)
+        Me.DLDataTextBox1.Name = "DLDataTextBox1"
+        Me.DLDataTextBox1.ReadOnly = True
+        Me.DLDataTextBox1.Size = New System.Drawing.Size(200, 20)
+        Me.DLDataTextBox1.TabIndex = 5
+        '
+        'DOBDateTimePicker2
+        '
+        Me.DOBDateTimePicker2.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.IDCardDataBindingSource, "DOB", True))
+        Me.DOBDateTimePicker2.Enabled = False
+        Me.DOBDateTimePicker2.Location = New System.Drawing.Point(473, 229)
+        Me.DOBDateTimePicker2.Name = "DOBDateTimePicker2"
+        Me.DOBDateTimePicker2.Size = New System.Drawing.Size(243, 20)
+        Me.DOBDateTimePicker2.TabIndex = 7
+        '
+        'ExpirationDateDateTimePicker1
+        '
+        Me.ExpirationDateDateTimePicker1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.IDCardDataBindingSource, "ExpirationDate", True))
+        Me.ExpirationDateDateTimePicker1.Enabled = False
+        Me.ExpirationDateDateTimePicker1.Location = New System.Drawing.Point(100, 305)
+        Me.ExpirationDateDateTimePicker1.Name = "ExpirationDateDateTimePicker1"
+        Me.ExpirationDateDateTimePicker1.Size = New System.Drawing.Size(200, 20)
+        Me.ExpirationDateDateTimePicker1.TabIndex = 9
+        '
+        'EyesTextBox
+        '
+        Me.EyesTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Eyes", True))
+        Me.EyesTextBox.Location = New System.Drawing.Point(473, 169)
+        Me.EyesTextBox.Name = "EyesTextBox"
+        Me.EyesTextBox.ReadOnly = True
+        Me.EyesTextBox.Size = New System.Drawing.Size(61, 20)
+        Me.EyesTextBox.TabIndex = 11
+        '
+        'FirstNameTextBox1
+        '
+        Me.FirstNameTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "FirstName", True))
+        Me.FirstNameTextBox1.Location = New System.Drawing.Point(100, 76)
+        Me.FirstNameTextBox1.Name = "FirstNameTextBox1"
+        Me.FirstNameTextBox1.ReadOnly = True
+        Me.FirstNameTextBox1.Size = New System.Drawing.Size(124, 20)
+        Me.FirstNameTextBox1.TabIndex = 13
+        '
+        'HairTextBox
+        '
+        Me.HairTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Hair", True))
+        Me.HairTextBox.Location = New System.Drawing.Point(473, 195)
+        Me.HairTextBox.Name = "HairTextBox"
+        Me.HairTextBox.ReadOnly = True
+        Me.HairTextBox.Size = New System.Drawing.Size(61, 20)
+        Me.HairTextBox.TabIndex = 15
+        '
+        'HeightTextBox1
+        '
+        Me.HeightTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Height", True))
+        Me.HeightTextBox1.Location = New System.Drawing.Point(670, 143)
+        Me.HeightTextBox1.Name = "HeightTextBox1"
+        Me.HeightTextBox1.ReadOnly = True
+        Me.HeightTextBox1.Size = New System.Drawing.Size(46, 20)
+        Me.HeightTextBox1.TabIndex = 17
+        '
+        'IdNumberTextBox1
+        '
+        Me.IdNumberTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "IdNumber", True))
+        Me.IdNumberTextBox1.Location = New System.Drawing.Point(100, 220)
+        Me.IdNumberTextBox1.Name = "IdNumberTextBox1"
+        Me.IdNumberTextBox1.ReadOnly = True
+        Me.IdNumberTextBox1.Size = New System.Drawing.Size(200, 20)
+        Me.IdNumberTextBox1.TabIndex = 19
+        '
+        'IssueDateDateTimePicker1
+        '
+        Me.IssueDateDateTimePicker1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.IDCardDataBindingSource, "IssueDate", True))
+        Me.IssueDateDateTimePicker1.Enabled = False
+        Me.IssueDateDateTimePicker1.Location = New System.Drawing.Point(100, 279)
+        Me.IssueDateDateTimePicker1.Name = "IssueDateDateTimePicker1"
+        Me.IssueDateDateTimePicker1.Size = New System.Drawing.Size(200, 20)
+        Me.IssueDateDateTimePicker1.TabIndex = 21
+        '
+        'LastNameTextBox1
+        '
+        Me.LastNameTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "LastName", True))
+        Me.LastNameTextBox1.Location = New System.Drawing.Point(345, 76)
+        Me.LastNameTextBox1.Name = "LastNameTextBox1"
+        Me.LastNameTextBox1.ReadOnly = True
+        Me.LastNameTextBox1.Size = New System.Drawing.Size(200, 20)
+        Me.LastNameTextBox1.TabIndex = 23
+        '
+        'MITextBox1
+        '
+        Me.MITextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "MI", True))
+        Me.MITextBox1.Location = New System.Drawing.Point(254, 76)
+        Me.MITextBox1.Name = "MITextBox1"
+        Me.MITextBox1.ReadOnly = True
+        Me.MITextBox1.Size = New System.Drawing.Size(46, 20)
+        Me.MITextBox1.TabIndex = 25
+        '
+        'PayGradeTextBox1
+        '
+        Me.PayGradeTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "PayGrade", True))
+        Me.PayGradeTextBox1.Location = New System.Drawing.Point(670, 168)
+        Me.PayGradeTextBox1.Name = "PayGradeTextBox1"
+        Me.PayGradeTextBox1.ReadOnly = True
+        Me.PayGradeTextBox1.Size = New System.Drawing.Size(46, 20)
+        Me.PayGradeTextBox1.TabIndex = 27
+        '
+        'RankTextBox
+        '
+        Me.RankTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Rank", True))
+        Me.RankTextBox.Location = New System.Drawing.Point(670, 194)
+        Me.RankTextBox.Name = "RankTextBox"
+        Me.RankTextBox.ReadOnly = True
+        Me.RankTextBox.Size = New System.Drawing.Size(46, 20)
+        Me.RankTextBox.TabIndex = 29
+        '
+        'SerialNumberTextBox1
+        '
+        Me.SerialNumberTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "SerialNumber", True))
+        Me.SerialNumberTextBox1.Location = New System.Drawing.Point(100, 246)
+        Me.SerialNumberTextBox1.Name = "SerialNumberTextBox1"
+        Me.SerialNumberTextBox1.ReadOnly = True
+        Me.SerialNumberTextBox1.Size = New System.Drawing.Size(200, 20)
+        Me.SerialNumberTextBox1.TabIndex = 31
+        '
+        'SexTextBox1
+        '
+        Me.SexTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Sex", True))
+        Me.SexTextBox1.Location = New System.Drawing.Point(473, 116)
+        Me.SexTextBox1.Name = "SexTextBox1"
+        Me.SexTextBox1.ReadOnly = True
+        Me.SexTextBox1.Size = New System.Drawing.Size(61, 20)
+        Me.SexTextBox1.TabIndex = 33
+        '
+        'SSNTextBox2
+        '
+        Me.SSNTextBox2.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "SSN", True))
+        Me.SSNTextBox2.Location = New System.Drawing.Point(100, 194)
+        Me.SSNTextBox2.Name = "SSNTextBox2"
+        Me.SSNTextBox2.ReadOnly = True
+        Me.SSNTextBox2.Size = New System.Drawing.Size(200, 20)
+        Me.SSNTextBox2.TabIndex = 35
+        '
+        'WeightTextBox1
+        '
+        Me.WeightTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Weight", True))
+        Me.WeightTextBox1.Location = New System.Drawing.Point(670, 116)
+        Me.WeightTextBox1.Name = "WeightTextBox1"
+        Me.WeightTextBox1.ReadOnly = True
+        Me.WeightTextBox1.Size = New System.Drawing.Size(46, 20)
+        Me.WeightTextBox1.TabIndex = 37
         '
         'CSMR_IDTableAdapter
         '
@@ -1438,15 +1888,30 @@ Partial Class ConvertDialogForm
         '
         Me.BackgroundWorkerThread.WorkerSupportsCancellation = True
         '
-        'MI_Enc
+        'MagReader_Status
         '
-        Me.MI_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "MI", True))
-        Me.MI_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.MI_Enc.Location = New System.Drawing.Point(339, 272)
-        Me.MI_Enc.Name = "MI_Enc"
-        Me.MI_Enc.Size = New System.Drawing.Size(142, 23)
-        Me.MI_Enc.TabIndex = 17
-        Me.MI_Enc.Text = "MI"
+        Me.MagReader_Status.AutoSize = True
+        Me.MagReader_Status.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.MagReader_Status.ForeColor = System.Drawing.SystemColors.Highlight
+        Me.MagReader_Status.Location = New System.Drawing.Point(11, 14)
+        Me.MagReader_Status.Name = "MagReader_Status"
+        Me.MagReader_Status.Size = New System.Drawing.Size(312, 20)
+        Me.MagReader_Status.TabIndex = 39
+        Me.MagReader_Status.Text = "Please swipe ID Card thru the Reader"
+        Me.MagReader_Status.TextAlign = System.Drawing.ContentAlignment.TopCenter
+        '
+        'Barcode_Status
+        '
+        Me.Barcode_Status.AllowDrop = True
+        Me.Barcode_Status.AutoSize = True
+        Me.Barcode_Status.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.Barcode_Status.ForeColor = System.Drawing.SystemColors.Highlight
+        Me.Barcode_Status.Location = New System.Drawing.Point(432, 14)
+        Me.Barcode_Status.Name = "Barcode_Status"
+        Me.Barcode_Status.Size = New System.Drawing.Size(332, 20)
+        Me.Barcode_Status.TabIndex = 39
+        Me.Barcode_Status.Text = "Please scan ID Card by Barcode Reader"
+        Me.Barcode_Status.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
         'ConvertDialogForm
         '
@@ -1478,6 +1943,9 @@ Partial Class ConvertDialogForm
         Me.BindingNavigator_Enc.ResumeLayout(False)
         Me.BindingNavigator_Enc.PerformLayout()
         CType(Me.PhotoPicture_Enc, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage_Scanner.ResumeLayout(False)
+        Me.TabPage_Scanner.PerformLayout()
+        CType(Me.IDCardDataBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
@@ -1585,5 +2053,29 @@ Partial Class ConvertDialogForm
     Friend WithEvents AAMVAMAGTextBox_Enc As System.Windows.Forms.TextBox
     Friend WithEvents MSR206_Enc As MSR206
     Friend WithEvents MI_Enc As System.Windows.Forms.Label
+    Friend WithEvents HHP4600_Scan As HHPScanner
+    Friend WithEvents AddressTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents IDCardDataBindingSource As System.Windows.Forms.BindingSource
+    Friend WithEvents BloodTypeTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents DLDataTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents DOBDateTimePicker2 As System.Windows.Forms.DateTimePicker
+    Friend WithEvents ExpirationDateDateTimePicker1 As System.Windows.Forms.DateTimePicker
+    Friend WithEvents EyesTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents FirstNameTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents HairTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents HeightTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents IdNumberTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents IssueDateDateTimePicker1 As System.Windows.Forms.DateTimePicker
+    Friend WithEvents LastNameTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents MITextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents PayGradeTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents RankTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents SerialNumberTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents SexTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents SSNTextBox2 As System.Windows.Forms.TextBox
+    Friend WithEvents WeightTextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents DataSourceLabel As System.Windows.Forms.Label
+    Friend WithEvents MagReader_Status As System.Windows.Forms.Label
+    Friend WithEvents Barcode_Status As System.Windows.Forms.Label
 
 End Class

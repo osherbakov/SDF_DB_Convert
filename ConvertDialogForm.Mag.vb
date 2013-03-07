@@ -10,7 +10,7 @@ Partial Public Class ConvertDialogForm
         CONNECTED = 1
     End Enum
 
-    Private m_Status As STATUS
+    Private m_Mag_Status As STATUS
     Private m_MSR206_Cancel As Boolean = True
 
     Private Sub TabPage_Encoder_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Encoder.Leave
@@ -52,11 +52,11 @@ Partial Public Class ConvertDialogForm
         End If
     End Sub
 
-    Private Sub UpdateStatus()
+    Private Sub UpdateEncStatus()
         If MagEncoder_Status.InvokeRequired Then
-            MagEncoder_Status.BeginInvoke(New MethodInvoker(AddressOf UpdateStatus))
+            MagEncoder_Status.BeginInvoke(New MethodInvoker(AddressOf UpdateEncStatus))
         Else
-            If m_Status = STATUS.DISCONNECTED Then
+            If m_Mag_Status = STATUS.DISCONNECTED Then
                 MagEncoder_Status.ForeColor = Color.Red
                 MagEncoder_Status.Text = lblConnectMSR
             Else
@@ -77,12 +77,12 @@ Partial Public Class ConvertDialogForm
         Do
             ' Loop until the Mag Encoder is connected
             If MSR206_Enc.CMD_Test(300) <> 0 Then
-                m_Status = STATUS.DISCONNECTED
-                UpdateStatus()
+                m_Mag_Status = STATUS.DISCONNECTED
+                UpdateEncStatus()
                 Do
                     If BackgroundWorkerThread.CancellationPending Then
                         e.Cancel = True
-                        Exit Sub
+                        Exit Do
                     End If
                     MSR206_Enc.DetectMSR206()
                     MSR206_Enc.InitComm()
@@ -90,14 +90,13 @@ Partial Public Class ConvertDialogForm
                 Loop Until MSR206_Enc.IsMSR206Detected
             End If
 
-            ' Found - update status
-            m_Status = STATUS.CONNECTED
-            UpdateStatus()
-
             If BackgroundWorkerThread.CancellationPending Then
                 e.Cancel = True
-                Exit Sub
+                Exit Do
             End If
+            ' Found - update status
+            m_Mag_Status = STATUS.CONNECTED
+            UpdateEncStatus()
 
             ' get the current selected/displaying record
             '   and extract the data
@@ -124,11 +123,17 @@ Partial Public Class ConvertDialogForm
 
             Result += MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW)
             Result += MSR206_Enc.CMD_WriteRaw(g1, g2, g3)
+
+            If BackgroundWorkerThread.CancellationPending Then
+                e.Cancel = True
+                Exit Do
+            End If
+
             If Result = 0 Then
+                ' If successfully programmed - move to the next
                 Me.BeginInvoke(New MethodInvoker(AddressOf MoveNextRecord))
             End If
         Loop While True
     End Sub
-
 
 End Class
