@@ -472,6 +472,7 @@ Public Class FullSupport
                 .DLData = .IdNumber
                 .LastName = ExtractAAMVATag(scannedString, "DL", "DCS")
                 .FirstName = ExtractAAMVATag(scannedString, "DL", "DCT")
+                .MI = ""
                 Dim names() As String = .FirstName.Split(New Char() {" "c}, StringSplitOptions.RemoveEmptyEntries)
                 If names.Length > 1 Then
                     .FirstName = names(0)

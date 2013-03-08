@@ -169,6 +169,12 @@ Public Class ConvertDialogForm
         IDCardDataBindingSource.DataSource = m_curr_id
         IDCardDataBindingSource.ResumeBinding()
         IDCardDataBindingSource.ResetItem(0)
+
+        ' Start with un-initialized Readers
+        MSR206_Enc.Close()
+        HHP4600_Scan.Close()
+
+        'Attach handlers
         AddHandler MSR206_Enc.DataReceived, AddressOf MagReaderDataReady
         AddHandler HHP4600_Scan.DataReceived, AddressOf ScannerDataReady
         Timer_Reader.Enabled = True
@@ -177,12 +183,16 @@ Public Class ConvertDialogForm
 
     Private Sub TabPage_Scanner_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Scanner.Leave
         Timer_Reader.Enabled = False
+        ' Stop and close MAG Reader 
         MSR206_Enc.Cancel()
         MSR206_Enc.CMD_Reset()
         MSR206_Enc.Close()
+
+        ' Stop and close Scanner
         HHP4600_Scan.Cancel()
         HHP4600_Scan.CMD_Reset()
         HHP4600_Scan.Close()
+
         IDCardDataBindingSource.SuspendBinding()
         RemoveHandler MSR206_Enc.DataReceived, AddressOf MagReaderDataReady
         RemoveHandler HHP4600_Scan.DataReceived, AddressOf ScannerDataReady
@@ -300,8 +310,11 @@ Public Class ConvertDialogForm
     Private Sub ConvertDialogForm_FormClosing(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
         Timer_Reader.Enabled = False
         MSR206_Enc.Cancel()
+        MSR206_Enc.CMD_Reset()
         MSR206_Enc.Close()
+
         HHP4600_Scan.Cancel()
+        HHP4600_Scan.CMD_Reset()
         HHP4600_Scan.Close()
     End Sub
 End Class

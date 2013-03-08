@@ -10,6 +10,7 @@ Partial Public Class ConvertDialogForm
 
     Private m_Mag_Status As STATUS
     Private m_Scan_Status As STATUS
+    Private m_curr_Position As Integer
 
     Private Sub TabPage_Encoder_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Encoder.Leave
         BackgroundWorkerThread.CancelAsync()
@@ -35,7 +36,9 @@ Partial Public Class ConvertDialogForm
 
 
     Private Sub ID_CARDSBindingSource_PositionChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ID_CARDSBindingSource.PositionChanged
-        MSR206_Enc.Cancel()
+        If m_curr_Position <> ID_CARDSBindingSource.Position Then
+            MSR206_Enc.Cancel()
+        End If
     End Sub
 
     Private Shared rx_Split_Tracks As New Regex("%(?<Track1>.+?)\?;(?<Track2>.+?)\?%(?<Track3>.+?)\?", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
@@ -70,9 +73,11 @@ Partial Public Class ConvertDialogForm
     End Sub
 
     Private Sub BackgroundWorkerThread_DoWorkMAG(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs)
-        MSR206_Enc.DetectMSR206()
-        Dim Result As Integer = 0
 
+        ' Start with un-initialized Reader
+        MSR206_Enc.Close()
+
+        Dim Result As Integer = 0
         Do
             ' Loop until the Mag Encoder is connected
             If Not MSR206_Enc.IsMSR206Detected Then
@@ -114,7 +119,9 @@ Partial Public Class ConvertDialogForm
                 m_Mag_Status = STATUS.CONNECTED
                 UpdateEncStatus()
 
-                Dim curr_data As ID_CARDS_DataSet.ID_CARDSRow = ID_CARDS_DataSet.ID_CARDS.Rows(ID_CARDSBindingSource.Position)
+                MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW)
+                m_curr_Position = ID_CARDSBindingSource.Position
+                Dim curr_data As ID_CARDS_DataSet.ID_CARDSRow = ID_CARDS_DataSet.ID_CARDS.Rows(m_curr_Position)
                 Dim rm As Match = rx_Split_Tracks.Match(curr_data.AAMVAMAG)
                 If rm.Success Then
                     g1 = rm.Groups("Track1").Value
@@ -123,16 +130,15 @@ Partial Public Class ConvertDialogForm
                 End If
 
                 ' Try to program the MAG stripe 
-                Result = 0
-                Result += MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW)
-                Result += MSR206_Enc.CMD_WriteRaw(g1, g2, g3)
+                Result = MSR206_Enc.CMD_WriteRaw(g1, g2, g3)
 
                 If BackgroundWorkerThread.CancellationPending Then
                     e.Cancel = True
                     Exit Do
                 End If
 
-                If Result = 0 Then
+                If (Result = 0) AndAlso _
+                    (m_curr_Position = ID_CARDSBindingSource.Position) Then
                     ' If successfully programmed - move to the next
                     Me.BeginInvoke(New MethodInvoker(AddressOf MoveNextRecord))
                 End If
