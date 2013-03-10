@@ -45,43 +45,55 @@ Partial Public Class ConvertDialogForm
         Dim ti As System.Globalization.TextInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo
 
         ' Do some data checking and formatting
+        Dim EmptyRecords As New List(Of CSMR_ID_DataSet.CSMR_IDRow)
+
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
+            '
+            ' TODO: To check for the empty records
+            '
+            If dr.IsDOBNull OrElse dr.IsH_ADDRNull Then
+                EmptyRecords.Add(dr)
+                Continue For
+            End If
 
             ' If only NAME_IND is provided - extract it, and populate other fields
-            If (dr.IsFIRST_NAMENull OrElse dr.IsLAST_NAMENull) And Not dr.IsNAME_INDNull Then
+            If (dr.IsFIRST_NAMENull Or dr.IsLAST_NAMENull) And Not dr.IsNAME_INDNull Then
                 Dim m As Match = np_rx.Match(dr.NAME_IND)
                 dr.LAST_NAME = m.Groups("LN").Value
                 dr.FIRST_NAME = m.Groups("FN").Value
                 dr.MIDDLE_NAME = m.Groups("MI").Value
             End If
 
-            ' Make MiddleName Valid
+            ' Make MiddleName Valid, remove NMN
             If dr.IsMIDDLE_NAMENull Then
                 dr.MIDDLE_NAME = String.Empty
             End If
-
+            ' Remove NMN (No Middle Name) abbreviation 
+            If dr.MIDDLE_NAME.ToUpper().Contains("NMN") Then
+                dr.MIDDLE_NAME = String.Empty
+            End If
             ' Remove all dots from the names and addresses
             dr.MIDDLE_NAME = dr.MIDDLE_NAME.Replace(".", "")
-            dr.H_ADDR = dr.H_ADDR.Replace(".", "").Replace(",", "")
 
-            ' Remove NMN (No Middle Name) abbreviation 
-            If dr.MIDDLE_NAME.Contains("NMN") Then
-                dr.MIDDLE_NAME = String.Empty
+            If Not dr.IsH_ADDRNull Then
+                dr.H_ADDR = dr.H_ADDR.Replace(".", "").Replace(",", "")
+                dr.H_ADDR = ti.ToTitleCase(dr.H_ADDR.ToLower()).Trim()
             End If
 
             ' If NAME_IND is not provided - make it
             If dr.IsNAME_INDNull And _
-                Not (dr.IsFIRST_NAMENull AndAlso dr.IsLAST_NAMENull) Then
+                Not (dr.IsFIRST_NAMENull And dr.IsLAST_NAMENull) Then
                 dr.NAME_IND = dr.LAST_NAME.ToUpper() + ", " + dr.FIRST_NAME.ToUpper() + " " + dr.MIDDLE_NAME.ToUpper()
             End If
 
             ' Capitalize all letters in the address and First-last  names
-            dr.H_ADDR = ti.ToTitleCase(dr.H_ADDR.ToLower())
-            dr.H_CITY = ti.ToTitleCase(dr.H_CITY.ToLower())
+            If Not dr.IsH_CITYNull Then
+                dr.H_CITY = ti.ToTitleCase(dr.H_CITY.ToLower()).Trim()
+            End If
 
-            dr.FIRST_NAME = ti.ToTitleCase(dr.FIRST_NAME.ToLower())
-            dr.LAST_NAME = ti.ToTitleCase(dr.LAST_NAME.ToLower())
-            dr.MIDDLE_NAME = ti.ToTitleCase(dr.MIDDLE_NAME.ToLower())
+            dr.FIRST_NAME = ti.ToTitleCase(dr.FIRST_NAME.ToLower().Trim())
+            dr.LAST_NAME = ti.ToTitleCase(dr.LAST_NAME.ToLower().Trim())
+            dr.MIDDLE_NAME = ti.ToTitleCase(dr.MIDDLE_NAME.ToLower().Trim())
 
             ' Rank cannot be Null
             If dr.IsRANKNull Then
@@ -98,7 +110,7 @@ Partial Public Class ConvertDialogForm
                 Next
             Else
                 dr.RANK = RankToGrade(0).Substring(0, 6)
-                dr.PAY_GR = RankToGrade(0).Substring(6)
+                dr.PAY_GR = RankToGrade(0).Substring(6).Trim()
             End If
 
             If dr.IsBLOOD_TYPENull Then
@@ -125,6 +137,12 @@ Partial Public Class ConvertDialogForm
                 dr.HEIGHT = String.Empty
             End If
         Next
+
+        ' Remove empty records from the dataset
+        For Each dr As CSMR_ID_DataSet.CSMR_IDRow In EmptyRecords
+            CSMR_ID_DataSet.CSMR_ID.RemoveCSMR_IDRow(dr)
+        Next
+
     End Sub
 
     Private Function MakeFullNumber(ByVal Station As String, ByVal SSN As String, ByVal LastName As String) As String

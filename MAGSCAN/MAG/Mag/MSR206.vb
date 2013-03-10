@@ -120,14 +120,16 @@ Public Class MSR206
     Public Function DetectMSR206() As Boolean
         Dim bFound As Boolean = False
         m_EncoderFoundOnPort = Nothing
-        For Each iPort As String In IO.Ports.SerialPort.GetPortNames
+        For Each Port As String In IO.Ports.SerialPort.GetPortNames
             Try
-                InitComm(iPort)
+                InitComm(Port)
                 CMD_Reset()
+                If m_CancelFlag Then Exit For
                 If CMD_Test(300) <> -1 Then
-                    m_EncoderFoundOnPort = iPort
+                    m_EncoderFoundOnPort = Port
                     bFound = True
                 End If
+                If m_CancelFlag Then Exit For
             Catch ex As Exception
                 m_EncoderFoundOnPort = Nothing
             End Try
@@ -468,6 +470,7 @@ Public Class MSR206
             m_SerialBuffer.Clear()
             m_SerialPort.Write(ByteData, 0, ByteData.Length)
         End SyncLock
+        Return 0
     End Function
 
     Public Function CMD_Send(ByVal ByteData As SerialBuffer) As Integer
@@ -476,9 +479,11 @@ Public Class MSR206
         m_SerialPort.ReadExisting()
         SyncLock m_SerialBuffer
             m_DataReady.Reset()
+            m_CancelFlag = False
             m_SerialBuffer.Clear()
             m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
         End SyncLock
+        Return 0
     End Function
 
 
@@ -486,7 +491,6 @@ Public Class MSR206
         Dim rdy As Boolean
         Dim idx As Integer
         Dim ret As Integer = -1
-
         rdy = False
         Do
             m_DataReady.WaitOne(Timeout.Infinite, False)
@@ -538,7 +542,7 @@ Public Class MSR206
             Cmd += ASCII("a")
             CMD_Send(Cmd)
             ret = 0
-            Thread.Sleep(500)
+            m_DataReady.WaitOne(500, False)
         Catch ex As Exception
             m_EncoderFoundOnPort = Nothing
         End Try
@@ -661,7 +665,7 @@ Public Class MSR206
         If leds = (MSR206.LEDs.YELLOW Or MSR206.LEDs.GREEN Or MSR206.LEDs.RED) Then
             CMD_Send(New Byte() {ESC, &H82})    ' turn on all LEDs
         End If
-        Thread.Sleep(500)
+        m_DataReady.WaitOne(500, False)
         Return 0
     End Function
 
@@ -679,13 +683,16 @@ Public Class MSR206
         Return ret
     End Function
 
-    Public Sub CMD_StartRead()
+    Public Function CMD_StartRead() As Integer
+        Dim ret As Integer = -1
         Try
             CMD_Send(New Byte() {ESC, ASCII("m")})
+            ret = 0
         Catch ex As Exception
             m_EncoderFoundOnPort = Nothing
         End Try
-    End Sub
+        Return ret
+    End Function
 
     Private Function DecodeRaw(ByRef Track1() As Byte, ByRef Track2() As Byte, ByRef Track3() As Byte) As Integer
         Dim idx, len As Integer

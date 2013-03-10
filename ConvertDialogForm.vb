@@ -74,10 +74,12 @@ Public Class ConvertDialogForm
                 .H_ZIP = dr.H_ZIP
                 .FirstName = dr.FIRST_NAME
                 .LastName = dr.LAST_NAME.ToUpper()
+                .MI = ""
                 If Not String.IsNullOrEmpty(dr.MIDDLE_NAME) Then
                     .MI = dr.MIDDLE_NAME.ToUpper().Substring(0, 1)
                 End If
 
+                .Sex = "M"
                 If Not String.IsNullOrEmpty(dr.GENDER) Then
                     .Sex = dr.GENDER.ToUpper().Substring(0, 1)
                 End If
@@ -185,12 +187,12 @@ Public Class ConvertDialogForm
         Timer_Reader.Enabled = False
         ' Stop and close MAG Reader 
         MSR206_Enc.Cancel()
-        MSR206_Enc.CMD_Reset()
+        If MSR206_Enc.IsMSR206Detected Then MSR206_Enc.CMD_Reset()
         MSR206_Enc.Close()
 
         ' Stop and close Scanner
         HHP4600_Scan.Cancel()
-        HHP4600_Scan.CMD_Reset()
+        If HHP4600_Scan.IsScannerDetected Then HHP4600_Scan.CMD_Reset()
         HHP4600_Scan.Close()
 
         IDCardDataBindingSource.SuspendBinding()
@@ -279,17 +281,16 @@ Public Class ConvertDialogForm
                 m_Mag_Status = STATUS.CONNECTED
                 UpdateReaderStatus()
                 ' Try to program the MAG stripe reader
-                Dim Result As Integer = 0
-                Result += MSR206_Enc.CMD_SetCo(MSR206.Coercity.HIGH)
-                Result += MSR206_Enc.CMD_SetBPI(75)
-                Result += MSR206_Enc.CMD_SetBPC(8, 8, 8)
-                Result += MSR206_Enc.CMD_SetEncoding(MSR206.Encoding.BITS6, MSR206.Encoding.BITS4, MSR206.Encoding.BITS6)
-                Result += MSR206_Enc.CMD_SetParity(MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY)
-                Result += MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK1 Or MSR206.Tracks.TRACK3, "%", "?", "^")
-                Result += MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK2, ";", "?", "=")
-
-                Result += MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW)
-                MSR206_Enc.CMD_StartRead()
+                Dim Result As Boolean
+                Result = MSR206_Enc.CMD_SetCo(MSR206.Coercity.HIGH) = 0 AndAlso _
+                MSR206_Enc.CMD_SetBPI(75) = 0 AndAlso _
+                MSR206_Enc.CMD_SetBPC(8, 8, 8) = 0 AndAlso _
+                MSR206_Enc.CMD_SetEncoding(MSR206.Encoding.BITS6, MSR206.Encoding.BITS4, MSR206.Encoding.BITS6) = 0 AndAlso _
+                MSR206_Enc.CMD_SetParity(MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY) = 0 AndAlso _
+                MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK1 Or MSR206.Tracks.TRACK3, "%", "?", "^") = 0 AndAlso _
+                MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK2, ";", "?", "=") = 0 AndAlso _
+                MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW) = 0 AndAlso _
+                MSR206_Enc.CMD_StartRead() = 0
             End If
         End If
 
@@ -310,11 +311,11 @@ Public Class ConvertDialogForm
     Private Sub ConvertDialogForm_FormClosing(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
         Timer_Reader.Enabled = False
         MSR206_Enc.Cancel()
-        MSR206_Enc.CMD_Reset()
+        If MSR206_Enc.IsMSR206Detected Then MSR206_Enc.CMD_Reset()
         MSR206_Enc.Close()
 
         HHP4600_Scan.Cancel()
-        HHP4600_Scan.CMD_Reset()
+        If HHP4600_Scan.IsScannerDetected Then HHP4600_Scan.CMD_Reset()
         HHP4600_Scan.Close()
     End Sub
 End Class
