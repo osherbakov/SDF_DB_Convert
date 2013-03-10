@@ -198,7 +198,6 @@ Partial Class ConvertDialogForm
         Me.BackgroundWorkerThread = New System.ComponentModel.BackgroundWorker
         Me.MSR206_Enc = New MSR206(Me.components)
         Me.HHP4600_Scan = New HHPScanner(Me.components)
-        Me.Timer_Reader = New System.Windows.Forms.Timer(Me.components)
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -1914,10 +1913,6 @@ Partial Class ConvertDialogForm
         '
         Me.BackgroundWorkerThread.WorkerSupportsCancellation = True
         '
-        'Timer_Reader
-        '
-        Me.Timer_Reader.Interval = 1000
-        '
         'ConvertDialogForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -2082,6 +2077,5 @@ Partial Class ConvertDialogForm
     Friend WithEvents DataSourceLabel As System.Windows.Forms.Label
     Friend WithEvents MagReader_Status As System.Windows.Forms.Label
     Friend WithEvents Barcode_Status As System.Windows.Forms.Label
-    Friend WithEvents Timer_Reader As System.Windows.Forms.Timer
 
 End Class

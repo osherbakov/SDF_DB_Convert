@@ -95,6 +95,9 @@
     <Compile Include="ConvertDialogForm.Mag.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ConvertDialogForm.Read.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ConvertDialogForm.Support.vb">
       <SubType>Form</SubType>
     </Compile>

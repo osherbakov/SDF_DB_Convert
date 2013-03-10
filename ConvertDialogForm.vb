@@ -167,154 +167,22 @@ Public Class ConvertDialogForm
         Next
     End Sub
 
-    Private Sub TabPage_Scanner_Enter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Scanner.Enter
-        IDCardDataBindingSource.DataSource = m_curr_id
-        IDCardDataBindingSource.ResumeBinding()
-        IDCardDataBindingSource.ResetItem(0)
+ 
+    Private Sub ConvertDialogForm_FormClosing(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
 
-        ' Start with un-initialized Readers
-        MSR206_Enc.Close()
-        HHP4600_Scan.Close()
-
-        'Attach handlers
-        AddHandler MSR206_Enc.DataReceived, AddressOf MagReaderDataReady
-        AddHandler HHP4600_Scan.DataReceived, AddressOf ScannerDataReady
-        Timer_Reader.Enabled = True
-    End Sub
-
-
-    Private Sub TabPage_Scanner_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Scanner.Leave
-        Timer_Reader.Enabled = False
+        BackgroundWorkerThread.CancelAsync()
         ' Stop and close MAG Reader 
         MSR206_Enc.Cancel()
-        If MSR206_Enc.IsMSR206Detected Then MSR206_Enc.CMD_Reset()
-        MSR206_Enc.Close()
-
         ' Stop and close Scanner
         HHP4600_Scan.Cancel()
-        If HHP4600_Scan.IsScannerDetected Then HHP4600_Scan.CMD_Reset()
-        HHP4600_Scan.Close()
 
-        IDCardDataBindingSource.SuspendBinding()
-        RemoveHandler MSR206_Enc.DataReceived, AddressOf MagReaderDataReady
-        RemoveHandler HHP4600_Scan.DataReceived, AddressOf ScannerDataReady
-    End Sub
+        While BackgroundWorkerThread.IsBusy
+            Application.DoEvents()
+        End While
 
-    Private m_curr_id As New IDCardData()
-
-    Private Sub UpdateReaderStatus()
-        If MagReader_Status.InvokeRequired Then
-            MagReader_Status.BeginInvoke(New MethodInvoker(AddressOf UpdateReaderStatus))
-        Else
-            If m_Mag_Status = STATUS.DISCONNECTED Then
-                MagReader_Status.ForeColor = Color.Red
-                MagReader_Status.Text = "Please connect MagReader"
-            Else
-                MagReader_Status.ForeColor = Color.DarkBlue
-                MagReader_Status.Text = "Please swipe ID Card thru MagReader"
-            End If
-        End If
-    End Sub
-
-    Private Sub UpdateScannerStatus()
-        If Barcode_Status.InvokeRequired Then
-            Barcode_Status.BeginInvoke(New MethodInvoker(AddressOf UpdateScannerStatus))
-        Else
-            If m_Scan_Status = STATUS.DISCONNECTED Then
-                Barcode_Status.ForeColor = Color.Red
-                Barcode_Status.Text = "Please connect Barcode Reader"
-            Else
-                Barcode_Status.ForeColor = Color.DarkBlue
-                Barcode_Status.Text = "Please scan ID Card Barcode"
-            End If
-        End If
-    End Sub
-
-
-    Private Sub UpdateDataFileds()
-        IDCardDataBindingSource.ResetCurrentItem()
-    End Sub
-
-    Private Sub UpdateDataSourceMag()
-        DataSourceLabel.Text = "Data scanned from AAMVA MagReader..."
-    End Sub
-
-    Private Sub UpdateDataSourceCAC()
-        DataSourceLabel.Text = "Data scanned from Federal ID barcode..."
-    End Sub
-
-    Private Sub UpdateDataSourceAAMVA()
-        DataSourceLabel.Text = "Data scanned from State AAMVA barcode..."
-    End Sub
-
-    ' This is the event handler for the Scanner received data event
-    Private Sub ScannerDataReady(ByVal sender As Object, ByVal e As HHPScanner.DataReceivedEventArgs)
-        If FullSupport.DecodeAAMVAPDF417Data(m_curr_id, e.StringData) Then
-            Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataFileds))
-            Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataSourceAAMVA))
-        ElseIf FullSupport.DecodeCACPDF417Data(m_curr_id, e.StringData) Then
-            Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataFileds))
-            Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataSourceCAC))
-        End If
-    End Sub
-
-    ' This is the event handler for the MagReader received data event
-    Private Sub MagReaderDataReady(ByVal sender As Object, ByVal e As MSR206.DataReceivedEventArgs)
-        If FullSupport.DecodeAAMVAMagData(m_curr_id, MSR206.DecodeTrack(e.Track1, MSR206.Encoding.BITS6, 8), _
-                    MSR206.DecodeTrack(e.Track2, MSR206.Encoding.BITS4, 8), MSR206.DecodeTrack(e.Track3, MSR206.Encoding.BITS6, 8)) Then
-            ' If successfully received - display it
-            Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataFileds))
-            Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataSourceMag))
-        End If
-        MSR206_Enc.CMD_StartRead()
-    End Sub
-
-
-    Private Sub Timer_Reader_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer_Reader.Tick
-        ' Check if the Mag Reader is connected
-        If Not MSR206_Enc.IsMSR206Detected Then
-            m_Mag_Status = STATUS.DISCONNECTED
-            UpdateReaderStatus()
-            MSR206_Enc.DetectMSR206()
-            If MSR206_Enc.IsMSR206Detected Then
-                ' Found - update status
-                m_Mag_Status = STATUS.CONNECTED
-                UpdateReaderStatus()
-                ' Try to program the MAG stripe reader
-                Dim Result As Boolean
-                Result = MSR206_Enc.CMD_SetCo(MSR206.Coercity.HIGH) = 0 AndAlso _
-                MSR206_Enc.CMD_SetBPI(75) = 0 AndAlso _
-                MSR206_Enc.CMD_SetBPC(8, 8, 8) = 0 AndAlso _
-                MSR206_Enc.CMD_SetEncoding(MSR206.Encoding.BITS6, MSR206.Encoding.BITS4, MSR206.Encoding.BITS6) = 0 AndAlso _
-                MSR206_Enc.CMD_SetParity(MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY) = 0 AndAlso _
-                MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK1 Or MSR206.Tracks.TRACK3, "%", "?", "^") = 0 AndAlso _
-                MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK2, ";", "?", "=") = 0 AndAlso _
-                MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW) = 0 AndAlso _
-                MSR206_Enc.CMD_StartRead() = 0
-            End If
-        End If
-
-
-        If Not HHP4600_Scan.IsScannerDetected() Then
-            m_Scan_Status = STATUS.DISCONNECTED
-            UpdateScannerStatus()
-            HHP4600_Scan.DetectScanner()
-            If HHP4600_Scan.IsScannerDetected() Then
-                m_Scan_Status = STATUS.CONNECTED
-                UpdateScannerStatus()
-                HHP4600_Scan.CMD_Setup()
-            End If
-        End If
-
-    End Sub
-
-    Private Sub ConvertDialogForm_FormClosing(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
-        Timer_Reader.Enabled = False
-        MSR206_Enc.Cancel()
         If MSR206_Enc.IsMSR206Detected Then MSR206_Enc.CMD_Reset()
         MSR206_Enc.Close()
 
-        HHP4600_Scan.Cancel()
         If HHP4600_Scan.IsScannerDetected Then HHP4600_Scan.CMD_Reset()
         HHP4600_Scan.Close()
     End Sub
