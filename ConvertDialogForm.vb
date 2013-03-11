@@ -153,8 +153,13 @@ Public Class ConvertDialogForm
 
         ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + Date.Today().ToString("ddMMMMyyyy"), "mdb")
         If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            CreateAccessDatabase(ID_CARDS_SaveFileDialog.FileName)
-            Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + ID_CARDS_SaveFileDialog.FileName
+            Dim FileName As String = ID_CARDS_SaveFileDialog.FileName
+            If FileIO.FileSystem.FileExists(FileName) Then
+                FileIO.FileSystem.DeleteFile(FileName)
+            End If
+
+            CreateAccessDatabase(FileName)
+            Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileName
             Me.ID_CARDSTableAdapter.Connection.Open()
 
             For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS

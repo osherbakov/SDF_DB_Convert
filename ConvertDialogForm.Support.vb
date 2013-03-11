@@ -61,7 +61,7 @@ Partial Public Class ConvertDialogForm
             For Each column As DataColumn In ds.Tables(0).Columns
                 'Special case - SSN may be a string or double
                 If column.ColumnName.ToUpper() = "SSN" Then
-                    If column.DataType Is GetType(String) Then
+                    If column.DataType Is GetType(String) AndAlso Not dt.IsNull(column.ColumnName) Then
                         new_rec(column.ColumnName) = Support.ExtractNumber(dt(column.ColumnName))
                     Else
                         new_rec(column.ColumnName) = dt(column.ColumnName)
