@@ -776,7 +776,7 @@ Partial Class ConvertDialogForm
         Me.IssuingStation.Name = "IssuingStation"
         Me.IssuingStation.Size = New System.Drawing.Size(100, 20)
         Me.IssuingStation.TabIndex = 28
-        Me.IssuingStation.Text = "CAB005"
+        Me.IssuingStation.Text = "CAHQ"
         '
         'Label1
         '
