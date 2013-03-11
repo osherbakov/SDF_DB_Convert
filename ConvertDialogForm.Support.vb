@@ -40,6 +40,33 @@ Partial Public Class ConvertDialogForm
 
     End Sub
 
+    Private Sub ImportRecords(ByVal ds As DataSet)
+        ' Here is the list of the columns that are essential
+        ' SSN  DOB H_ADDR H_CITY RANK ( LAST_NAME or NAME_IND)
+        Dim reqColumns() As String = {"SSN", "DOB", "H_ADDR", "H_CITY", "RANK"}
+        For Each colname As String In reqColumns
+            If Not ds.Tables(0).Columns.Contains(colname) Then
+                Exit Sub
+            End If
+        Next
+        If Not ds.Tables(0).Columns.Contains("LAST_NAME") _
+            AndAlso ds.Tables(0).Columns.Contains("NAME_IND") Then
+            Exit Sub
+        End If
+        '
+        ' Passed the test - start importing datainto the CSMR_ID_DataSet.CSMR_ID
+        '
+        For Each dt As DataRow In ds.Tables(0).Rows
+            Dim new_rec As CSMR_ID_DataSet.CSMR_IDRow = CSMR_ID_DataSet.CSMR_ID.NewRow()
+            For Each column As DataColumn In ds.Tables(0).Columns
+                If CSMR_ID_DataSet.CSMR_ID.Columns.Contains(column.ColumnName) Then
+                    new_rec(column.ColumnName) = dt(column.ColumnName)
+                End If
+            Next
+            CSMR_ID_DataSet.CSMR_ID.AddCSMR_IDRow(new_rec)
+        Next
+    End Sub
+
     Private Sub CheckInputRecords()
         ' We need this TextInfo to do proper capitalizing
         Dim ti As System.Globalization.TextInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo
