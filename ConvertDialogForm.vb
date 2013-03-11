@@ -37,45 +37,41 @@ Public Class ConvertDialogForm
         If CSMR_ID_OpenFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK AndAlso _
             Not String.IsNullOrEmpty(CSMR_ID_OpenFileDialog.FileName()) AndAlso _
                 IO.File.Exists(CSMR_ID_OpenFileDialog.FileName()) Then
-            ' Open thedatabase and fill the data
+
+            ' Open the database and fill the data
             Dim FileName As String = CSMR_ID_OpenFileDialog.FileName()
+            Dim extProp As String = ""
+            Dim cb As OleDb.OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
+            cb.DataSource = FileName
             Try
                 If IO.Path.GetExtension(FileName).ToUpper = ".MDB" Then
-                    Me.CSMR_IDTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileName
-                    Me.CSMR_IDTableAdapter.Connection.Open()
-                    Me.CSMR_IDTableAdapter.Fill(Me.CSMR_ID_DataSet.CSMR_ID)
-                    Me.CSMR_IDTableAdapter.Connection.Close()
-                Else
-                    Dim cb As OleDb.OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
-                    cb.DataSource = FileName
-                    Dim extProp As String = ""
-                    If IO.Path.GetExtension(FileName).ToUpper = ".XLS" Then ' Excel 97-03 files
-                        cb.Provider = "Microsoft.Jet.OLEDB.4.0"
-                        extProp = "Excel 8.0;HDR=Yes;IMEX=1"
-                    ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLSX" Then ' Excel 2007 files
-                        cb.Provider = "Microsoft.ACE.OLEDB.12.0"
-                        extProp = "Excel 12.0;HDR=Yes;IMEX=1"
-                    End If
-                    cb.Add("Extended Properties", extProp)
-                    Dim od_data_set As New DataSet()
-                    Using conn As OleDbConnection = New OleDbConnection(cb.ToString())
-                        conn.Open()
-                        Me.CSMR_IDTableAdapter.Connection = conn
-                        Dim dtSchema As DataTable = conn.GetOleDbSchemaTable(OleDb.OleDbSchemaGuid.Tables, Nothing)
-                        For Each dr As DataRow In dtSchema.Rows
-                            Dim TblName As String = dr("TABLE_NAME").ToString
-                            If TblName.Contains("$") Then
-                                Dim cmd As New OleDbCommand()
-                                cmd.CommandText = "SELECT * FROM [" + TblName + "]"
-                                cmd.Connection = conn
-                                Dim oda As New OleDbDataAdapter(cmd)
-                                oda.Fill(od_data_set)
-                            End If
-                        Next
-                        conn.Close()
-                    End Using
-                    ImportRecords(od_data_set)
+                    cb.Provider = "Microsoft.Jet.OLEDB.4.0"
+                ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLS" Then ' Excel 97-03 files
+                    cb.Provider = "Microsoft.Jet.OLEDB.4.0"
+                    extProp = "Excel 8.0;HDR=Yes;IMEX=1"
+                ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLSX" Then ' Excel 2007 files
+                    cb.Provider = "Microsoft.ACE.OLEDB.12.0"
+                    extProp = "Excel 12.0;HDR=Yes;IMEX=1"
                 End If
+
+                cb.Add("Extended Properties", extProp)
+                Using conn As OleDbConnection = New OleDbConnection(cb.ToString())
+                    conn.Open()
+                    Dim dtSchema As DataTable = conn.GetOleDbSchemaTable(OleDb.OleDbSchemaGuid.Tables, Nothing)
+                    For Each dr As DataRow In dtSchema.Rows
+                        Dim TblName As String = dr("TABLE_NAME").ToString
+                        If Not TblName.ToUpper.Contains("MSYS") Then
+                            Dim od_data_set As New DataSet()
+                            Dim cmd As New OleDbCommand()
+                            cmd.CommandText = "SELECT * FROM [" + TblName + "]"
+                            cmd.Connection = conn
+                            Dim oda As New OleDbDataAdapter(cmd)
+                            oda.Fill(od_data_set)
+                            ImportRecords(od_data_set)
+                        End If
+                    Next
+                    conn.Close()
+                End Using
 
             Catch ex As Exception
                 MessageBox.Show(ex.Message)

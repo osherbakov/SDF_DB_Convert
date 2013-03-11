@@ -135,8 +135,7 @@ Partial Public Class ConvertDialogForm
                     Exit Sub
                 End If
 
-                If (Result = 0) AndAlso _
-                    (m_curr_Position = ID_CARDSBindingSource.Position) Then
+                If Result And (m_curr_Position = ID_CARDSBindingSource.Position) Then
                     ' If successfully programmed - move to the next
                     Me.BeginInvoke(New MethodInvoker(AddressOf MoveNextRecord))
                 End If

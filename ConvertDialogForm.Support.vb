@@ -50,7 +50,7 @@ Partial Public Class ConvertDialogForm
             End If
         Next
         If Not ds.Tables(0).Columns.Contains("LAST_NAME") _
-            AndAlso ds.Tables(0).Columns.Contains("NAME_IND") Then
+            And Not ds.Tables(0).Columns.Contains("NAME_IND") Then
             Exit Sub
         End If
         '
@@ -59,7 +59,14 @@ Partial Public Class ConvertDialogForm
         For Each dt As DataRow In ds.Tables(0).Rows
             Dim new_rec As CSMR_ID_DataSet.CSMR_IDRow = CSMR_ID_DataSet.CSMR_ID.NewRow()
             For Each column As DataColumn In ds.Tables(0).Columns
-                If CSMR_ID_DataSet.CSMR_ID.Columns.Contains(column.ColumnName) Then
+                'Special case - SSN may be a string or double
+                If column.ColumnName.ToUpper() = "SSN" Then
+                    If column.DataType Is GetType(String) Then
+                        new_rec(column.ColumnName) = Support.ExtractNumber(dt(column.ColumnName))
+                    Else
+                        new_rec(column.ColumnName) = dt(column.ColumnName)
+                    End If
+                ElseIf CSMR_ID_DataSet.CSMR_ID.Columns.Contains(column.ColumnName) Then
                     new_rec(column.ColumnName) = dt(column.ColumnName)
                 End If
             Next

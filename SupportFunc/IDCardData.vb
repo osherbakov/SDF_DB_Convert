@@ -52,6 +52,29 @@ Public Class IDCardData
         m_ExpirationDate = m_IssueDate.AddYears(3)
     End Sub
 
+    Public Sub Clear()
+        m_IDNumber = ""
+        m_LastName = ""
+        m_FirstName = ""
+        m_MI = ""
+        m_SSN = ""
+        m_PayGrade = ""
+        m_Rank = ""
+        m_Address = ""
+        m_DOB = Nothing
+        m_IssueDate = Nothing
+        m_ExpirationDate = Nothing
+        m_Hair = ""
+        m_Eyes = ""
+        m_Height = ""
+        m_Weight = ""
+        m_BloodType = ""
+        m_Photo = Nothing
+        m_DLData = ""
+        m_Sex = ""
+        m_SerialNumber = ""
+    End Sub
+
     Public Property Address() As String
         Get
             Return m_Address
