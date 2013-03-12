@@ -43,35 +43,34 @@ Partial Public Class ConvertDialogForm
     Private Sub ImportRecords(ByVal ds As DataSet)
         ' Here is the list of the columns that are essential
         ' SSN  DOB H_ADDR H_CITY RANK ( LAST_NAME or NAME_IND)
-        Dim reqColumns() As String = {"SSN", "DOB", "H_ADDR", "H_CITY", "RANK"}
+        Dim reqColumns() As String = {"SSN", "DOB", "H_CITY", "H_ZIP"}
         For Each colname As String In reqColumns
             If Not ds.Tables(0).Columns.Contains(colname) Then
                 Exit Sub
             End If
         Next
-        If Not ds.Tables(0).Columns.Contains("LAST_NAME") _
-            And Not ds.Tables(0).Columns.Contains("NAME_IND") Then
-            Exit Sub
-        End If
-        '
-        ' Passed the test - start importing datainto the CSMR_ID_DataSet.CSMR_ID
-        '
-        For Each dt As DataRow In ds.Tables(0).Rows
-            Dim new_rec As CSMR_ID_DataSet.CSMR_IDRow = CSMR_ID_DataSet.CSMR_ID.NewRow()
-            For Each column As DataColumn In ds.Tables(0).Columns
-                'Special case - SSN may be a string or double
-                If column.ColumnName.ToUpper() = "SSN" Then
-                    If column.DataType Is GetType(String) AndAlso Not dt.IsNull(column.ColumnName) Then
-                        new_rec(column.ColumnName) = Support.ExtractNumber(dt(column.ColumnName))
-                    Else
+
+        If ds.Tables(0).Columns.Contains("LAST_NAME") Or ds.Tables(0).Columns.Contains("NAME_IND") Then
+            '
+            ' Passed the test - start importing data into the CSMR_ID_DataSet.CSMR_ID
+            '
+            For Each dt As DataRow In ds.Tables(0).Rows
+                Dim new_rec As CSMR_ID_DataSet.CSMR_IDRow = CSMR_ID_DataSet.CSMR_ID.NewRow()
+                For Each column As DataColumn In ds.Tables(0).Columns
+                    'Special case - SSN may be a string or double
+                    If column.ColumnName.ToUpper() = "SSN" Then
+                        If column.DataType Is GetType(String) AndAlso Not dt.IsNull(column.ColumnName) Then
+                            new_rec(column.ColumnName) = Support.ExtractNumber(dt(column.ColumnName))
+                        Else
+                            new_rec(column.ColumnName) = dt(column.ColumnName)
+                        End If
+                    ElseIf CSMR_ID_DataSet.CSMR_ID.Columns.Contains(column.ColumnName) Then
                         new_rec(column.ColumnName) = dt(column.ColumnName)
                     End If
-                ElseIf CSMR_ID_DataSet.CSMR_ID.Columns.Contains(column.ColumnName) Then
-                    new_rec(column.ColumnName) = dt(column.ColumnName)
-                End If
+                Next
+                CSMR_ID_DataSet.CSMR_ID.AddCSMR_IDRow(new_rec)
             Next
-            CSMR_ID_DataSet.CSMR_ID.AddCSMR_IDRow(new_rec)
-        Next
+        End If
     End Sub
 
     Private Sub CheckInputRecords()
@@ -207,30 +206,34 @@ Partial Public Class ConvertDialogForm
     Private Function GetIDCardData(ByVal dr As CSMR_DB_Convert.ID_CARDS_DataSet.ID_CARDSRow) As IDCardData
         Dim card_data As New IDCardData()
         With card_data
-            .Address = dr.Address
+            Try
+                .Address = dr.Address
 
-            .FirstName = dr.FirstName
-            .LastName = dr.LastName
-            .MI = dr.MI
-            .DOB = dr.DOB
+                .FirstName = dr.FirstName
+                .LastName = dr.LastName
+                .MI = dr.MI
+                .DOB = dr.DOB
 
-            .IssueDate = dr.IssueDate
-            .ExpirationDate = dr.ExpirationDate
+                .IssueDate = dr.IssueDate
+                .ExpirationDate = dr.ExpirationDate
 
-            .PayGrade = dr.PayGrade
-            .Rank = dr.Rank
-            .Sex = dr.Sex(0)
+                .PayGrade = dr.PayGrade
+                .Rank = dr.Rank
+                .Sex = dr.Sex(0)
 
-            .BloodType = dr.BloodType
-            .Eyes = dr.Eyes
-            .Hair = dr.Hair
-            .Height = dr.Height
-            .Weight = dr.Weight
+                .BloodType = dr.BloodType
+                .Eyes = dr.Eyes
+                .Hair = dr.Hair
+                .Height = dr.Height
+                .Weight = dr.Weight
 
-            .SSN = dr.SSN
-            .IdNumber = dr.IDNumber
-            .DLData = dr.DLData
-            .SerialNumber = dr.SerialNumber
+                .SSN = dr.SSN
+                .IdNumber = dr.IDNumber
+                .DLData = dr.DLData
+                .SerialNumber = dr.SerialNumber
+            Catch ex As Exception
+                MessageBox.Show(ex.Message)
+            End Try
         End With
         Return card_data
     End Function

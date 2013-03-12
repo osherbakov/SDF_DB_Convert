@@ -21,12 +21,13 @@ Public Class ConvertDialogForm
 
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
+        Dim nextTab As Integer = 0 ' The next tab to switch toafter the load
         Me.InitLists()
 
+        ' Define special formatters for Names and Dates 
         AddHandler LastName_Enc.DataBindings(0).Format, AddressOf ConvertToUpper
         AddHandler FirstName_Enc.DataBindings(0).Format, AddressOf ConvertToUpper
         AddHandler MI_Enc.DataBindings(0).Format, AddressOf ConvertToUpper
-
         AddHandler ExpirationDate_Enc.DataBindings(0).Format, AddressOf ConvertToMILDate
         AddHandler AAMVAMAGTextBox_Enc.DataBindings(0).Format, AddressOf ConvertToMAG
 
@@ -46,6 +47,7 @@ Public Class ConvertDialogForm
             Try
                 If IO.Path.GetExtension(FileName).ToUpper = ".MDB" Then
                     cb.Provider = "Microsoft.Jet.OLEDB.4.0"
+                    extProp = ""
                 ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLS" Then ' Excel 97-03 files
                     cb.Provider = "Microsoft.Jet.OLEDB.4.0"
                     extProp = "Excel 8.0;HDR=Yes;IMEX=1"
@@ -57,10 +59,22 @@ Public Class ConvertDialogForm
                 cb.Add("Extended Properties", extProp)
                 Using conn As OleDbConnection = New OleDbConnection(cb.ToString())
                     conn.Open()
+
                     Dim dtSchema As DataTable = conn.GetOleDbSchemaTable(OleDb.OleDbSchemaGuid.Tables, Nothing)
                     For Each dr As DataRow In dtSchema.Rows
                         Dim TblName As String = dr("TABLE_NAME").ToString
-                        If Not TblName.ToUpper.Contains("MSYS") Then
+
+                        ' Check if the Table in ID_CARDS format
+                        If TblName = "ID_CARDS" Then
+                            ID_CARDSTableAdapter.Connection = conn
+                            ID_CARDSTableAdapter.Fill(ID_CARDS_DataSet.ID_CARDS)
+                            nextTab = 1
+                            Button_CreateDB.Enabled = False
+                            Exit For
+                        ElseIf Not TblName.ToUpper.Contains("MSYS") And _
+                                Not TblName.ToUpper.Contains("PRINT_") Then
+                            ' Try to load the table
+
                             Dim od_data_set As New DataSet()
                             Dim cmd As New OleDbCommand()
                             cmd.CommandText = "SELECT * FROM [" + TblName + "]"
@@ -78,7 +92,7 @@ Public Class ConvertDialogForm
             End Try
             Me.CheckInputRecords()
         End If
-        TabControl_ID.SelectTab(0)
+        TabControl_ID.SelectTab(nextTab)
     End Sub
 
 
