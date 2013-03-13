@@ -58,37 +58,61 @@ Partial Public Class ConvertDialogForm
 
     End Sub
 
-    Private Sub ImportRecords(ByVal ds As DataSet)
-        ' Here is the list of the columns that are essential
-        ' SSN  DOB H_ADDR H_CITY RANK ( LAST_NAME or NAME_IND)
-        Dim reqColumns() As String = {"SSN", "DOB", "H_CITY", "H_ZIP"}
-        For Each colname As String In reqColumns
-            If Not ds.Tables(0).Columns.Contains(colname) Then
-                Exit Sub
-            End If
+    '
+    Private Structure colMap
+        Dim srcIdx As Integer
+        Dim dstIdx As Integer
+        Dim doConvert As Boolean
+        Sub New(ByVal s As Integer, ByVal d As Integer, ByVal c As Boolean)
+            srcIdx = s
+            dstIdx = d
+            doConvert = c
+        End Sub
+    End Structure
+
+
+
+    Private Sub ImportRecords(ByVal srcData As DataSet, ByVal dstData As DataSet)
+
+        Dim dbMapping As New List(Of colMap)
+
+        Dim srcColumns As DataColumnCollection = srcData.Tables(0).Columns
+        Dim dstColumns As DataColumnCollection = dstData.Tables(0).Columns
+        '
+        ' Create the column mapping  src -> dst
+        For src = 0 To srcColumns.Count - 1
+            For dst = 0 To dstColumns.Count - 1
+                If srcColumns(src).ColumnName.ToUpper() = dstColumns(dst).ColumnName.ToUpper Then
+                    Dim conv As Boolean = srcColumns(src).GetType Is GetType(String) And _
+                                            dstColumns(dst).GetType IsNot GetType(String)
+                    dbMapping.Add(New colMap(src, dst, conv))
+                    Exit For
+                End If
+            Next
         Next
 
-        If ds.Tables(0).Columns.Contains("LAST_NAME") Or ds.Tables(0).Columns.Contains("NAME_IND") Then
-            '
-            ' Passed the test - start importing data into the CSMR_ID_DataSet.CSMR_ID
-            '
-            For Each dt As DataRow In ds.Tables(0).Rows
-                Dim new_rec As CSMR_ID_DataSet.CSMR_IDRow = CSMR_ID_DataSet.CSMR_ID.NewRow()
-                For Each column As DataColumn In ds.Tables(0).Columns
-                    'Special case - SSN may be a string or double
-                    If column.ColumnName.ToUpper() = "SSN" Then
-                        If column.DataType Is GetType(String) AndAlso Not dt.IsNull(column.ColumnName) Then
-                            new_rec(column.ColumnName) = Support.ExtractNumber(dt(column.ColumnName))
-                        Else
-                            new_rec(column.ColumnName) = dt(column.ColumnName)
-                        End If
-                    ElseIf CSMR_ID_DataSet.CSMR_ID.Columns.Contains(column.ColumnName) Then
-                        new_rec(column.ColumnName) = dt(column.ColumnName)
-                    End If
-                Next
-                CSMR_ID_DataSet.CSMR_ID.AddCSMR_IDRow(new_rec)
-            Next
+        ' More than half of the fields should match
+        If dbMapping.Count < dstColumns.Count / 2 Then
+            Exit Sub
         End If
+        ProgressBar1.Minimum = 0
+        ProgressBar1.Value = 0
+        ProgressBar1.Maximum = srcData.Tables(0).Rows.Count
+
+        dstData.Tables(0).BeginLoadData()   ' Stop indexing
+        For Each dt As DataRow In srcData.Tables(0).Rows
+            Dim dstRec As DataRow = dstData.Tables(0).NewRow()
+            For Each map As colMap In dbMapping
+                If map.doConvert AndAlso Not dt.IsNull(map.srcIdx) Then
+                    dstRec(map.dstIdx) = Support.ExtractNumber(dt(map.srcIdx))
+                Else
+                    dstRec(map.dstIdx) = dt(map.srcIdx)
+                End If
+            Next
+            dstData.Tables(0).Rows.Add(dstRec)
+            ProgressBar1.PerformStep()
+        Next
+        dstData.Tables(0).EndLoadData()     ' Resume indexing
     End Sub
 
     Private Sub CheckInputRecords()
@@ -96,14 +120,20 @@ Partial Public Class ConvertDialogForm
         Dim ti As System.Globalization.TextInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo
 
         ' Do some data checking and formatting
-        Dim EmptyRecords As New List(Of CSMR_ID_DataSet.CSMR_IDRow)
+        Dim EmptyRecords_CSMR_ID As New List(Of CSMR_ID_DataSet.CSMR_IDRow)
 
+        ProgressBar1.Minimum = 0
+        ProgressBar1.Value = 0
+        ProgressBar1.Maximum = CSMR_ID_DataSet.CSMR_ID.Rows.Count
+
+        ' Freeze index updating
+        CSMR_ID_DataSet.CSMR_ID.BeginLoadData()
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
             '
             ' TODO: To check for the empty records
             '
             If dr.IsDOBNull OrElse dr.IsH_ADDRNull OrElse dr.SSN = 0 Then
-                EmptyRecords.Add(dr)
+                EmptyRecords_CSMR_ID.Add(dr)
                 Continue For
             End If
 
@@ -187,13 +217,58 @@ Partial Public Class ConvertDialogForm
             If dr.IsHEIGHTNull Then
                 dr.HEIGHT = String.Empty
             End If
+            ProgressBar1.PerformStep()
         Next
 
         ' Remove empty records from the dataset
-        For Each dr As CSMR_ID_DataSet.CSMR_IDRow In EmptyRecords
+        For Each dr As CSMR_ID_DataSet.CSMR_IDRow In EmptyRecords_CSMR_ID
             CSMR_ID_DataSet.CSMR_ID.RemoveCSMR_IDRow(dr)
         Next
+        CSMR_ID_DataSet.CSMR_ID.EndLoadData()
 
+        '
+        ' Do the same for the ID_CARDS records
+        '
+        ProgressBar1.Minimum = 0
+        ProgressBar1.Value = 0
+        ProgressBar1.Maximum = ID_CARDS_DataSet.ID_CARDS.Rows.Count
+        ID_CARDS_DataSet.ID_CARDS.BeginLoadData()   ' Freeze index updates
+
+        Dim EmptyRecords_ID_CARDS As New List(Of ID_CARDS_DataSet.ID_CARDSRow)
+        For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
+            ' Weed out empty records
+            If dr.IsLastNameNull OrElse String.IsNullOrEmpty(dr.LastName) OrElse _
+                dr.IsFirstNameNull OrElse String.IsNullOrEmpty(dr.FirstName) OrElse _
+                        dr.IsRankNull OrElse String.IsNullOrEmpty(dr.Rank) Then
+                EmptyRecords_ID_CARDS.Add(dr)
+                Continue For
+            End If
+
+            If (dr.IsAddressNull OrElse String.IsNullOrEmpty(dr.Address) _
+                        OrElse Not dr.Address.Contains(VB.vbCrLf)) AndAlso _
+                        Not dr.IsH_AddressNull AndAlso Not String.IsNullOrEmpty(dr.H_Address) AndAlso _
+                            Not dr.IsH_CityNull AndAlso Not String.IsNullOrEmpty(dr.H_City) AndAlso _
+                                Not dr.IsH_ZIPNull AndAlso Not String.IsNullOrEmpty(dr.H_ZIP) Then
+                dr.Address = ti.ToTitleCase(dr.H_Address.Replace(".", "").Replace(",", "")) + _
+                VB.vbCrLf + ti.ToTitleCase(dr.H_City) + ", CA " + dr.H_ZIP
+            End If
+            If Not dr.IsPayGradeNull AndAlso Not String.IsNullOrEmpty(dr.PayGrade) AndAlso _
+                dr.PayGrade.Length < 3 Then
+                dr.PayGrade = dr.PayGrade(0) + " " + dr.PayGrade(1) + " "
+            End If
+            ProgressBar1.PerformStep()
+        Next
+        ProgressBar1.Minimum = 0
+        ProgressBar1.Value = 0
+        ProgressBar1.Maximum = EmptyRecords_ID_CARDS.Count
+
+        ' Remove empty records from the dataset
+        For Each dr As ID_CARDS_DataSet.ID_CARDSRow In EmptyRecords_ID_CARDS
+            dr.Delete()
+            Application.DoEvents()
+            ProgressBar1.PerformStep()
+        Next
+        ID_CARDS_DataSet.ID_CARDS.EndLoadData()
     End Sub
 
     Private Function ValidateRecord(ByVal dr As ID_CARDS_DataSet.ID_CARDSRow) As Boolean

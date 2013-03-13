@@ -21,7 +21,6 @@ Public Class ConvertDialogForm
 
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
-        Dim nextTab As Integer = 0 ' The next tab to switch toafter the load
         Me.InitLists()
 
         ' Define special formatters for Names and Dates 
@@ -31,70 +30,6 @@ Public Class ConvertDialogForm
         AddHandler ExpirationDate_Enc.DataBindings(0).Format, AddressOf ConvertToMILDate
         AddHandler AAMVAMAGTextBox_Enc.DataBindings(0).Format, AddressOf ConvertToMAG
 
-        '
-        ' On start present the FileOpen dialog and get the Database File
-        '
-        CSMR_ID_OpenFileDialog.Filter = "Access DB Files|*.mdb|Excel 97-03 Files|*.xls|Excel 2007 Files|*.xlsx"
-        If CSMR_ID_OpenFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK AndAlso _
-            Not String.IsNullOrEmpty(CSMR_ID_OpenFileDialog.FileName()) AndAlso _
-                IO.File.Exists(CSMR_ID_OpenFileDialog.FileName()) Then
-
-            ' Open the database and fill the data
-            Dim FileName As String = CSMR_ID_OpenFileDialog.FileName()
-            Dim extProp As String = ""
-            Dim cb As OleDb.OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
-            cb.DataSource = FileName
-            Try
-                If IO.Path.GetExtension(FileName).ToUpper = ".MDB" Then
-                    cb.Provider = "Microsoft.Jet.OLEDB.4.0"
-                    extProp = ""
-                ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLS" Then ' Excel 97-03 files
-                    cb.Provider = "Microsoft.Jet.OLEDB.4.0"
-                    extProp = "Excel 8.0;HDR=Yes;IMEX=1"
-                ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLSX" Then ' Excel 2007 files
-                    cb.Provider = "Microsoft.ACE.OLEDB.12.0"
-                    extProp = "Excel 12.0;HDR=Yes;IMEX=1"
-                End If
-
-                cb.Add("Extended Properties", extProp)
-                Using conn As OleDbConnection = New OleDbConnection(cb.ToString())
-                    conn.Open()
-                    Dim dtSchema As DataTable = conn.GetOleDbSchemaTable(OleDb.OleDbSchemaGuid.Tables, Nothing)
-                    For Each dr As DataRow In dtSchema.Rows
-                        Dim TblName As String = dr("TABLE_NAME").ToString
-
-                        ' Check if the Table in ID_CARDS format
-                        If TblName.ToUpper() = "ID_CARDS" Then
-                            Dim cmd As New OleDbCommand()
-                            cmd.CommandText = "SELECT * FROM [" + TblName + "]"
-                            cmd.Connection = conn
-
-                            ID_CARDSTableAdapter.Connection = conn
-                            ID_CARDSTableAdapter.Fill(ID_CARDS_DataSet.ID_CARDS)
-                            nextTab = 1
-                            Button_CreateDB.Enabled = False
-                            Exit For
-                        ElseIf Not TblName.ToUpper.Contains("MSYS") And _
-                                Not TblName.ToUpper.Contains("PRINT_") Then
-                            ' Try to load the table
-                            Dim od_data_set As New DataSet()
-                            Dim cmd As New OleDbCommand()
-                            cmd.CommandText = "SELECT * FROM [" + TblName + "]"
-                            cmd.Connection = conn
-                            Dim oda As New OleDbDataAdapter(cmd)
-                            oda.Fill(od_data_set)
-                            ImportRecords(od_data_set)
-                        End If
-                    Next
-                    conn.Close()
-                End Using
-
-            Catch ex As Exception
-                MessageBox.Show(ex.Message)
-            End Try
-            Me.CheckInputRecords()
-        End If
-        TabControl_ID.SelectTab(nextTab)
     End Sub
 
 
@@ -108,8 +43,10 @@ Public Class ConvertDialogForm
         End If
 
         ProgressBar1.Minimum = 0
+        ProgressBar1.Value = 0
         ProgressBar1.Maximum = CSMR_ID_DataSet.CSMR_ID.Count()
 
+        ID_CARDS_DataSet.ID_CARDS.BeginLoadData()
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
             '           id_card = New IDCardData()
             id_row = ID_CARDS_DataSet.ID_CARDS.NewID_CARDSRow()
@@ -160,6 +97,7 @@ Public Class ConvertDialogForm
             ID_CARDS_DataSet.ID_CARDS.AddID_CARDSRow(id_row)
             ProgressBar1.PerformStep()
         Next
+        ID_CARDS_DataSet.ID_CARDS.EndLoadData()
         TabControl_ID.SelectTab(1)
     End Sub
 
@@ -187,6 +125,8 @@ Public Class ConvertDialogForm
                 Dim card_data As IDCardData = GetIDCardData(dr)
                 With dr
                     ' Update all MAG and PDF field
+                    .IssueDate = Date.Today()
+                    .ExpirationDate = .IssueDate.AddYears(3)
                     .AAMVAMAG = Support.EncodeAAMVAMagData(card_data)
                     .AAMVAPDF = FullSupport.EncodeAAMVAPDF417Data(card_data)
                     .CACPDF = Support.EncodeCACPDF417Data(card_data)
@@ -249,4 +189,94 @@ Public Class ConvertDialogForm
         End If
     End Sub
 
+    Private Sub ConvertDialogForm_Shown(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Shown
+        Dim nextTab As Integer = 0 ' The next tab to switch to after the load
+        TabControl_ID.SelectTab(nextTab)
+
+        '
+        ' On start present the FileOpen dialog and get the Database File
+        '
+        CSMR_ID_OpenFileDialog.Filter = "Access DB Files|*.mdb|Excel 97-03 Files|*.xls|Excel 2007 Files|*.xlsx"
+        If CSMR_ID_OpenFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK AndAlso _
+            Not String.IsNullOrEmpty(CSMR_ID_OpenFileDialog.FileName()) AndAlso _
+                IO.File.Exists(CSMR_ID_OpenFileDialog.FileName()) Then
+
+            ' Open the database and fill the data
+            Dim FileName As String = CSMR_ID_OpenFileDialog.FileName()
+            Dim extProp As String = ""
+            Dim cb As OleDb.OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
+            cb.DataSource = FileName
+            Try
+                If IO.Path.GetExtension(FileName).ToUpper = ".MDB" Then
+                    cb.Provider = "Microsoft.Jet.OLEDB.4.0"
+                    extProp = ""
+                ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLS" Then ' Excel 97-03 files
+                    cb.Provider = "Microsoft.Jet.OLEDB.4.0"
+                    extProp = "Excel 8.0;HDR=Yes;IMEX=1"
+                ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLSX" Then ' Excel 2007 files
+                    cb.Provider = "Microsoft.ACE.OLEDB.12.0"
+                    extProp = "Excel 12.0;HDR=Yes;IMEX=1"
+                End If
+
+                cb.Add("Extended Properties", extProp)
+                Using conn As OleDbConnection = New OleDbConnection(cb.ToString())
+                    conn.Open()
+                    Dim dtSchema As DataTable = conn.GetOleDbSchemaTable(OleDb.OleDbSchemaGuid.Tables, Nothing)
+                    For Each dr As DataRow In dtSchema.Rows
+                        Dim TblName As String = dr("TABLE_NAME").ToString
+
+                        ' Check if the Table in ID_CARDS format
+                        If TblName.ToUpper() = "ID_CARDS" Then
+                            Dim cmd As New OleDbCommand()
+                            Dim od_data_set As New DataSet()
+                            cmd.CommandText = "SELECT * FROM [" + TblName + "]"
+                            cmd.Connection = conn
+
+                            Dim oda As New OleDbDataAdapter(cmd)
+                            oda.Fill(od_data_set)
+                            ImportRecords(od_data_set, ID_CARDS_DataSet)
+                            nextTab = 1
+                            Button_CreateDB.Enabled = False
+                            Exit For
+                        ElseIf Not TblName.ToUpper.Contains("MSYS") And _
+                                Not TblName.ToUpper.Contains("PRINT_") Then
+                            ' Try to load the table
+                            Dim cmd As New OleDbCommand()
+                            Dim od_data_set As New DataSet()
+                            cmd.CommandText = "SELECT * FROM [" + TblName + "]"
+                            cmd.Connection = conn
+
+                            Dim oda As New OleDbDataAdapter(cmd)
+                            oda.Fill(od_data_set)
+                            ImportRecords(od_data_set, CSMR_ID_DataSet)
+                        End If
+                    Next
+                    conn.Close()
+                End Using
+
+            Catch ex As Exception
+                MessageBox.Show(ex.Message)
+            End Try
+            Me.CheckInputRecords()
+        End If
+        TabControl_ID.SelectTab(nextTab)
+    End Sub
+
+    Private Sub Button_ID_Photo_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button_ID_Photo.Click
+        If OpenFileDialog_Photo.ShowDialog() = Windows.Forms.DialogResult.OK AndAlso _
+           Not String.IsNullOrEmpty(OpenFileDialog_Photo.FileName) AndAlso _
+            IO.File.Exists(OpenFileDialog_Photo.FileName) Then
+
+            Dim FileName As String = OpenFileDialog_Photo.FileName
+            Dim fi As IO.FileInfo = New IO.FileInfo(FileName)
+            Dim stream As New IO.FileStream(FileName, IO.FileMode.Open)
+            Dim photo(fi.Length) As Byte
+            stream.Read(photo, 0, fi.Length())
+            ID_CARDS_DataSet.ID_CARDS(ID_CARDSBindingSource.Position).Photo = photo
+            stream.Close()
+            stream = Nothing
+            fi = Nothing
+            photo = Nothing
+        End If
+    End Sub
 End Class

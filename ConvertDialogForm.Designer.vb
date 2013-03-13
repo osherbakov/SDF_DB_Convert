@@ -198,6 +198,8 @@ Partial Class ConvertDialogForm
         Me.BackgroundWorkerThread = New System.ComponentModel.BackgroundWorker
         Me.MSR206_Enc = New MSR206(Me.components)
         Me.HHP4600_Scan = New HHPScanner(Me.components)
+        Me.OpenFileDialog_Photo = New System.Windows.Forms.OpenFileDialog
+        Me.Button_ID_Photo = New System.Windows.Forms.Button
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -1002,6 +1004,7 @@ Partial Class ConvertDialogForm
         'TabPage_ID_CARDS
         '
         Me.TabPage_ID_CARDS.AutoScroll = True
+        Me.TabPage_ID_CARDS.Controls.Add(Me.Button_ID_Photo)
         Me.TabPage_ID_CARDS.Controls.Add(RankLabel1)
         Me.TabPage_ID_CARDS.Controls.Add(Me.RankComboBox_ID)
         Me.TabPage_ID_CARDS.Controls.Add(DLDataLabel)
@@ -1897,6 +1900,7 @@ Partial Class ConvertDialogForm
         Me.CSMR_ID_OpenFileDialog.FileName = "CSMR_ID.mdb"
         Me.CSMR_ID_OpenFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
         Me.CSMR_ID_OpenFileDialog.InitialDirectory = "."
+        Me.CSMR_ID_OpenFileDialog.Title = "Select file that contains ID Database"
         '
         'Form_error
         '
@@ -1908,10 +1912,28 @@ Partial Class ConvertDialogForm
         Me.ID_CARDS_SaveFileDialog.FileName = "ID_CARDS.mdb"
         Me.ID_CARDS_SaveFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
         Me.ID_CARDS_SaveFileDialog.InitialDirectory = "."
+        Me.ID_CARDS_SaveFileDialog.Title = "Select a file to save Database into"
         '
         'BackgroundWorkerThread
         '
         Me.BackgroundWorkerThread.WorkerSupportsCancellation = True
+        '
+        'OpenFileDialog_Photo
+        '
+        Me.OpenFileDialog_Photo.DefaultExt = "jpg"
+        Me.OpenFileDialog_Photo.FileName = "OpenFileDialog_Photo"
+        Me.OpenFileDialog_Photo.Filter = "Image Files|*.jpg|All Files|*.*"
+        Me.OpenFileDialog_Photo.InitialDirectory = "."
+        Me.OpenFileDialog_Photo.Title = "Select a Photo image"
+        '
+        'Button_ID_Photo
+        '
+        Me.Button_ID_Photo.Location = New System.Drawing.Point(54, 301)
+        Me.Button_ID_Photo.Name = "Button_ID_Photo"
+        Me.Button_ID_Photo.Size = New System.Drawing.Size(75, 23)
+        Me.Button_ID_Photo.TabIndex = 48
+        Me.Button_ID_Photo.Text = "Get photo"
+        Me.Button_ID_Photo.UseVisualStyleBackColor = True
         '
         'ConvertDialogForm
         '
@@ -2077,5 +2099,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents DataSourceLabel As System.Windows.Forms.Label
     Friend WithEvents MagReader_Status As System.Windows.Forms.Label
     Friend WithEvents Barcode_Status As System.Windows.Forms.Label
+    Friend WithEvents OpenFileDialog_Photo As System.Windows.Forms.OpenFileDialog
+    Friend WithEvents Button_ID_Photo As System.Windows.Forms.Button
 
 End Class
