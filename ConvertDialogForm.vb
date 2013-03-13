@@ -59,13 +59,16 @@ Public Class ConvertDialogForm
                 cb.Add("Extended Properties", extProp)
                 Using conn As OleDbConnection = New OleDbConnection(cb.ToString())
                     conn.Open()
-
                     Dim dtSchema As DataTable = conn.GetOleDbSchemaTable(OleDb.OleDbSchemaGuid.Tables, Nothing)
                     For Each dr As DataRow In dtSchema.Rows
                         Dim TblName As String = dr("TABLE_NAME").ToString
 
                         ' Check if the Table in ID_CARDS format
-                        If TblName = "ID_CARDS" Then
+                        If TblName.ToUpper() = "ID_CARDS" Then
+                            Dim cmd As New OleDbCommand()
+                            cmd.CommandText = "SELECT * FROM [" + TblName + "]"
+                            cmd.Connection = conn
+
                             ID_CARDSTableAdapter.Connection = conn
                             ID_CARDSTableAdapter.Fill(ID_CARDS_DataSet.ID_CARDS)
                             nextTab = 1
@@ -74,7 +77,6 @@ Public Class ConvertDialogForm
                         ElseIf Not TblName.ToUpper.Contains("MSYS") And _
                                 Not TblName.ToUpper.Contains("PRINT_") Then
                             ' Try to load the table
-
                             Dim od_data_set As New DataSet()
                             Dim cmd As New OleDbCommand()
                             cmd.CommandText = "SELECT * FROM [" + TblName + "]"
@@ -240,4 +242,11 @@ Public Class ConvertDialogForm
         If HHP4600_Scan.IsScannerDetected Then HHP4600_Scan.CMD_Reset()
         HHP4600_Scan.Close()
     End Sub
+
+    Private Sub TabPage_ID_CARDS_Validating(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles TabPage_ID_CARDS.Validating
+        If Button_CreateDB.Enabled AndAlso Not ValidateRecord(ID_CARDS_DataSet.ID_CARDS(ID_CARDSBindingSource.Position)) Then
+            e.Cancel = True
+        End If
+    End Sub
+
 End Class

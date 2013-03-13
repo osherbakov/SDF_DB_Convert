@@ -20,6 +20,7 @@ Partial Public Class ConvertDialogForm
     Private Shared HairColors() As String = {"BAL", "BLK", "BLN", "BRO", "BRN", "GRY", "RED", "SDY", "WHI", "UNK"}
     Private Shared BloodTypes() As String = {"AB NEG", "AB POS", "A NEG", "A POS", "B NEG", "B POS", "O NEG", "O POS", "UNK"}
     Private Shared Ranks() As String
+    Private Shared RanksAll() As String
     Private Shared PayGrades() As String
 
     ' Regex to extract the First, Last names from the comma-separated list
@@ -30,16 +31,23 @@ Partial Public Class ConvertDialogForm
         ' Populate the Ranks list to be used in comboBoxes
         Dim r As New List(Of String)
         Dim p As New List(Of String)
+        Dim a As New List(Of String)
+
         For Each rankgrade As String In RankToGrade
             r.Add(rankgrade.Substring(0, 6))
-            r.Add(rankgrade.Substring(0, 3))
-            r.Add(rankgrade.Substring(0, 4))
-            r.Add(rankgrade.Substring(0, 5))
-            ' Add bothe versions of Paygrade - 4 and 3 letters
-            p.Add(rankgrade.Substring(6))
+
+            a.Add(rankgrade.Substring(0, 6))
+            a.Add(rankgrade.Substring(0, 5))
+            a.Add(rankgrade.Substring(0, 4))
+            a.Add(rankgrade.Substring(0, 3))
+            ' Add both versions of Paygrade - 4 and 3 letters
+            p.Add(rankgrade.Substring(6, 4))
+            p.Add(rankgrade.Substring(6, 4))
+            p.Add(rankgrade.Substring(6, 4))
             p.Add(rankgrade.Substring(6, 3))
         Next
         Ranks = r.ToArray()
+        RanksAll = a.ToArray()
         PayGrades = p.ToArray()
 
         RANKComboBox.DataSource = Ranks
@@ -94,7 +102,7 @@ Partial Public Class ConvertDialogForm
             '
             ' TODO: To check for the empty records
             '
-            If dr.IsDOBNull OrElse dr.IsH_ADDRNull Then
+            If dr.IsDOBNull OrElse dr.IsH_ADDRNull OrElse dr.SSN = 0 Then
                 EmptyRecords.Add(dr)
                 Continue For
             End If
@@ -188,93 +196,97 @@ Partial Public Class ConvertDialogForm
 
     End Sub
 
-    Private Function CheckOutputRecords() As Boolean
-        Dim ret As Boolean = False
-        Dim curr_rec As ID_CARDS_DataSet.ID_CARDSRow = Nothing
-        Dim curr_idx As Integer
-        Dim dr As ID_CARDS_DataSet.ID_CARDSRow
+    Private Function ValidateRecord(ByVal dr As ID_CARDS_DataSet.ID_CARDSRow) As Boolean
+        Dim IsValid As Boolean = True
 
         ' Clear all errors first
-
         For Each c As Control In TabPage_ID_CARDS.Controls()
             Form_error.SetError(c, "")
         Next
 
+        If dr.IsBloodTypeNull OrElse String.IsNullOrEmpty(dr.BloodType) OrElse Not BloodTypes.Contains(dr.BloodType) Then
+            Form_error.SetError(BloodTypeComboBox, "Incorrect BloodType")
+            IsValid = False
+        End If
+        If dr.IsEyesNull OrElse String.IsNullOrEmpty(dr.Eyes) OrElse Not EyesColors.Contains(dr.Eyes) Then
+            Form_error.SetError(EyesComboBox, "Incorrect Eyes Color")
+            IsValid = False
+        End If
+        If dr.IsHairNull OrElse String.IsNullOrEmpty(dr.Hair) OrElse Not HairColors.Contains(dr.Hair) Then
+            Form_error.SetError(HairComboBox, "Incorrect Hair Color")
+            IsValid = False
+        End If
+
+        If dr.IsRankNull OrElse String.IsNullOrEmpty(dr.Rank) OrElse Not RanksAll.Contains(dr.Rank) Then
+            Form_error.SetError(RankComboBox_ID, "Incorrect Rank")
+            IsValid = False
+        End If
+
+        If dr.IsPayGradeNull OrElse String.IsNullOrEmpty(dr.PayGrade) OrElse Not PayGrades.Contains(dr.PayGrade) Then
+            Form_error.SetError(PayGradeTextBox, "Incorrect Paygrade")
+            IsValid = False
+        End If
+
+        If dr.IsFirstNameNull OrElse String.IsNullOrEmpty(dr.FirstName) Then
+            Form_error.SetError(FirstNameTextBox, "First Name missing")
+            IsValid = False
+        End If
+
+        If dr.IsLastNameNull OrElse String.IsNullOrEmpty(dr.LastName) Then
+            Form_error.SetError(LastNameTextBox, "Last Name missing")
+            IsValid = False
+        End If
+
+        If dr.IsSSNNull OrElse String.IsNullOrEmpty(dr.SSN) OrElse dr.SSN.Length <> 11 Then
+            Form_error.SetError(SSNTextBox1, "Invalid SSN")
+            IsValid = False
+        End If
+
+        Dim height As Integer
+        If dr.IsHeightNull OrElse String.IsNullOrEmpty(dr.Height) OrElse _
+              Not Integer.TryParse(dr.Height, height) OrElse height > 90 OrElse height < 48 Then
+            Form_error.SetError(HeightTextBox, "Incorrect Height (48-90)")
+            IsValid = False
+        End If
+
+        Dim weight As Integer
+        If dr.IsWeightNull OrElse String.IsNullOrEmpty(dr.Weight) OrElse _
+              Not Integer.TryParse(dr.Weight, weight) OrElse weight > 400 OrElse weight < 50 Then
+            Form_error.SetError(WeightTextBox, "Incorrect Weight (50-400)")
+            IsValid = False
+        End If
+
+        If dr.IsAddressNull OrElse String.IsNullOrEmpty(dr.Address) Then
+            Form_error.SetError(AddressTextBox, "Incorrect Address")
+            IsValid = False
+        End If
+
+        If dr.IsDOBNull OrElse dr.DOB > Date.Today().AddYears(-15) OrElse dr.DOB < Date.Today.AddYears(-80) Then
+            Form_error.SetError(DOBDateTimePicker1, "Incorrect DOB")
+            IsValid = False
+        End If
+
+        If dr.IsSexNull OrElse String.IsNullOrEmpty(dr.Sex) OrElse Not (dr.Sex = "M" Or dr.Sex = "F") Then
+            Form_error.SetError(SexTextBox, "Invalid Gender (M or F)")
+            IsValid = False
+        End If
+        Return IsValid
+    End Function
+
+    Private Function CheckOutputRecords() As Boolean
+        Dim curr_rec As ID_CARDS_DataSet.ID_CARDSRow = Nothing
+        Dim curr_idx As Integer
+        Dim dr As ID_CARDS_DataSet.ID_CARDSRow
+
+        ' Loop thru all records and do verification
         For curr_idx = 0 To ID_CARDS_DataSet.ID_CARDS.Count() - 1
             dr = ID_CARDS_DataSet.ID_CARDS(curr_idx)
-
-            If dr.IsBloodTypeNull OrElse String.IsNullOrEmpty(dr.BloodType) OrElse Not BloodTypes.Contains(dr.BloodType) Then
-                Form_error.SetError(BloodTypeComboBox, "Incorrect BloodType")
-                curr_rec = dr
-            End If
-            If dr.IsEyesNull OrElse String.IsNullOrEmpty(dr.Eyes) OrElse Not EyesColors.Contains(dr.Eyes) Then
-                Form_error.SetError(EyesComboBox, "Incorrect Eyes Color")
-                curr_rec = dr
-            End If
-            If dr.IsHairNull OrElse String.IsNullOrEmpty(dr.Hair) OrElse Not HairColors.Contains(dr.Hair) Then
-                Form_error.SetError(HairComboBox, "Incorrect Hair Color")
-                curr_rec = dr
-            End If
-
-            If dr.IsRankNull OrElse String.IsNullOrEmpty(dr.Rank) OrElse Not Ranks.Contains(dr.Rank) Then
-                Form_error.SetError(RankComboBox_ID, "Incorrect Rank")
-                curr_rec = dr
-            End If
-
-            If dr.IsPayGradeNull OrElse String.IsNullOrEmpty(dr.PayGrade) OrElse Not PayGrades.Contains(dr.PayGrade) Then
-                Form_error.SetError(PayGradeTextBox, "Incorrect Paygrade")
-                curr_rec = dr
-            End If
-
-            If dr.IsFirstNameNull OrElse String.IsNullOrEmpty(dr.FirstName) Then
-                Form_error.SetError(FirstNameTextBox, "First Name missing")
-                curr_rec = dr
-            End If
-
-            If dr.IsLastNameNull OrElse String.IsNullOrEmpty(dr.LastName) Then
-                Form_error.SetError(LastNameTextBox, "Last Name missing")
-                curr_rec = dr
-            End If
-
-            If dr.IsSSNNull OrElse String.IsNullOrEmpty(dr.SSN) OrElse dr.SSN.Length <> 11 Then
-                Form_error.SetError(SSNTextBox1, "Valid SSN is not provided")
-                curr_rec = dr
-            End If
-
-            If dr.IsHeightNull OrElse String.IsNullOrEmpty(dr.Height) OrElse _
-                  System.Convert.ToInt32(dr.Height) > 90 Then
-                Form_error.SetError(HeightTextBox, "Incorrect Height (48-90)")
-                curr_rec = dr
-            End If
-
-            If dr.IsWeightNull OrElse String.IsNullOrEmpty(dr.Weight) OrElse _
-                  System.Convert.ToInt32(dr.Weight) > 300 Then
-                Form_error.SetError(WeightTextBox, "Incorrect Weight (50-300)")
-                curr_rec = dr
-            End If
-
-            If dr.IsAddressNull OrElse String.IsNullOrEmpty(dr.Address) Then
-                Form_error.SetError(AddressTextBox, "Incorrect Address")
-                curr_rec = dr
-            End If
-
-            If dr.IsDOBNull OrElse dr.DOB > Date.Today().AddYears(-15) OrElse dr.DOB < Date.Today.AddYears(-80) Then
-                Form_error.SetError(DOBDateTimePicker1, "Incorrect DOB")
-                curr_rec = dr
-            End If
-
-            If dr.IsSexNull OrElse String.IsNullOrEmpty(dr.Sex) OrElse Not (dr.Sex = "M" Or dr.Sex = "F") Then
-                Form_error.SetError(SexTextBox, "Invalid value (M or F)")
-                curr_rec = dr
-            End If
-
-            If curr_rec IsNot Nothing Then
+            If Not ValidateRecord(dr) Then
                 ID_CARDSBindingSource.Position = curr_idx
                 ID_CARDSBindingSource.ResetItem(curr_idx)
                 Return False
             End If
         Next
-
         Return True
     End Function
 

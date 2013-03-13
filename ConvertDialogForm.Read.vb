@@ -76,19 +76,19 @@ Partial Public Class ConvertDialogForm
     End Sub
 
     Private Sub UpdateDataSourceMag()
-        DataSourceLabel.Text = "Data scanned from AAMVA MagReader..."
+        DataSourceLabel.Text = "Data scanned from State AAMVA Reader..."
     End Sub
 
     Private Sub UpdateDataSourceError()
-        DataSourceLabel.Text = "Error: Cannot recognize Data format..."
+        DataSourceLabel.Text = "Error: Invalid ID Data format..."
     End Sub
 
     Private Sub UpdateDataSourceCAC()
-        DataSourceLabel.Text = "Data scanned from Federal ID barcode..."
+        DataSourceLabel.Text = "Data scanned from Federal ID Barcode..."
     End Sub
 
     Private Sub UpdateDataSourceAAMVA()
-        DataSourceLabel.Text = "Data scanned from State AAMVA barcode..."
+        DataSourceLabel.Text = "Data scanned from State AAMVA Barcode..."
     End Sub
 
     ' This is the event handler for the Scanner received data event
