@@ -164,6 +164,10 @@ Public Class ConvertDialogForm
     Private Sub Button_CreateDB_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button_CreateDB.Click
 
         Me.Validate()
+        If Not CheckOutputRecords() Then
+            Exit Sub
+        End If
+
 
         ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + Date.Today().ToString("ddMMMMyyyy"), "mdb")
         If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
