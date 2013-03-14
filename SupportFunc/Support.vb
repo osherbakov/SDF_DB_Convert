@@ -284,8 +284,8 @@ Public Class FullSupport
         If ret Then
             With idCard
                 .SSN = String.Format("{0:###-##-####}", B32toBin(rm.Groups("SSN").Value))
-                .IdNumber = B32toBin(rm.Groups("ID").Value)
-                ' Check if license has special encoding for A, B < c so 01 = A, 02 = B, 03 = C and so on.....
+                .IdNumber = CInt(B32toBin(rm.Groups("ID").Value)).ToString("D9")
+                ' Check if license has special encoding for A, B , C so 01 = A, 02 = B, 03 = C and so on.....
                 If (.IdNumber(0) = "0"c) Or (.IdNumber(0) = "1"c) Then
                     Dim sFirstChar As String = .IdNumber.Substring(0, 2)
                     Dim nFirstChar As Integer = Integer.Parse(sFirstChar) + Convert.ToInt32("A"c) - 1
@@ -468,8 +468,13 @@ Public Class FullSupport
             If Not IsValidAAMVAFile(scannedString) Then Return ret
 
             With idCard
-                .IdNumber = ExtractAAMVATag(scannedString, "DL", "DAQ")
-                .DLData = .IdNumber
+                .DLData = ExtractAAMVATag(scannedString, "DL", "DAQ")
+                .IdNumber = .DLData
+                Dim UID As String = ExtractAAMVATag(scannedString, "DL", "DCF")
+                If Not String.IsNullOrEmpty(UID) AndAlso UID.LastIndexOf("/") <> -1 Then
+                    .IdNumber = UID.Substring(UID.LastIndexOf("/") + 1) + "-" + .IdNumber
+                End If
+
                 .LastName = ExtractAAMVATag(scannedString, "DL", "DCS")
                 .FirstName = ExtractAAMVATag(scannedString, "DL", "DCT")
                 .MI = ""
@@ -541,7 +546,7 @@ Public Class FullSupport
         ' Start building DL Subfile
         With Data
             Subf1.Append("DL")
-            Subf1.Append("DAQ" + ExtractIDNumber(Data) + VB.vbLf)
+            Subf1.Append("DAQ" + ExtractDLNumber(Data) + VB.vbLf)
 
             Subf1.Append("DAA" + .LastName)
             If Not String.IsNullOrEmpty(.FirstName) Then Subf1.Append(", " + .FirstName)
@@ -602,7 +607,7 @@ Public Class FullSupport
             End If
             Subf1.Append("DAU" + ht.ToString("D03") + " IN" + VB.vbLf)
             Subf1.Append("DAW" + .Weight + " LB" + VB.vbLf)
-            Subf1.Append("DCF" + .IdNumber + "/" + .SerialNumber + VB.vbLf)
+            Subf1.Append("DCF" + .IdNumber + "/" + .SerialNumber + "/" + ExtractIDStation(Data) + VB.vbLf)
 
             Subf1.Append("DDE" + "U" + VB.vbLf)
             Subf1.Append("DDF" + "U" + VB.vbLf)
@@ -694,7 +699,7 @@ Public Class FullSupport
             ' Process track2
             tm = rxtrk2.Match(track2)
             IDNumber = tm.Groups("DL").Value
-            ' Check if license has special encoding for A, B < c so 01 = A, 02 = B, 03 = C and so on.....
+            ' Check if license has special encoding for A, B , C so 01 = A, 02 = B, 03 = C and so on.....
             If (IDNumber(0) = "0"c) Or (IDNumber(0) = "1"c) Then
                 Dim sFirstChar As String = IDNumber.Substring(0, 2)
                 Dim nFirstChar As Integer = Integer.Parse(sFirstChar) + Convert.ToInt32("A"c) - 1
@@ -980,6 +985,23 @@ Public Class FullSupport
         Next
         Return IDN
     End Function
+
+    Public Shared Function ExtractDLNumber(ByVal data As IDCardData) As String
+        Dim IDNumber As String = ""
+        If String.IsNullOrEmpty(data.DLData) Then
+            Dim IDNums() As String = data.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
+            If IDNums.Length > 1 Then
+                IDNumber = IDNums(1)
+            Else
+                IDNumber = data.IdNumber
+            End If
+        Else
+            IDNumber = data.DLData
+        End If
+
+        Return IDNumber
+    End Function
+
 
     Public Shared Function ExtractNumber(ByVal serialNumber As String) As Double
         If String.IsNullOrEmpty(serialNumber) Then Return 0

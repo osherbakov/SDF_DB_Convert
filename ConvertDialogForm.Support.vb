@@ -459,7 +459,7 @@ Partial Public Class ConvertDialogForm
 
         If FileFound Then
             Dim fi As IO.FileInfo = New IO.FileInfo(FileName)
-            Dim stream As New IO.FileStream(FileName, IO.FileMode.Open)
+            Dim stream As New IO.FileStream(FileName, IO.FileMode.Open, IO.FileAccess.Read)
             Dim photo(fi.Length) As Byte
             stream.Read(photo, 0, fi.Length())
             result = photo

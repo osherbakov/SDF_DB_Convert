@@ -317,6 +317,22 @@ Public Class Support
         Return IDN
     End Function
 
+    Public Shared Function ExtractDLNumber(ByVal data As IDCardData) As String
+        Dim IDNumber As String = ""
+        If String.IsNullOrEmpty(data.DLData) Then
+            Dim IDNums() As String = data.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
+            If IDNums.Length > 1 Then
+                IDNumber = IDNums(1)
+            Else
+                IDNumber = data.IdNumber
+            End If
+        Else
+            IDNumber = data.DLData
+        End If
+
+        Return IDNumber
+    End Function
+
     Public Shared Function ExtractNumber(ByVal serialNumber As String) As Double
         If String.IsNullOrEmpty(serialNumber) Then Return 0
 
@@ -410,39 +426,5 @@ Public Class Support
         Result += txt
 
         Return Result.ToUpper()
-    End Function
-
-    Private Shared rxSerinc As New Regex("\D*(?<Grp1>\d+)\D+(?<Grp2>\d+)\D*|\D*(?<Grp2>\d+)\D*", RegexOptions.IgnoreCase Or RegexOptions.Compiled)
-
-    Public Shared Function IncrementSerialNumber(ByVal serialNumber As String) As String
-        ' Accepted format is ABCXXXX-YYYYYZZ, where XXXX and YYYYYY may be digits
-        If String.IsNullOrEmpty(serialNumber) Then Return 0
-
-        Dim ret As String = serialNumber
-        Dim carry As Integer = 0
-        Dim im As Match = rxSerinc.Match(serialNumber)
-
-        If im.Groups("Grp2").Success Then
-            Dim sNum As String = im.Groups("Grp2").Value
-            Dim nDigits = sNum.Length
-            Dim Num As Integer = Integer.Parse(sNum)
-            Dim MaxNum As Integer = (10.0 ^ nDigits)
-            Num = Num + 1
-            carry = Num \ MaxNum
-            Num = Num Mod MaxNum
-            ret = ret.Replace(sNum, Num.ToString("D0" + nDigits.ToString))
-        End If
-        If im.Groups("Grp1").Success Then
-            Dim sNum As String = im.Groups("Grp1").Value
-            Dim nDigits = sNum.Length
-            Dim Num As Integer = Integer.Parse(sNum)
-            Dim MaxNum As Integer = (10.0 ^ nDigits)
-            Num = Num + carry
-            carry = Num \ MaxNum
-            Num = Num Mod MaxNum
-            ret = ret.Replace(sNum, Num.ToString("D0" + nDigits.ToString))
-        End If
-
-        Return ret
     End Function
 End Class

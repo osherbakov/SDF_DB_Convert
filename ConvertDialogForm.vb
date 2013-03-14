@@ -223,10 +223,11 @@ Public Class ConvertDialogForm
                     conn.Open()
                     Dim dtSchema As DataTable = conn.GetOleDbSchemaTable(OleDb.OleDbSchemaGuid.Tables, Nothing)
                     For Each dr As DataRow In dtSchema.Rows
+                        ' Get the table name
                         Dim TblName As String = dr("TABLE_NAME").ToString
 
                         ' Check if the Table in ID_CARDS format
-                        If TblName.ToUpper() = "ID_CARDS" Then
+                        If TblName.ToUpper().Contains("ID_CARDS") Then
                             Dim cmd As New OleDbCommand()
                             Dim od_data_set As New DataSet()
                             cmd.CommandText = "SELECT * FROM [" + TblName + "]"
@@ -269,7 +270,7 @@ Public Class ConvertDialogForm
 
             Dim FileName As String = OpenFileDialog_Photo.FileName
             Dim fi As IO.FileInfo = New IO.FileInfo(FileName)
-            Dim stream As New IO.FileStream(FileName, IO.FileMode.Open)
+            Dim stream As New IO.FileStream(FileName, IO.FileMode.Open, IO.FileAccess.Read)
             Dim photo(fi.Length) As Byte
             stream.Read(photo, 0, fi.Length())
             ID_CARDS_DataSet.ID_CARDS(ID_CARDSBindingSource.Position).Photo = photo
