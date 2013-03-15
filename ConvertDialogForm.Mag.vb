@@ -72,52 +72,50 @@ Partial Public Class ConvertDialogForm
     End Sub
 
     Private Sub BackgroundWorkerThread_DoWorkMAG(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs)
+        Dim g1 As String = ""
+        Dim g2 As String = ""
+        Dim g3 As String = ""
 
         ' Start with un-initialized Reader
         MSR206_Enc.Close()
 
         Dim Result As Boolean
         Do
-            ' Loop until the Mag Encoder is connected
+            ' Check if the Mag Encoder is connected
             If Not MSR206_Enc.IsMSR206Detected Then
                 m_Mag_Status = STATUS.DISCONNECTED
                 UpdateEncStatus()
-                Do
-                    If BackgroundWorkerThread.CancellationPending Then
-                        e.Cancel = True
-                        Exit Sub
-                    End If
-                    MSR206_Enc.DetectMSR206()
-                Loop Until MSR206_Enc.IsMSR206Detected
+
+                ' Try to detect the Encoder
+                MSR206_Enc.DetectMSR206()
+                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
 
                 ' Found - update status and program Encoder
-                m_Mag_Status = STATUS.CONNECTED
-                UpdateEncStatus()
+                If MSR206_Enc.IsMSR206Detected Then
+                    m_Mag_Status = STATUS.CONNECTED
+                    UpdateEncStatus()
 
-                Result = MSR206_Enc.CMD_SetCo(MSR206.Coercity.HIGH) = 0 AndAlso _
-                MSR206_Enc.CMD_SetBPI(75) = 0 AndAlso _
-                MSR206_Enc.CMD_SetBPC(8, 8, 8) = 0 AndAlso _
-                MSR206_Enc.CMD_SetEncoding(MSR206.Encoding.BITS6, MSR206.Encoding.BITS4, MSR206.Encoding.BITS6) = 0 AndAlso _
-                MSR206_Enc.CMD_SetParity(MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY) = 0 AndAlso _
-                MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK1 Or MSR206.Tracks.TRACK3, "%", "?", "^") = 0 AndAlso _
-                MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK2, ";", "?", "=")
+                    Result = MSR206_Enc.CMD_SetCo(MSR206.Coercity.HIGH) = 0 AndAlso _
+                    MSR206_Enc.CMD_SetBPI(75) = 0 AndAlso _
+                    MSR206_Enc.CMD_SetBPC(8, 8, 8) = 0 AndAlso _
+                    MSR206_Enc.CMD_SetEncoding(MSR206.Encoding.BITS6, MSR206.Encoding.BITS4, MSR206.Encoding.BITS6) = 0 AndAlso _
+                    MSR206_Enc.CMD_SetParity(MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY, MSR206.Parity.ODD_PARITY) = 0 AndAlso _
+                    MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK1 Or MSR206.Tracks.TRACK3, "%", "?", "^") = 0 AndAlso _
+                    MSR206_Enc.CMD_SetSpecialChars(MSR206.Tracks.TRACK2, ";", "?", "=")
+                End If
             End If
 
-            If BackgroundWorkerThread.CancellationPending Then
-                e.Cancel = True
-                Exit Sub
-            End If
-
-            ' get the current selected/displaying record
-            '   and extract the data
-            Dim g1 As String = ""
-            Dim g2 As String = ""
-            Dim g3 As String = ""
-            If ID_CARDSBindingSource.Count <> 0 Then
+            ' Encode card if detected and there are records to program
+            If MSR206_Enc.IsMSR206Detected AndAlso ID_CARDSBindingSource.Count <> 0 Then
+                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
                 m_Mag_Status = STATUS.CONNECTED
                 UpdateEncStatus()
 
                 Result = MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW) = 0
+                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+
+                ' Get the current selected/displaying record
+                '   and extract the data
                 m_curr_Position = ID_CARDSBindingSource.Position
                 Dim curr_data As ID_CARDS_DataSet.ID_CARDSRow = ID_CARDS_DataSet.ID_CARDS.Rows(m_curr_Position)
                 Dim rm As Match = rx_Split_Tracks.Match(curr_data.AAMVAMAG)
@@ -129,14 +127,10 @@ Partial Public Class ConvertDialogForm
 
                 ' Try to program the MAG stripe 
                 Result = Result AndAlso MSR206_Enc.CMD_WriteRaw(g1, g2, g3) = 0
+                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
 
-                If BackgroundWorkerThread.CancellationPending Then
-                    e.Cancel = True
-                    Exit Sub
-                End If
-
+                ' If successfully programmed - move to the next
                 If Result And (m_curr_Position = ID_CARDSBindingSource.Position) Then
-                    ' If successfully programmed - move to the next
                     Me.BeginInvoke(New MethodInvoker(AddressOf MoveNextRecord))
                 End If
             End If

@@ -130,12 +130,7 @@ Partial Public Class ConvertDialogForm
                 m_Mag_Status = STATUS.DISCONNECTED
                 UpdateReaderStatus()
                 MSR206_Enc.DetectMSR206()
-
-                If BackgroundWorkerThread.CancellationPending Then
-                    e.Cancel = True
-                    Exit Sub
-                End If
-
+                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
                 If MSR206_Enc.IsMSR206Detected Then
                     ' Found - update status
                     m_Mag_Status = STATUS.CONNECTED
@@ -155,33 +150,27 @@ Partial Public Class ConvertDialogForm
             End If
 
             ' Check for the Cancel request
-            If BackgroundWorkerThread.CancellationPending Then
-                e.Cancel = True
-                Exit Sub
-            End If
+            If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
 
+            ' Check for the Scanner connected
             If Not HHP4600_Scan.IsScannerDetected() Then
                 m_Scan_Status = STATUS.DISCONNECTED
                 UpdateScannerStatus()
+
+                ' Try to detect the Scanner
                 HHP4600_Scan.DetectScanner()
-                If BackgroundWorkerThread.CancellationPending Then
-                    e.Cancel = True
-                    Exit Sub
-                End If
+                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
                 If HHP4600_Scan.IsScannerDetected() Then
                     m_Scan_Status = STATUS.CONNECTED
                     UpdateScannerStatus()
                     HHP4600_Scan.CMD_Setup()
                 End If
             End If
+
             Threading.Thread.Sleep(500)
             ' Check for the Cancel request
-            If BackgroundWorkerThread.CancellationPending Then
-                e.Cancel = True
-                Exit Sub
-            End If
+            If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
         Loop
-
     End Sub
 
 End Class

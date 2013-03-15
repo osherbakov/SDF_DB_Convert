@@ -128,12 +128,13 @@ Public Class MSR206
                 If CMD_Test(300) <> -1 Then
                     m_EncoderFoundOnPort = Port
                     bFound = True
+                    Exit For
+                Else
+                    Me.Close()
                 End If
                 If m_CancelFlag Then Exit For
             Catch ex As Exception
-                m_EncoderFoundOnPort = Nothing
             End Try
-            If bFound Then Exit For
         Next
         Return bFound
     End Function
@@ -185,9 +186,7 @@ Public Class MSR206
 
     Private Sub InitComm(ByVal Port As String)
 
-        If m_SerialPort.IsOpen Then
-            m_SerialPort.Close()
-        End If
+        If m_SerialPort.IsOpen Then m_SerialPort.Close()
 
         m_SerialPort.PortName = Port
         m_SerialPort.Open()

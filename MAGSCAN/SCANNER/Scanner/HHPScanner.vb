@@ -114,11 +114,12 @@ Public Class HHPScanner
                 If CMD_Test(200) <> -1 Then
                     m_ScannerFoundOnPort = iPort
                     bFound = True
+                    Exit For
+                Else
+                    Me.Close()
                 End If
             Catch ex As Exception
-                m_ScannerFoundOnPort = Nothing
             End Try
-            If bFound Then Exit For
         Next
         Return bFound
     End Function
@@ -170,9 +171,7 @@ Public Class HHPScanner
 
     Private Sub InitComm(ByVal Port As String)
 
-        If m_SerialPort.IsOpen Then
-            m_SerialPort.Close()
-        End If
+        If m_SerialPort.IsOpen Then m_SerialPort.Close()
 
         m_SerialPort.PortName = Port
         m_SerialPort.Open()
