@@ -6,19 +6,6 @@ Imports System.Data.OleDb
 
 Public Class ConvertDialogForm
 
-    Private Sub ConvertToUpper(ByVal sender As Object, ByVal cevent As ConvertEventArgs)
-        If cevent.DesiredType Is GetType(String) Then
-            cevent.Value = cevent.Value.ToString.ToUpper
-        End If
-    End Sub
-
-    Private Sub ConvertToMILDate(ByVal sender As Object, ByVal cevent As ConvertEventArgs)
-        If cevent.DesiredType Is GetType(String) Then
-            Dim d As Date = CType(cevent.Value, Date)
-            cevent.Value = d.ToString("yyyyMMMdd").ToUpper
-        End If
-    End Sub
-
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Me.InitLists()
@@ -37,10 +24,6 @@ Public Class ConvertDialogForm
         ' Start converting data into ID_CARDS format
         '        Dim id_card As New IDCardData()
         Dim id_row As ID_CARDS_DataSet.ID_CARDSRow
-
-        If Not Me.Validate() Then
-            Exit Sub
-        End If
 
         ProgressBar1.Minimum = 0
         ProgressBar1.Value = 0
@@ -87,11 +70,6 @@ Public Class ConvertDialogForm
                 .Photo = GetImageFile(.LastName, .FirstName, .MI)
                 .IDNumber = MakeFullNumber(IssuingStation.Text, .SSN, .LastName)
                 .SerialNumber = MakeSerial()
-
-                Dim card_data As IDCardData = GetIDCardData(id_row)
-                .AAMVAMAG = Support.EncodeAAMVAMagData(card_data)
-                .AAMVAPDF = FullSupport.EncodeAAMVAPDF417Data(card_data)
-                .CACPDF = Support.EncodeCACPDF417Data(card_data)
             End With
 
             ID_CARDS_DataSet.ID_CARDS.AddID_CARDSRow(id_row)
@@ -103,11 +81,7 @@ Public Class ConvertDialogForm
 
     Private Sub Button_CreateDB_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button_CreateDB.Click
 
-        Me.Validate()
-        If Not CheckOutputRecords() Then
-            Exit Sub
-        End If
-
+        If Not CheckOutputRecords() Then Exit Sub
 
         ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + Date.Today().ToString("ddMMMMyyyy"), "mdb")
         If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
@@ -236,6 +210,8 @@ Public Class ConvertDialogForm
                             Dim oda As New OleDbDataAdapter(cmd)
                             oda.Fill(od_data_set)
                             ImportRecords(od_data_set, ID_CARDS_DataSet)
+                            od_data_set.Dispose()
+                            cmd.Dispose()
                             nextTab = 1
                             Button_CreateDB.Enabled = False
                             Exit For
@@ -250,6 +226,8 @@ Public Class ConvertDialogForm
                             Dim oda As New OleDbDataAdapter(cmd)
                             oda.Fill(od_data_set)
                             ImportRecords(od_data_set, CSMR_ID_DataSet)
+                            od_data_set.Dispose()
+                            cmd.Dispose()
                         End If
                     Next
                     conn.Close()

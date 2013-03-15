@@ -70,6 +70,18 @@ Partial Public Class ConvertDialogForm
         End Sub
     End Structure
 
+    Private Sub ConvertToUpper(ByVal sender As Object, ByVal cevent As ConvertEventArgs)
+        If cevent.DesiredType Is GetType(String) Then
+            cevent.Value = cevent.Value.ToString.ToUpper
+        End If
+    End Sub
+
+    Private Sub ConvertToMILDate(ByVal sender As Object, ByVal cevent As ConvertEventArgs)
+        If cevent.DesiredType Is GetType(String) Then
+            Dim d As Date = CType(cevent.Value, Date)
+            cevent.Value = d.ToString("yyyyMMMdd").ToUpper
+        End If
+    End Sub
 
 
     Private Sub ImportRecords(ByVal srcData As DataSet, ByVal dstData As DataSet)
@@ -83,8 +95,8 @@ Partial Public Class ConvertDialogForm
         For src = 0 To srcColumns.Count - 1
             For dst = 0 To dstColumns.Count - 1
                 If srcColumns(src).ColumnName.ToUpper() = dstColumns(dst).ColumnName.ToUpper Then
-                    Dim conv As Boolean = srcColumns(src).GetType Is GetType(String) And _
-                                            dstColumns(dst).GetType IsNot GetType(String)
+                    Dim conv As Boolean = srcColumns(src).DataType() Is GetType(String) And _
+                                            dstColumns(dst).DataType() IsNot GetType(String)
                     dbMapping.Add(New colMap(src, dst, conv))
                     Exit For
                 End If
@@ -128,9 +140,10 @@ Partial Public Class ConvertDialogForm
 
         ' Freeze index updating
         CSMR_ID_DataSet.CSMR_ID.BeginLoadData()
+
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
             '
-            ' TODO: To check for the empty records
+            ' TODO: To check for empty records
             '
             If dr.IsDOBNull OrElse dr.IsH_ADDRNull OrElse dr.SSN = 0 Then
                 EmptyRecords_CSMR_ID.Add(dr)
@@ -145,7 +158,7 @@ Partial Public Class ConvertDialogForm
                 dr.MIDDLE_NAME = m.Groups("MI").Value
             End If
 
-            ' Make MiddleName Valid, remove NMN
+            ' Make MiddleName Valid
             If dr.IsMIDDLE_NAMENull Then
                 dr.MIDDLE_NAME = String.Empty
             End If
