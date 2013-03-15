@@ -362,7 +362,6 @@ Partial Public Class ConvertDialogForm
     End Function
 
     Private Function CheckOutputRecords() As Boolean
-        Dim curr_rec As ID_CARDS_DataSet.ID_CARDSRow = Nothing
         Dim curr_idx As Integer
         Dim dr As ID_CARDS_DataSet.ID_CARDSRow
 

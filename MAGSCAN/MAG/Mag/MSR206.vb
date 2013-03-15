@@ -117,8 +117,7 @@ Public Class MSR206
         End If
     End Sub
 
-    Public Function DetectMSR206() As Boolean
-        Dim bFound As Boolean = False
+    Public Sub DetectMSR206()
         m_EncoderFoundOnPort = Nothing
         For Each Port As String In IO.Ports.SerialPort.GetPortNames
             Try
@@ -127,17 +126,15 @@ Public Class MSR206
                 If m_CancelFlag Then Exit For
                 If CMD_Test(300) <> -1 Then
                     m_EncoderFoundOnPort = Port
-                    bFound = True
                     Exit For
                 Else
                     Me.Close()
                 End If
-                If m_CancelFlag Then Exit For
             Catch ex As Exception
             End Try
+            If m_CancelFlag Then Exit For
         Next
-        Return bFound
-    End Function
+    End Sub
 
 
     Public Function IsMSR206Detected() As Boolean
@@ -145,17 +142,20 @@ Public Class MSR206
     End Function
 
     Public Sub Close()
-        m_Timer.Change(Timeout.Infinite, Timeout.Infinite)
-        If m_SerialPort.IsOpen Then
-            m_SerialPort.DiscardInBuffer()
-            m_SerialPort.DiscardOutBuffer()
-            m_SerialPort.ReadExisting()
-            m_SerialPort.ReceivedBytesThreshold = 1
-            m_SerialPort.ReadTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
-            m_SerialPort.WriteTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
-            m_SerialPort.Close()
-        End If
-        m_EncoderFoundOnPort = Nothing
+        Try
+            m_Timer.Change(Timeout.Infinite, Timeout.Infinite)
+            If m_SerialPort.IsOpen Then
+                m_SerialPort.DiscardInBuffer()
+                m_SerialPort.DiscardOutBuffer()
+                m_SerialPort.ReadExisting()
+                m_SerialPort.ReceivedBytesThreshold = 1
+                m_SerialPort.ReadTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+                m_SerialPort.WriteTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+                m_SerialPort.Close()
+            End If
+        Finally
+            m_EncoderFoundOnPort = Nothing
+        End Try
     End Sub
 
     Public Sub InitComm()
@@ -487,49 +487,32 @@ Public Class MSR206
 
 
     Private Function CMD_Wait_Response() As Integer
-        Dim rdy As Boolean
         Dim idx As Integer
-        Dim ret As Integer = -1
-        rdy = False
         Do
             m_DataReady.WaitOne(Timeout.Infinite, False)
-
             SyncLock m_SerialBuffer
                 If m_CancelFlag Then Exit Do
                 idx = m_SerialBuffer.LastIndexOf(ESC)
                 If idx <> -1 AndAlso m_SerialBuffer.Length = (idx + 2) Then
-                    rdy = True
-                    ret = m_SerialBuffer(idx + 1) - DigitZero
+                    Return (m_SerialBuffer(idx + 1) - DigitZero)
                 End If
             End SyncLock
-        Loop Until rdy
-        '        If ret <> 0 Then System.Diagnostics.Debugger.Break()
-        Return ret
+        Loop
+        Return -1
     End Function
 
     Private Function CMD_Wait_Response(ByVal responceExpected As Byte(), ByVal Timeout As Integer) As Integer
-        Dim rdy As Boolean
         Dim idx As Integer
-        Dim ret As Integer = -1
-        Dim Signalled As Boolean
-
-        rdy = False
         Do
-            Signalled = m_DataReady.WaitOne(Timeout, False)
-            If m_CancelFlag OrElse Not Signalled Then
-                rdy = True
-            Else
-                SyncLock m_SerialBuffer
-                    idx = m_SerialBuffer.LastIndexOf(responceExpected)
-                    If idx <> -1 Then
-                        rdy = True
-                        ret = 0
-                    End If
-                End SyncLock
-            End If
-        Loop Until rdy
-        '        If ret <> 0 Then System.Diagnostics.Debugger.Break()
-        Return ret
+            SyncLock m_SerialBuffer
+                If Not m_DataReady.WaitOne(Timeout, False) OrElse m_CancelFlag Then Exit Do
+                idx = m_SerialBuffer.LastIndexOf(responceExpected)
+                If idx <> -1 Then
+                    Return 0
+                End If
+            End SyncLock
+        Loop
+        Return -1
     End Function
 
 
@@ -550,90 +533,107 @@ Public Class MSR206
 
     Public Function CMD_Read(ByRef Track1 As String, ByRef Track2 As String, ByRef Track3 As String) As Integer
         Dim idx, idxe As Integer
-        Dim rdy As Boolean
         Dim ret As Integer = -1
 
-        CMD_Send(New Byte() {ESC, ASCII("r")})
+        If m_EncoderFoundOnPort Is Nothing Then Return -1
 
-        rdy = False
-        Do
-            m_DataReady.WaitOne()
-            SyncLock m_SerialBuffer
-                If m_CancelFlag Then Return ret
-                idx = m_SerialBuffer.LastIndexOf(New Byte() {ASCII("?"), FS, ESC})
-                If idx <> -1 AndAlso m_SerialBuffer.Length = idx + 4 Then
-                    rdy = True
-                    ret = m_SerialBuffer(idx + 3) - DigitZero
-                End If
-            End SyncLock
-        Loop Until rdy
+        Try
+            CMD_Send(New Byte() {ESC, ASCII("r")})
 
-        If Track1 IsNot Nothing Then
-            Track1 = String.Empty
-            idx = m_SerialBuffer.IndexOf(New Byte() {ESC, ASCII("s"), ESC, TRK1, m_TrackStart(0)})
-            If idx <> -1 Then
-                idxe = m_SerialBuffer.IndexOf(m_TrackEnd(0), idx)
-                If idxe <> -1 Then
-                    Track1 = m_SerialBuffer.ToString(idx + 5, idxe - idx - 5)
-                End If
-            End If
-        End If
+            ' Loop until you get all bytes of the response
+            Do
+                m_DataReady.WaitOne()
+                SyncLock m_SerialBuffer
+                    If m_CancelFlag Then Return ret
+                    idx = m_SerialBuffer.LastIndexOf(New Byte() {ASCII("?"), FS, ESC})
+                    If idx <> -1 AndAlso m_SerialBuffer.Length = idx + 4 Then
+                        ret = m_SerialBuffer(idx + 3) - DigitZero
+                        Exit Do
+                    End If
+                End SyncLock
+            Loop
 
-
-        If Track2 IsNot Nothing Then
-            Track2 = String.Empty
-            idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK2, m_TrackStart(1)})
-            If idx <> -1 Then
-                idxe = m_SerialBuffer.IndexOf(m_TrackEnd(1), idx)
-                If idxe <> -1 Then
-                    Track2 = m_SerialBuffer.ToString(idx + 3, idxe - idx - 3)
+            ' Analyze all track data
+            If Track1 IsNot Nothing Then
+                Track1 = String.Empty
+                idx = m_SerialBuffer.IndexOf(New Byte() {ESC, ASCII("s"), ESC, TRK1, m_TrackStart(0)})
+                If idx <> -1 Then
+                    idxe = m_SerialBuffer.IndexOf(m_TrackEnd(0), idx)
+                    If idxe <> -1 Then
+                        Track1 = m_SerialBuffer.ToString(idx + 5, idxe - idx - 5)
+                    End If
                 End If
             End If
-        End If
 
-        If Track3 IsNot Nothing Then
-            Track3 = String.Empty
-            idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK3, m_TrackStart(2)})
-            If idx <> -1 Then
-                idxe = m_SerialBuffer.IndexOf(m_TrackEnd(2), idx)
-                If idxe <> -1 Then
-                    Track3 = m_SerialBuffer.ToString(idx + 3, idxe - idx - 3)
+
+            If Track2 IsNot Nothing Then
+                Track2 = String.Empty
+                idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK2, m_TrackStart(1)})
+                If idx <> -1 Then
+                    idxe = m_SerialBuffer.IndexOf(m_TrackEnd(1), idx)
+                    If idxe <> -1 Then
+                        Track2 = m_SerialBuffer.ToString(idx + 3, idxe - idx - 3)
+                    End If
                 End If
             End If
-        End If
+
+            If Track3 IsNot Nothing Then
+                Track3 = String.Empty
+                idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK3, m_TrackStart(2)})
+                If idx <> -1 Then
+                    idxe = m_SerialBuffer.IndexOf(m_TrackEnd(2), idx)
+                    If idxe <> -1 Then
+                        Track3 = m_SerialBuffer.ToString(idx + 3, idxe - idx - 3)
+                    End If
+                End If
+            End If
+
+        Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
+        End Try
 
         Return ret
     End Function
 
     Public Function CMD_Write(ByVal Track1 As String, ByVal Track2 As String, ByVal Track3 As String) As Integer
         Dim Cmd As New SerialBuffer
-        Cmd += New Byte() {ESC, ASCII("w")}
+        Dim ret As Integer = -1
 
-        ' Begin DataBlock
-        Cmd += New Byte() {ESC, ASCII("s")}
+        If m_EncoderFoundOnPort Is Nothing Then Return -1
 
-        Cmd += New Byte() {ESC, TRK1}
-        If Not String.IsNullOrEmpty(Track1) Then
-            Cmd += Track1
-        End If
+        Try
+            Cmd += New Byte() {ESC, ASCII("w")}
 
-        Cmd += New Byte() {ESC, TRK2}
-        If Not String.IsNullOrEmpty(Track2) Then
-            Cmd += Track2
-        End If
+            ' Begin DataBlock
+            Cmd += New Byte() {ESC, ASCII("s")}
 
-        Cmd += New Byte() {ESC, TRK3}
-        If Not String.IsNullOrEmpty(Track3) Then
-            Cmd += Track3
-        End If
+            Cmd += New Byte() {ESC, TRK1}
+            If Not String.IsNullOrEmpty(Track1) Then
+                Cmd += Track1
+            End If
 
-        Cmd += New Byte() {ASCII("?"), FS}  ' Terminate DataBlock
+            Cmd += New Byte() {ESC, TRK2}
+            If Not String.IsNullOrEmpty(Track2) Then
+                Cmd += Track2
+            End If
 
-        '       Dim cc() As Byte = New Byte() {&H1B, &H77, &H1B, &H73, &H1B, &H1, &H30, &H31, &H1B, _
-        '      &H2, &H32, &H33, &H1B, &H3, &H34, &H35, &H3F, &H1C}
+            Cmd += New Byte() {ESC, TRK3}
+            If Not String.IsNullOrEmpty(Track3) Then
+                Cmd += Track3
+            End If
 
-        CMD_Send(Cmd)    ' Send assembled command
-        Return CMD_Wait_Response()
+            Cmd += New Byte() {ASCII("?"), FS}  ' Terminate DataBlock
+
+            '       Dim cc() As Byte = New Byte() {&H1B, &H77, &H1B, &H73, &H1B, &H1, &H30, &H31, &H1B, _
+            '      &H2, &H32, &H33, &H1B, &H3, &H34, &H35, &H3F, &H1C}
+
+            CMD_Send(Cmd)    ' Send assembled command
+            ret = CMD_Wait_Response()
+
+        Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
+        End Try
+        Return ret
     End Function
 
     Public Function CMD_Test(ByVal Timeout As Integer) As Integer
@@ -648,42 +648,55 @@ Public Class MSR206
     End Function
 
     Public Function CMD_LED(ByVal leds As LEDs) As Integer
+        Dim ret As Integer = -1
+        If m_EncoderFoundOnPort Is Nothing Then Return -1
 
-        CMD_Send(New Byte() {ESC, &H81})    ' turn off all LEDs first
+        Try
+            CMD_Send(New Byte() {ESC, &H81})    ' turn off all LEDs first
 
-        If leds And MSR206.LEDs.GREEN Then
-            CMD_Send(New Byte() {ESC, &H83})    ' turn on appropriate LED
-        End If
-        If leds And MSR206.LEDs.YELLOW Then
-            CMD_Send(New Byte() {ESC, &H84})    ' turn on appropriate LED
-        End If
-        If leds And MSR206.LEDs.RED Then
-            CMD_Send(New Byte() {ESC, &H85})    ' turn on appropriate LED
-        End If
+            If leds And MSR206.LEDs.GREEN Then
+                CMD_Send(New Byte() {ESC, &H83})    ' turn on appropriate LED
+            End If
+            If leds And MSR206.LEDs.YELLOW Then
+                CMD_Send(New Byte() {ESC, &H84})    ' turn on appropriate LED
+            End If
+            If leds And MSR206.LEDs.RED Then
+                CMD_Send(New Byte() {ESC, &H85})    ' turn on appropriate LED
+            End If
 
-        If leds = (MSR206.LEDs.YELLOW Or MSR206.LEDs.GREEN Or MSR206.LEDs.RED) Then
-            CMD_Send(New Byte() {ESC, &H82})    ' turn on all LEDs
-        End If
-        m_DataReady.WaitOne(500, False)
-        Return 0
+            If leds = (MSR206.LEDs.YELLOW Or MSR206.LEDs.GREEN Or MSR206.LEDs.RED) Then
+                CMD_Send(New Byte() {ESC, &H82})    ' turn on all LEDs
+            End If
+            ret = m_DataReady.WaitOne(500, False)
+
+        Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
+        End Try
+        Return ret
     End Function
 
 
     Public Function CMD_SetBPI(ByVal density As Integer) As Integer
         Dim ret As Integer = -1
         Dim Cmd As New SerialBuffer
-        If density = 210 Or density = 75 Then
-            m_density = density
-            Cmd += New Byte() {ESC, ASCII("b")}
-            Cmd += m_density
-            CMD_Send(Cmd)    ' Send density command
-            ret = CMD_Wait_Response()
-        End If
+        If m_EncoderFoundOnPort Is Nothing Then Return -1
+        Try
+            If density = 210 Or density = 75 Then
+                m_density = density
+                Cmd += New Byte() {ESC, ASCII("b")}
+                Cmd += m_density
+                CMD_Send(Cmd)    ' Send density command
+                ret = CMD_Wait_Response()
+            End If
+        Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
+        End Try
         Return ret
     End Function
 
     Public Function CMD_StartRead() As Integer
         Dim ret As Integer = -1
+        If m_EncoderFoundOnPort Is Nothing Then Return -1
         Try
             CMD_Send(New Byte() {ESC, ASCII("m")})
             ret = 0
@@ -750,146 +763,176 @@ Public Class MSR206
         Dim idx, len As Integer
         Dim ret As Integer = -1
         Dim rdy As Boolean
-
         Dim data As New System.Collections.Generic.List(Of Byte)
 
-        CMD_Send(New Byte() {ESC, ASCII("m")})
+        If m_EncoderFoundOnPort Is Nothing Then Return -1
 
-        rdy = False
-        Do
-            m_DataReady.WaitOne(Timeout.Infinite, False)
+        Try
+            CMD_Send(New Byte() {ESC, ASCII("m")})
 
-            SyncLock m_SerialBuffer
-                If m_CancelFlag Then Return ret
-                idx = m_SerialBuffer.LastIndexOf(New Byte() {ASCII("?"), FS, ESC})
-                If idx <> -1 AndAlso m_SerialBuffer.Length = idx + 4 Then
-                    ret = m_SerialBuffer(idx + 3) - DigitZero
-                    rdy = True
+            rdy = False
+            Do
+                m_DataReady.WaitOne(Timeout.Infinite, False)
+
+                SyncLock m_SerialBuffer
+                    If m_CancelFlag Then Return ret
+                    idx = m_SerialBuffer.LastIndexOf(New Byte() {ASCII("?"), FS, ESC})
+                    If idx <> -1 AndAlso m_SerialBuffer.Length = idx + 4 Then
+                        ret = m_SerialBuffer(idx + 3) - DigitZero
+                        rdy = True
+                    End If
+                End SyncLock
+            Loop Until rdy
+
+            data.Clear()
+            If Track1 IsNot Nothing Then
+                idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK1})
+                If idx <> -1 Then
+                    len = m_SerialBuffer(idx + 2)
+                    For i As Integer = 0 To len - 1
+                        data.Add(m_SerialBuffer(idx + 3 + i))
+                    Next
+                    Track1 = data.ToArray()
                 End If
-            End SyncLock
-        Loop Until rdy
-
-        data.Clear()
-        If Track1 IsNot Nothing Then
-            idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK1})
-            If idx <> -1 Then
-                len = m_SerialBuffer(idx + 2)
-                For i As Integer = 0 To len - 1
-                    data.Add(m_SerialBuffer(idx + 3 + i))
-                Next
-                Track1 = data.ToArray()
             End If
-        End If
 
-        data.Clear()
-        If Track2 IsNot Nothing Then
-            idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK2}, idx + len + 3)
-            If idx <> -1 Then
-                len = m_SerialBuffer(idx + 2)
-                For i As Integer = 0 To len - 1
-                    data.Add(m_SerialBuffer(idx + 3 + i))
-                Next
-                Track2 = data.ToArray()
+            data.Clear()
+            If Track2 IsNot Nothing Then
+                idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK2}, idx + len + 3)
+                If idx <> -1 Then
+                    len = m_SerialBuffer(idx + 2)
+                    For i As Integer = 0 To len - 1
+                        data.Add(m_SerialBuffer(idx + 3 + i))
+                    Next
+                    Track2 = data.ToArray()
+                End If
             End If
-        End If
 
-        data.Clear()
-        If Track3 IsNot Nothing Then
-            idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK3}, idx + len + 3)
-            If idx <> -1 Then
-                len = m_SerialBuffer(idx + 2)
-                For i As Integer = 0 To len - 1
-                    data.Add(m_SerialBuffer(idx + 3 + i))
-                Next
-                Track3 = data.ToArray()
+            data.Clear()
+            If Track3 IsNot Nothing Then
+                idx = m_SerialBuffer.IndexOf(New Byte() {ESC, TRK3}, idx + len + 3)
+                If idx <> -1 Then
+                    len = m_SerialBuffer(idx + 2)
+                    For i As Integer = 0 To len - 1
+                        data.Add(m_SerialBuffer(idx + 3 + i))
+                    Next
+                    Track3 = data.ToArray()
+                End If
             End If
-        End If
+
+        Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
+        End Try
         Return ret
     End Function
 
     Public Function CMD_WriteRaw(ByVal Track1 As String, ByVal Track2 As String, ByVal Track3 As String) As Integer
         Dim data() As Byte
+        Dim ret As Integer = -1
         Dim Cmd As New SerialBuffer
 
-        Cmd += New Byte() {ESC, ASCII("n")}
+        If m_EncoderFoundOnPort Is Nothing Then Return -1
 
-        ' Begin DataBlock
-        Cmd += New Byte() {ESC, ASCII("s")}
+        Try
 
-        ' Track 1
-        Cmd += New Byte() {ESC, TRK1}
-        If Not String.IsNullOrEmpty(Track1) Then
-            If m_encoding(0) = Encoding.BITS6 Then
-                data = MSR206.EncodeTrack64(ASCII(m_TrackStart(0)) + Track1 + ASCII(m_TrackEnd(0)), m_packing(0), m_parity(0))
+            Cmd += New Byte() {ESC, ASCII("n")}
+            ' Begin DataBlock
+            Cmd += New Byte() {ESC, ASCII("s")}
+
+            ' Track 1
+            Cmd += New Byte() {ESC, TRK1}
+            If Not String.IsNullOrEmpty(Track1) Then
+                If m_encoding(0) = Encoding.BITS6 Then
+                    data = MSR206.EncodeTrack64(ASCII(m_TrackStart(0)) + Track1 + ASCII(m_TrackEnd(0)), m_packing(0), m_parity(0))
+                Else
+                    data = MSR206.EncodeTrack16(ASCII(m_TrackStart(0)) + Track1 + ASCII(m_TrackEnd(0)), m_packing(0), m_parity(0))
+                End If
+
+                ' Specify the size of the data block
+                Cmd += data.Length
+                Cmd += data
             Else
-                data = MSR206.EncodeTrack16(ASCII(m_TrackStart(0)) + Track1 + ASCII(m_TrackEnd(0)), m_packing(0), m_parity(0))
+                Cmd += 0
             End If
 
-            ' Specify the size of the data block
-            Cmd += data.Length
-            Cmd += data
-        Else
-            Cmd += 0
-        End If
+            ' Track 2
+            Cmd += New Byte() {ESC, TRK2}
+            If Not String.IsNullOrEmpty(Track2) Then
+                If m_encoding(1) = Encoding.BITS6 Then
+                    data = MSR206.EncodeTrack64(ASCII(m_TrackStart(1)) + Track2 + ASCII(m_TrackEnd(1)), m_packing(1), m_parity(1))
+                Else
+                    data = MSR206.EncodeTrack16(ASCII(m_TrackStart(1)) + Track2 + ASCII(m_TrackEnd(1)), m_packing(1), m_parity(1))
+                End If
 
-        ' Track 2
-        Cmd += New Byte() {ESC, TRK2}
-        If Not String.IsNullOrEmpty(Track2) Then
-            If m_encoding(1) = Encoding.BITS6 Then
-                data = MSR206.EncodeTrack64(ASCII(m_TrackStart(1)) + Track2 + ASCII(m_TrackEnd(1)), m_packing(1), m_parity(1))
+                ' Specify the size of the data block
+                Cmd += data.Length
+                Cmd += data
             Else
-                data = MSR206.EncodeTrack16(ASCII(m_TrackStart(1)) + Track2 + ASCII(m_TrackEnd(1)), m_packing(1), m_parity(1))
+                Cmd += 0
             End If
 
-            ' Specify the size of the data block
-            Cmd += data.Length
-            Cmd += data
-        Else
-            Cmd += 0
-        End If
+            ' Track 3
+            Cmd += New Byte() {ESC, TRK3}
+            If Not String.IsNullOrEmpty(Track3) Then
+                If m_encoding(2) = Encoding.BITS6 Then
+                    data = MSR206.EncodeTrack64(ASCII(m_TrackStart(2)) + Track3 + ASCII(m_TrackEnd(2)), m_packing(2), m_parity(2))
+                Else
+                    data = MSR206.EncodeTrack16(ASCII(m_TrackStart(2)) + Track3 + ASCII(m_TrackEnd(2)), m_packing(2), m_parity(2))
+                End If
 
-        ' Track 3
-        Cmd += New Byte() {ESC, TRK3}
-        If Not String.IsNullOrEmpty(Track3) Then
-            If m_encoding(2) = Encoding.BITS6 Then
-                data = MSR206.EncodeTrack64(ASCII(m_TrackStart(2)) + Track3 + ASCII(m_TrackEnd(2)), m_packing(2), m_parity(2))
+                ' Specify the size of the data block
+                Cmd += data.Length
+                Cmd += data
             Else
-                data = MSR206.EncodeTrack16(ASCII(m_TrackStart(2)) + Track3 + ASCII(m_TrackEnd(2)), m_packing(2), m_parity(2))
+                Cmd += 0
             End If
 
-            ' Specify the size of the data block
-            Cmd += data.Length
-            Cmd += data
-        Else
-            Cmd += 0
-        End If
+            Cmd += New Byte() {ASCII("?"), FS}  ' Terminate DataBlock
+            CMD_Send(Cmd)    ' Send assembled command
+            ret = CMD_Wait_Response()
 
-        Cmd += New Byte() {ASCII("?"), FS}  ' Terminate DataBlock
-        CMD_Send(Cmd)    ' Send assembled command
-        Return CMD_Wait_Response()
+        Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
+        End Try
+        Return ret
     End Function
 
 
     Public Function CMD_Erase(ByVal tracks As Tracks) As Integer
         Dim cmd As New SerialBuffer
-        cmd += New Byte() {ESC, ASCII("c")}
-        cmd += Convert.ToChar(tracks)
-        CMD_Send(cmd)    ' Send erase command
-        Return CMD_Wait_Response()
+        Dim ret As Integer = -1
+
+        If m_EncoderFoundOnPort Is Nothing Then Return -1
+
+        Try
+            cmd += New Byte() {ESC, ASCII("c")}
+            cmd += Convert.ToChar(tracks)
+            CMD_Send(cmd)    ' Send erase command
+            ret = CMD_Wait_Response()
+        Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
+        End Try
+        Return ret
     End Function
 
 
     Public Function CMD_SetBPC(ByVal track1 As Integer, ByVal track2 As Integer, ByVal track3 As Integer) As Integer
+        Dim ret As Integer = -1
         Dim cmd As New SerialBuffer
-        m_packing(0) = track1
-        m_packing(1) = track2
-        m_packing(2) = track3
-        cmd += New Byte() {ESC, ASCII("o")}
-        cmd += track1
-        cmd += track2
-        cmd += track3
-        CMD_Send(cmd)    ' Send Bits per track command
-        Return CMD_Wait_Response(New Byte() {ESC, DigitZero, track1, track2, track3}, 2000)
+        Try
+            m_packing(0) = track1
+            m_packing(1) = track2
+            m_packing(2) = track3
+            cmd += New Byte() {ESC, ASCII("o")}
+            cmd += track1
+            cmd += track2
+            cmd += track3
+            CMD_Send(cmd)    ' Send Bits per track command
+            ret = CMD_Wait_Response(New Byte() {ESC, DigitZero, track1, track2, track3}, 2000)
+        Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
+        End Try
+        Return ret
     End Function
 
     Public Function CMD_SetParity(ByVal track1 As Parity, ByVal track2 As Parity, ByVal track3 As Parity) As Integer
@@ -937,14 +980,23 @@ Public Class MSR206
     End Function
 
     Public Function CMD_SetCo(ByVal value As Coercity) As Integer
-        m_coercity = value
-        Select Case value
-            Case Coercity.HIGH
-                CMD_Send(New Byte() {ESC, ASCII("x")})
-            Case Coercity.LO
-                CMD_Send(New Byte() {ESC, ASCII("y")})
-        End Select
-        Return CMD_Wait_Response()
+        Dim ret As Integer = -1
+
+        If m_EncoderFoundOnPort Is Nothing Then Return -1
+
+        Try
+            m_coercity = value
+            Select Case value
+                Case Coercity.HIGH
+                    CMD_Send(New Byte() {ESC, ASCII("x")})
+                Case Coercity.LO
+                    CMD_Send(New Byte() {ESC, ASCII("y")})
+            End Select
+            ret = CMD_Wait_Response()
+        Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
+        End Try
+        Return ret
     End Function
 
     Public Function CMD_SetEncoding(ByVal track As Tracks, ByVal encoding As Encoding) As Integer
@@ -979,6 +1031,7 @@ Public Class MSR206
                 m_Timer.Change(200, Timeout.Infinite)
             End SyncLock
         Catch ex As Exception
+            m_EncoderFoundOnPort = Nothing
         End Try
     End Sub
 

@@ -105,6 +105,7 @@ Partial Class ConvertDialogForm
         Me.H_ZIPTextBox = New System.Windows.Forms.TextBox
         Me.DOBDateTimePicker = New System.Windows.Forms.DateTimePicker
         Me.TabPage_ID_CARDS = New System.Windows.Forms.TabPage
+        Me.Button_ID_Photo = New System.Windows.Forms.Button
         Me.RankComboBox_ID = New System.Windows.Forms.ComboBox
         Me.ID_CARDSBindingSource = New System.Windows.Forms.BindingSource(Me.components)
         Me.ID_CARDS_DataSet = New CSMR_DB_Convert.ID_CARDS_DataSet
@@ -199,7 +200,6 @@ Partial Class ConvertDialogForm
         Me.MSR206_Enc = New MSR206(Me.components)
         Me.HHP4600_Scan = New HHPScanner(Me.components)
         Me.OpenFileDialog_Photo = New System.Windows.Forms.OpenFileDialog
-        Me.Button_ID_Photo = New System.Windows.Forms.Button
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -1052,6 +1052,15 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS.TabIndex = 1
         Me.TabPage_ID_CARDS.Text = "ID_CARDS"
         Me.TabPage_ID_CARDS.UseVisualStyleBackColor = True
+        '
+        'Button_ID_Photo
+        '
+        Me.Button_ID_Photo.Location = New System.Drawing.Point(54, 301)
+        Me.Button_ID_Photo.Name = "Button_ID_Photo"
+        Me.Button_ID_Photo.Size = New System.Drawing.Size(75, 23)
+        Me.Button_ID_Photo.TabIndex = 48
+        Me.Button_ID_Photo.Text = "Get photo"
+        Me.Button_ID_Photo.UseVisualStyleBackColor = True
         '
         'RankComboBox_ID
         '
@@ -1926,21 +1935,14 @@ Partial Class ConvertDialogForm
         Me.OpenFileDialog_Photo.InitialDirectory = "."
         Me.OpenFileDialog_Photo.Title = "Select a Photo image"
         '
-        'Button_ID_Photo
-        '
-        Me.Button_ID_Photo.Location = New System.Drawing.Point(54, 301)
-        Me.Button_ID_Photo.Name = "Button_ID_Photo"
-        Me.Button_ID_Photo.Size = New System.Drawing.Size(75, 23)
-        Me.Button_ID_Photo.TabIndex = 48
-        Me.Button_ID_Photo.Text = "Get photo"
-        Me.Button_ID_Photo.UseVisualStyleBackColor = True
-        '
         'ConvertDialogForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(822, 393)
         Me.Controls.Add(Me.TabControl_ID)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
+        Me.MaximizeBox = False
         Me.Name = "ConvertDialogForm"
         Me.Text = "ConvertDialogForm"
         Me.TabControl_ID.ResumeLayout(False)

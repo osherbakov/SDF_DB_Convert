@@ -155,6 +155,9 @@ Public Class ConvertDialogForm
 
         If HHP4600_Scan.IsScannerDetected Then HHP4600_Scan.CMD_Reset()
         HHP4600_Scan.Close()
+
+        'Tell the system that Validation events CANNOT cancel closing!!!
+        e.Cancel = False
     End Sub
 
     Private Sub TabPage_ID_CARDS_Validating(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles TabPage_ID_CARDS.Validating
