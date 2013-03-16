@@ -1,6 +1,8 @@
 ﻿Imports System.Text.RegularExpressions
 Imports VB = Microsoft.VisualBasic
 Imports System
+Imports System.Data.OleDb
+
 
 Partial Public Class ConvertDialogForm
     ' Rank is 6 characters, PayGrade is 4
@@ -376,6 +378,126 @@ Partial Public Class ConvertDialogForm
         Next
         Return True
     End Function
+
+    Private Sub SaveAccessDatabase()
+        If Not CheckOutputRecords() Then Exit Sub
+        ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + Date.Today().ToString("ddMMMMyyyy"), "mdb")
+        If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            Dim FileName As String = ID_CARDS_SaveFileDialog.FileName
+            If FileIO.FileSystem.FileExists(FileName) Then
+                FileIO.FileSystem.DeleteFile(FileName)
+            End If
+
+            CreateAccessDatabase(FileName)
+            Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileName
+            Me.ID_CARDSTableAdapter.Connection.Open()
+
+            For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
+
+                Dim card_data As IDCardData = GetIDCardData(dr)
+                With dr
+                    ' Update all MAG and PDF field
+                    .IssueDate = Date.Today()
+                    .ExpirationDate = .IssueDate.AddYears(3)
+                    .AAMVAMAG = Support.EncodeAAMVAMagData(card_data)
+                    .AAMVAPDF = FullSupport.EncodeAAMVAPDF417Data(card_data)
+                    .CACPDF = Support.EncodeCACPDF417Data(card_data)
+                    .AAMVACode39 = ""
+                    .CACCode39 = ""
+                    Me.ID_CARDSTableAdapter.Insert(MakeIDNumber(.SSN, .LastName), .LastName, .FirstName, .MI, _
+                                                    .DOB, "XXX-XX-" + .SSN.Substring(.SSN.Length() - 4, 4), .Address, .H_Address, .H_City, .H_ZIP, _
+                                                    .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
+                                                    .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
+                                                    .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
+                                                    .AAMVACode39, .CACCode39)
+                End With
+            Next
+            Me.ID_CARDSTableAdapter.Connection.Close()
+            TabControl_ID.SelectTab(2)
+        End If
+    End Sub
+
+    Private Sub AddAccessDatabase()
+        If Not CheckOutputRecords() Then Exit Sub
+        ID_CARDS_SaveFileDialog.FileName = My.Settings.SummaryDBFile
+        ID_CARDS_SaveFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
+        ID_CARDS_SaveFileDialog.OverwritePrompt = False
+        ID_CARDS_SaveFileDialog.CreatePrompt = True
+
+        If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            Dim FileName As String = ID_CARDS_SaveFileDialog.FileName
+            Dim extProp As String = ""
+            If String.IsNullOrEmpty(FileName) OrElse Not FileIO.FileSystem.FileExists(FileName) Then Exit Sub
+
+            Dim cb As OleDb.OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
+            cb.DataSource = FileName
+            Try
+                If IO.Path.GetExtension(FileName).ToUpper = ".MDB" Then
+                    cb.Provider = "Microsoft.Jet.OLEDB.4.0"
+                    extProp = ""
+                ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLS" Then ' Excel 97-03 files
+                    cb.Provider = "Microsoft.Jet.OLEDB.4.0"
+                    extProp = "Excel 8.0;HDR=Yes;IMEX=1"
+                ElseIf IO.Path.GetExtension(FileName).ToUpper = ".XLSX" Then ' Excel 2007 files
+                    cb.Provider = "Microsoft.ACE.OLEDB.12.0"
+                    extProp = "Excel 12.0;HDR=Yes;IMEX=1"
+                End If
+
+                cb.Add("Extended Properties", extProp)
+                Using conn As OleDbConnection = New OleDbConnection(cb.ToString())
+                    conn.Open()
+                    Dim dtSchema As DataTable = conn.GetOleDbSchemaTable(OleDb.OleDbSchemaGuid.Tables, Nothing)
+                    For Each dr As DataRow In dtSchema.Rows
+                        ' Get the table name
+                        Dim TblName As String = dr("TABLE_NAME").ToString
+
+                        ' Check if the Table in ID_CARDS format
+                        If TblName.ToUpper().Contains("ID_CARDS") Then
+                            Dim cmdCheck As New OleDbCommand()
+                            Dim dba As New ID_CARDS_DataSetTableAdapters.ID_CARDSTableAdapter()
+                            dba.Connection = conn
+                            cmdCheck.CommandText = "SELECT COUNT(1) FROM [" + TblName + "] WHERE " + _
+                                "[IDNumber] = @IDNumber AND " + _
+                                "[SSN] = @SSN AND " + _
+                                "[IssueDate] = @IssueDate AND " + _
+                                "[SerialNumber] = @SerialNumber AND " + _
+                                "[AAMVAMAG] = @AAMVAMAG"
+                            cmdCheck.Connection = conn
+
+                            ' Go thru all records and only add unique ones
+                            Dim rec_count As Integer = 0
+                            For Each data_rec As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS.Rows
+                                With data_rec
+                                    cmdCheck.Parameters.Clear()
+                                    cmdCheck.Parameters.AddWithValue("@IDNumber", .IDNumber)
+                                    cmdCheck.Parameters.AddWithValue("@SSN", .SSN)
+                                    cmdCheck.Parameters.AddWithValue("@IssueDate", .IssueDate)
+                                    cmdCheck.Parameters.AddWithValue("@SerialNumber", .SerialNumber)
+                                    cmdCheck.Parameters.AddWithValue("@AAMVAMAG", .AAMVAMAG)
+                                    If cmdCheck.ExecuteScalar() = 0 Then
+                                        dba.Insert(.IDNumber, .LastName, .FirstName, .MI, _
+                                                                        .DOB, .SSN, .Address, .H_Address, .H_City, .H_ZIP, _
+                                                                        .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
+                                                                        .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
+                                                                        .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
+                                                                        .AAMVACode39, .CACCode39)
+                                        rec_count += 1
+                                    End If
+                                End With
+                            Next
+                            MessageBox.Show(String.Format("Added {0} records out of {1}", rec_count, ID_CARDS_DataSet.ID_CARDS.Rows.Count), _
+                                            "Records added to the Database")
+                        End If
+                    Next
+                    conn.Close()
+                End Using
+
+            Catch ex As Exception
+                MessageBox.Show(ex.Message)
+            End Try
+        End If
+
+    End Sub
 
     Private Function MakeFullNumber(ByVal Station As String, ByVal SSN As String, ByVal LastName As String) As String
         Return IssuingStation.Text + "-" + MakeIDNumber(SSN, LastName)

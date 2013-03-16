@@ -6,6 +6,10 @@ Imports System.Data.OleDb
 
 Public Class ConvertDialogForm
 
+    Private Delegate Sub SaveOrAddToDB()
+    Private m_SaveAdd As SaveOrAddToDB = AddressOf SaveAccessDatabase
+
+
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Me.InitLists()
@@ -80,43 +84,7 @@ Public Class ConvertDialogForm
     End Sub
 
     Private Sub Button_CreateDB_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button_CreateDB.Click
-
-        If Not CheckOutputRecords() Then Exit Sub
-
-        ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + Date.Today().ToString("ddMMMMyyyy"), "mdb")
-        If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            Dim FileName As String = ID_CARDS_SaveFileDialog.FileName
-            If FileIO.FileSystem.FileExists(FileName) Then
-                FileIO.FileSystem.DeleteFile(FileName)
-            End If
-
-            CreateAccessDatabase(FileName)
-            Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileName
-            Me.ID_CARDSTableAdapter.Connection.Open()
-
-            For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
-
-                Dim card_data As IDCardData = GetIDCardData(dr)
-                With dr
-                    ' Update all MAG and PDF field
-                    .IssueDate = Date.Today()
-                    .ExpirationDate = .IssueDate.AddYears(3)
-                    .AAMVAMAG = Support.EncodeAAMVAMagData(card_data)
-                    .AAMVAPDF = FullSupport.EncodeAAMVAPDF417Data(card_data)
-                    .CACPDF = Support.EncodeCACPDF417Data(card_data)
-                    .AAMVACode39 = ""
-                    .CACCode39 = ""
-                    Me.ID_CARDSTableAdapter.Insert(MakeIDNumber(.SSN, .LastName), .LastName, .FirstName, .MI, _
-                                                    .DOB, "XXX-XX-" + .SSN.Substring(.SSN.Length() - 4, 4), .Address, .H_Address, .H_City, .H_ZIP, _
-                                                    .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
-                                                    .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
-                                                    .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
-                                                    .AAMVACode39, .CACCode39)
-                End With
-            Next
-            Me.ID_CARDSTableAdapter.Connection.Close()
-            TabControl_ID.SelectTab(2)
-        End If
+        m_SaveAdd()
     End Sub
 
     Private Sub RANKComboBox_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RANKComboBox.SelectedIndexChanged
@@ -216,7 +184,8 @@ Public Class ConvertDialogForm
                             od_data_set.Dispose()
                             cmd.Dispose()
                             nextTab = 1
-                            Button_CreateDB.Enabled = False
+                            Button_CreateDB.Text = "Add to Main DB"
+                            m_SaveAdd = AddressOf AddAccessDatabase
                             Exit For
                         ElseIf Not TblName.ToUpper.Contains("MSYS") And _
                                 Not TblName.ToUpper.Contains("PRINT_") Then
@@ -231,6 +200,9 @@ Public Class ConvertDialogForm
                             ImportRecords(od_data_set, CSMR_ID_DataSet)
                             od_data_set.Dispose()
                             cmd.Dispose()
+                            nextTab = 0
+                            Button_CreateDB.Text = "Create Database"
+                            m_SaveAdd = AddressOf SaveAccessDatabase
                         End If
                     Next
                     conn.Close()
