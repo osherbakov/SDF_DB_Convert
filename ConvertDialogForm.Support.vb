@@ -382,6 +382,8 @@ Partial Public Class ConvertDialogForm
     Private Sub SaveAccessDatabase()
         If Not CheckOutputRecords() Then Exit Sub
         ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + Date.Today().ToString("ddMMMMyyyy"), "mdb")
+        ID_CARDS_SaveFileDialog.OverwritePrompt = True
+
         If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Dim FileName As String = ID_CARDS_SaveFileDialog.FileName
             If FileIO.FileSystem.FileExists(FileName) Then
@@ -394,14 +396,14 @@ Partial Public Class ConvertDialogForm
 
             For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
 
-                Dim card_data As IDCardData = GetIDCardData(dr)
+                Dim id_card_data As IDCardData = GetIDCardData(dr)
                 With dr
                     ' Update all MAG and PDF field
                     .IssueDate = Date.Today()
                     .ExpirationDate = .IssueDate.AddYears(3)
-                    .AAMVAMAG = Support.EncodeAAMVAMagData(card_data)
-                    .AAMVAPDF = FullSupport.EncodeAAMVAPDF417Data(card_data)
-                    .CACPDF = Support.EncodeCACPDF417Data(card_data)
+                    .AAMVAMAG = Support.EncodeAAMVAMagData(id_card_data)
+                    .AAMVAPDF = FullSupport.EncodeAAMVAPDF417Data(id_card_data)
+                    .CACPDF = Support.EncodeCACPDF417Data(id_card_data)
                     .AAMVACode39 = ""
                     .CACCode39 = ""
                     Me.ID_CARDSTableAdapter.Insert(MakeIDNumber(.SSN, .LastName), .LastName, .FirstName, .MI, _
@@ -456,13 +458,13 @@ Partial Public Class ConvertDialogForm
                             Dim cmdCheck As New OleDbCommand()
                             Dim dba As New ID_CARDS_DataSetTableAdapters.ID_CARDSTableAdapter()
                             dba.Connection = conn
+                            cmdCheck.Connection = conn
                             cmdCheck.CommandText = "SELECT COUNT(1) FROM [" + TblName + "] WHERE " + _
                                 "[IDNumber] = @IDNumber AND " + _
                                 "[SSN] = @SSN AND " + _
                                 "[IssueDate] = @IssueDate AND " + _
                                 "[SerialNumber] = @SerialNumber AND " + _
                                 "[AAMVAMAG] = @AAMVAMAG"
-                            cmdCheck.Connection = conn
 
                             ' Go thru all records and only add unique ones
                             Dim rec_count As Integer = 0
@@ -475,18 +477,25 @@ Partial Public Class ConvertDialogForm
                                     cmdCheck.Parameters.AddWithValue("@SerialNumber", .SerialNumber)
                                     cmdCheck.Parameters.AddWithValue("@AAMVAMAG", .AAMVAMAG)
                                     If cmdCheck.ExecuteScalar() = 0 Then
+                                        If data_rec.IsAAMVACode39Null Then data_rec.AAMVACode39 = ""
+                                        If data_rec.IsCACCode39Null Then data_rec.CACCode39 = ""
+                                        If data_rec.IsMINull Then data_rec.MI = ""
                                         dba.Insert(.IDNumber, .LastName, .FirstName, .MI, _
-                                                                        .DOB, .SSN, .Address, .H_Address, .H_City, .H_ZIP, _
-                                                                        .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
-                                                                        .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
-                                                                        .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
-                                                                        .AAMVACode39, .CACCode39)
+                                                        .DOB, .SSN, .Address, .H_Address, .H_City, .H_ZIP, _
+                                                        .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
+                                                        .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
+                                                        .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
+                                                        .AAMVACode39, .CACCode39)
                                         rec_count += 1
                                     End If
                                 End With
                             Next
-                            MessageBox.Show(String.Format("Added {0} records out of {1}", rec_count, ID_CARDS_DataSet.ID_CARDS.Rows.Count), _
-                                            "Records added to the Database")
+                            dba.Dispose()
+                            cmdCheck.Dispose()
+                            MessageBox.Show(String.Format("Added {0} records out of {1}", _
+                                                          rec_count, ID_CARDS_DataSet.ID_CARDS.Rows.Count), _
+                                                            "Records added to the Database")
+                            My.Settings.SummaryDBFile = ID_CARDS_SaveFileDialog.FileName
                         End If
                     Next
                     conn.Close()
