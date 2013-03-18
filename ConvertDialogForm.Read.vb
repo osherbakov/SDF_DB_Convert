@@ -94,9 +94,9 @@ Partial Public Class ConvertDialogForm
     ' This is the event handler for the Scanner received data event
     Private Sub ScannerDataReady(ByVal sender As Object, ByVal e As HHPScanner.DataReceivedEventArgs)
         m_curr_id.Clear()
-        If FullSupport.DecodeAAMVAPDF417Data(m_curr_id, e.StringData) Then
+        If Support.DecodeAAMVAPDF417Data(m_curr_id, e.StringData) Then
             Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataSourceAAMVA))
-        ElseIf FullSupport.DecodeCACPDF417Data(m_curr_id, e.StringData) Then
+        ElseIf Support.DecodeCACPDF417Data(m_curr_id, e.StringData) Then
             Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataSourceCAC))
         Else
             Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataSourceError))
@@ -107,7 +107,7 @@ Partial Public Class ConvertDialogForm
     ' This is the event handler for the MagReader received data event
     Private Sub MagReaderDataReady(ByVal sender As Object, ByVal e As MSR206.DataReceivedEventArgs)
         m_curr_id.Clear()
-        If FullSupport.DecodeAAMVAMagData(m_curr_id, MSR206.DecodeTrack(e.Track1, MSR206.Encoding.BITS6, 8), _
+        If Support.DecodeAAMVAMagData(m_curr_id, MSR206.DecodeTrack(e.Track1, MSR206.Encoding.BITS6, 8), _
                     MSR206.DecodeTrack(e.Track2, MSR206.Encoding.BITS4, 8), MSR206.DecodeTrack(e.Track3, MSR206.Encoding.BITS6, 8)) Then
             ' If successfully received - display it
             Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataSourceMag))

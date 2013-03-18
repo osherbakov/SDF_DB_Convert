@@ -402,11 +402,11 @@ Partial Public Class ConvertDialogForm
                     .IssueDate = Date.Today()
                     .ExpirationDate = .IssueDate.AddYears(3)
                     .AAMVAMAG = Support.EncodeAAMVAMagData(id_card_data)
-                    .AAMVAPDF = FullSupport.EncodeAAMVAPDF417Data(id_card_data)
+                    .AAMVAPDF = Support.EncodeAAMVAPDF417Data(id_card_data)
                     .CACPDF = Support.EncodeCACPDF417Data(id_card_data)
                     .AAMVACode39 = ""
                     .CACCode39 = ""
-                    Me.ID_CARDSTableAdapter.Insert(MakeIDNumber(.SSN, .LastName), .LastName, .FirstName, .MI, _
+                    Me.ID_CARDSTableAdapter.Insert(.IDNumber, .LastName, .FirstName, .MI, _
                                                     .DOB, "XXX-XX-" + .SSN.Substring(.SSN.Length() - 4, 4), .Address, .H_Address, .H_City, .H_ZIP, _
                                                     .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
                                                     .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
@@ -419,7 +419,7 @@ Partial Public Class ConvertDialogForm
         End If
     End Sub
 
-    Private Sub AddAccessDatabase()
+    Private Sub AddToAccessDatabase()
         If Not CheckOutputRecords() Then Exit Sub
         ID_CARDS_SaveFileDialog.FileName = My.Settings.SummaryDBFile
         ID_CARDS_SaveFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
@@ -508,30 +508,6 @@ Partial Public Class ConvertDialogForm
 
     End Sub
 
-    Private Function MakeFullNumber(ByVal Station As String, ByVal SSN As String, ByVal LastName As String) As String
-        Return IssuingStation.Text + "-" + MakeIDNumber(SSN, LastName)
-    End Function
-
-    Private Function MakeIDNumber(ByVal SSN As String, ByVal LastName As String) As String
-        Dim hash As New System.Security.Cryptography.HMACSHA256(System.Text.Encoding.UTF8.GetBytes("California State Military Reserve"))
-        hash.Initialize()
-        Dim BattleRosterNumber As String = LastName.ToUpper().Substring(0, 1) + SSN.Substring(SSN.Length() - 4, 4)
-        Dim idn() As Byte = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(BattleRosterNumber))
-        Dim byte_result1() As Byte = {idn(5), idn(0), idn(1), idn(11)}
-        Dim byte_result2() As Byte = {idn(15), idn(3), idn(22), idn(19)}
-        Dim int_result As UInt32 = BitConverter.ToUInt32(byte_result1, 0)
-        int_result = int_result Xor BitConverter.ToUInt32(byte_result2, 0)
-        Return (int_result Mod 100000000).ToString("D8")
-    End Function
-
-    Private Function MakeSerial() As String
-        Dim g() As Byte = Guid.NewGuid.ToByteArray()
-        Dim int_result As UInt32 = BitConverter.ToUInt32(g, 0)
-        int_result = int_result Xor BitConverter.ToUInt32(g, 4)
-        int_result = int_result Xor BitConverter.ToUInt32(g, 8)
-        int_result = int_result Xor BitConverter.ToUInt32(g, 12)
-        Return (int_result Mod 10000000000).ToString("D10")
-    End Function
 
     Private Function GetIDCardData(ByVal dr As CSMR_DB_Convert.ID_CARDS_DataSet.ID_CARDSRow) As IDCardData
         Dim card_data As New IDCardData()

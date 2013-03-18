@@ -110,7 +110,7 @@ Public Class HHPScanner
         For Each iPort As String In IO.Ports.SerialPort.GetPortNames
             Try
                 InitComm(iPort)
-                If CMD_Test(200) = 0 Then
+                If CMD_Test(500) = 0 Then
                     m_ScannerFoundOnPort = iPort
                     Exit For
                 Else
@@ -207,6 +207,7 @@ Public Class HHPScanner
             m_SerialBuffer.Clear()
             m_SerialPort.Write(ByteData, 0, ByteData.Length)
         End SyncLock
+        Return 0
     End Function
 
 
@@ -219,60 +220,65 @@ Public Class HHPScanner
             m_SerialBuffer.Clear()
             m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
         End SyncLock
+        Return 0
     End Function
 
 
     Private Function CMD_Wait_Response() As Integer
-        Dim idx As Integer
-
+        Dim ret As Integer = -1
         Do
             m_DataReady.WaitOne()
             SyncLock m_SerialBuffer
                 If m_CancelFlag Then Exit Do
-                idx = m_SerialBuffer.LastIndexOf(ACK)
+                Dim idx As Integer = m_SerialBuffer.LastIndexOf(ACK)
                 If idx <> -1 Then
-                    Return m_SerialBuffer(idx)
+                    ret = m_SerialBuffer(idx)
+                    m_SerialBuffer.Clear()
+                    Exit Do
                 End If
             End SyncLock
         Loop
-        Return -1
+        Return ret
     End Function
 
     Private Function CMD_Wait_AnyResponse() As Integer
-        Dim idx As Integer
-
+        Dim ret As Integer = -1
         Do
             m_DataReady.WaitOne()
             SyncLock m_SerialBuffer
                 If m_CancelFlag Then Exit Do
-                idx = m_SerialBuffer.LastIndexOf(ACK)
+                Dim idx As Integer = m_SerialBuffer.LastIndexOf(ACK)
                 If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(NAK)
                 If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(ENQ)
                 If idx <> -1 Then
-                    Return m_SerialBuffer(idx)
+                    ret = m_SerialBuffer(idx)
+                    m_SerialBuffer.Clear()
+                    Exit Do
                 End If
             End SyncLock
         Loop
-        Return -1
+        Return ret
     End Function
 
     Private Function CMD_Wait_AnyResponse(ByVal Timeout As Integer) As Integer
-        Dim idx As Integer
         Dim Signalled As Boolean
+        Dim ret As Integer = -1
 
         Do
             Signalled = m_DataReady.WaitOne(Timeout, False)
             SyncLock m_SerialBuffer
                 If m_CancelFlag OrElse Not Signalled Then Exit Do
-                idx = m_SerialBuffer.LastIndexOf(ACK)
+                Dim idx As Integer = m_SerialBuffer.LastIndexOf(ACK)
                 If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(NAK)
                 If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(ENQ)
                 If idx <> -1 Then
-                    Return m_SerialBuffer(idx)
+                    ret = m_SerialBuffer(idx)
+                    m_SerialBuffer.Clear()
+                    Exit Do
                 End If
             End SyncLock
         Loop
-        Return -1
+        Return ret
     End Function
 
     Public Function CMD_Reset() As Integer
@@ -281,15 +287,15 @@ Public Class HHPScanner
         Try
             Cmd += ACTIVATETRIGGER
             CMD_Send(Cmd)
-            Thread.Sleep(300)
+            ret = CMD_Wait_AnyResponse(300)
             Cmd.Clear()
             Cmd += DEACTIVATETRIGGER
             CMD_Send(Cmd)
-            ret = 0
+            ret = CMD_Wait_AnyResponse(300)
         Catch ex As Exception
             m_ScannerFoundOnPort = Nothing
         End Try
-        Return ret
+        Return 0
     End Function
 
     Public Function CMD_Test(ByVal Timeout As Integer) As Integer
@@ -301,6 +307,7 @@ Public Class HHPScanner
             Cmd += NVRAM
             CMD_Send(Cmd)    ' Send assembled command
             ret = CMD_Wait_AnyResponse(Timeout)
+            If ret = ACK OrElse ret = NAK OrElse ret = ENQ Then ret = 0
         Catch ex As Exception
             m_ScannerFoundOnPort = Nothing
         End Try
@@ -324,6 +331,7 @@ Public Class HHPScanner
             Cmd += NVRAM
             CMD_Send(Cmd)    ' Send assembled command
             ret = CMD_Wait_Response()
+            If ret = ACK OrElse ret = NAK OrElse ret = ENQ Then ret = 0
         Catch ex As Exception
             m_ScannerFoundOnPort = Nothing
         End Try

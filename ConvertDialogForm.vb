@@ -72,8 +72,8 @@ Public Class ConvertDialogForm
                 .Weight = dr.WEIGHT
 
                 .Photo = GetImageFile(.LastName, .FirstName, .MI)
-                .IDNumber = MakeFullNumber(IssuingStation.Text, .SSN, .LastName)
-                .SerialNumber = MakeSerial()
+                .IDNumber = Support.MakeFullNumber(IssuingStation.Text, .SSN, .LastName)
+                .SerialNumber = Support.MakeSerial()
             End With
 
             ID_CARDS_DataSet.ID_CARDS.AddID_CARDSRow(id_row)
@@ -185,7 +185,7 @@ Public Class ConvertDialogForm
                             cmd.Dispose()
                             nextTab = 1
                             Button_CreateDB.Text = "Add to Main DB"
-                            m_SaveAdd = AddressOf AddAccessDatabase
+                            m_SaveAdd = AddressOf AddToAccessDatabase
                             Exit For
                         ElseIf Not TblName.ToUpper.Contains("MSYS") And _
                                 Not TblName.ToUpper.Contains("PRINT_") Then

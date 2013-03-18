@@ -5,7 +5,7 @@ Imports System.Text
 Imports System.Text.RegularExpressions
 Imports VB = Microsoft.VisualBasic
 
-Public Class FullSupport
+Public Class Support
 
     Private Shared MonthAbbrev As String() = New String() _
         {"UNK", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"}
@@ -285,12 +285,6 @@ Public Class FullSupport
             With idCard
                 .SSN = String.Format("{0:###-##-####}", B32toBin(rm.Groups("SSN").Value))
                 .IdNumber = CInt(B32toBin(rm.Groups("ID").Value)).ToString("D9")
-                ' Check if license has special encoding for A, B , C so 01 = A, 02 = B, 03 = C and so on.....
-                If (.IdNumber(0) = "0"c) Or (.IdNumber(0) = "1"c) Then
-                    Dim sFirstChar As String = .IdNumber.Substring(0, 2)
-                    Dim nFirstChar As Integer = Integer.Parse(sFirstChar) + Convert.ToInt32("A"c) - 1
-                    .IdNumber = Convert.ToChar(nFirstChar) + .IdNumber.Substring(2)
-                End If
                 .FirstName = rm.Groups("FName").Value.Trim()
                 .LastName = rm.Groups("LName").Value.Trim
                 .DOB = RefDate.AddDays(B32toBin(rm.Groups("DOB").Value))
@@ -298,7 +292,7 @@ Public Class FullSupport
                 .PayGrade = rm.Groups("Pay").Value.Trim
                 .IssueDate = RefDate.AddDays(B32toBin(rm.Groups("Issued").Value))
                 .ExpirationDate = RefDate.AddDays(B32toBin(rm.Groups("Expires").Value))
-                .DLData = .IdNumber
+                .DLData = ""
             End With
         End If
 
@@ -324,7 +318,7 @@ Public Class FullSupport
         ' Designator code - S - Social Security
         Result += "S"
 
-        ' Person DEERS Code - get it from DL
+        ' Person DEERS Code - get it from ID Number
         Dim IDNumber As String = ExtractIDNumber(data)
         Num = ExtractNumber(IDNumber)
         Result += BintoB32(Num, 7)
@@ -351,7 +345,7 @@ Public Class FullSupport
         Result += "08"
 
         ' Rank - padded to 6
-        txt = data.Rank.ToUpper.PadRight(6, " "c).Substring(0, 6)
+        txt = data.Rank.PadRight(6, " "c).Substring(0, 6)
         Result += txt
 
         ' Payplan Code and Grade - 4 chars (2 for code + 2 for grade)
@@ -378,7 +372,7 @@ Public Class FullSupport
         txt = data.MI.PadRight(1, " "c).Substring(0, 1).ToUpper
         Result += txt
 
-        Return Result.ToUpper()
+        Return Result
     End Function
 
 
@@ -438,9 +432,11 @@ Public Class FullSupport
         Dim result As New Date(1900, 1, 1)
 
         If Double.TryParse(StringDate, Num) Then
+            ' Try format MMDDYYYY
             Year = Num Mod 10000
             Day = (Num \ 10000) Mod 100
             Mo = (Num \ 1000000) Mod 100
+            ' If not reasonable - try YYYYMMDD
             If (Year < Now.Year - 80) OrElse (Year > Now.Year + 80) Then
                 Year = (Num \ 10000) Mod 10000
                 Day = (Num) Mod 100
@@ -607,12 +603,13 @@ Public Class FullSupport
             End If
             Subf1.Append("DAU" + ht.ToString("D03") + " IN" + VB.vbLf)
             Subf1.Append("DAW" + .Weight + " LB" + VB.vbLf)
-            Subf1.Append("DCF" + .IdNumber + "/" + .SerialNumber + "/" + ExtractIDStation(Data) + VB.vbLf)
+
+            Subf1.Append("DCF" + ExtractIDNumber(Data) + "/" + .SerialNumber + "/" + ExtractIDStation(Data) + VB.vbLf)
+            Subf1.Append("DCK" + .SerialNumber + VB.vbLf)
 
             Subf1.Append("DDE" + "U" + VB.vbLf)
             Subf1.Append("DDF" + "U" + VB.vbLf)
             Subf1.Append("DDG" + "U" + VB.vbLf)
-            Subf1.Append("DCK" + .SerialNumber + VB.vbLf)
             Subf1.Append("DDB" + "03032013" + VB.vbLf)
             Subf1.Append("DDD" + "0" + VB.vbLf)
 
@@ -741,10 +738,11 @@ Public Class FullSupport
             IDData.SerialNumber = ""
 
             Dim Grade As String = tm.Groups("Grade").Value
-            If (Grade(0) = "O" Or Grade(0) = "E") AndAlso Grade(1) > "1" AndAlso Grade(1) <= "9" Then
+            If (Grade(0) = "O" Or Grade(0) = "E" Or Grade(0) = "W") AndAlso Grade(1) >= "1" AndAlso Grade(1) <= "9" Then
                 IDData.PayGrade = Grade(0) & " " & Grade(1)
                 IDData.Rank = tm.Groups("Rank").Value
                 IDData.SSN = String.Format("{0:000-00-0000}", B32toBin(tm.Groups("SSN").Value))
+                IDData.IdNumber = MakeFullNumber(IDStation, IDData.SSN, LastN)
             End If
 
             With IDData
@@ -777,7 +775,7 @@ Public Class FullSupport
                 .Hair = Hair
                 .Weight = Weight
                 .Height = Height
-                .Sex = Sex.Chars(0)
+                .Sex = Sex(0)
             End With
             ret = True
         Catch ex As Exception
@@ -857,7 +855,7 @@ Public Class FullSupport
         strbldr.Append("636014")    ' ISO Code for California
 
         IDStation = ExtractIDStation(IDData)
-        IDNumber = ExtractIDNumber(IDData)
+        IDNumber = ConvertDLToNumeric(ExtractDLNumber(IDData))
         If IDNumber.Length <= 13 Then
             strbldr.Append(IDNumber)
         Else
@@ -931,7 +929,7 @@ Public Class FullSupport
         strbldr.Append(IDData.Rank.PadRight(3).Substring(0, 3))
 
         If (IDData.PayGrade(0) = "O" Or IDData.PayGrade(0) = "E" Or IDData.PayGrade(0) = "W") _
-                AndAlso IDData.PayGrade(2) > "1" AndAlso IDData.PayGrade(2) <= "9" Then
+                AndAlso IDData.PayGrade(2) >= "1" AndAlso IDData.PayGrade(2) <= "9" Then
             strbldr.Append(IDData.PayGrade.Substring(0, 1))
             strbldr.Append(IDData.PayGrade.Substring(2, 1))
         Else
@@ -947,6 +945,178 @@ Public Class FullSupport
         End Try
     End Sub
 
+
+    Public Shared Function EncodeAAMVAMagData(ByVal IDData As IDCardData) As String
+        Dim trackData As String
+        Dim FullName As String
+        Dim IDStation, IDNumber As String
+        Dim Streets(), Street, City, State, ZIP As String
+        Dim Height, Weight As String
+        Dim Hair, Eyes As String
+
+        Dim tm As RegularExpressions.Match
+        ' 
+        ' %CAMOUNTAIN VIEWSHERBAKOV$OLEG$A^1446 WILDROSE WAY^?
+        ' ;636014015868735=110219589912?
+        ' %!!94043      C 01            M602190BRNGRY            D51820001012  [^&)HL,/ 1(?
+
+        If IDData Is Nothing Then Return String.Empty
+
+        Dim strbldr As New StringBuilder()
+
+        State = "CA"
+        strbldr.Append(State)
+        Streets = IDData.Address.Split(New Char() {VB.vbCr, VB.vbLf}, StringSplitOptions.RemoveEmptyEntries)
+
+        Street = ""
+        City = String.Empty
+        ZIP = New String(" ", 11)
+
+        If Streets.Length = 2 Then
+            Street = Streets(0).Trim
+            tm = rxCityStateZip.Match(Streets(1))
+            City = tm.Groups("City").Value
+            ZIP = ""
+            For Each iCh As Char In tm.Groups("ZIP").Value
+                If Char.IsLetterOrDigit(iCh) Then
+                    ZIP += iCh
+                End If
+            Next
+            ZIP = ZIP.PadRight(11).Substring(0, 11)
+        End If
+        If City.Length < 13 Then
+            City += "^"
+        Else
+            City = City.Substring(0, 13)
+        End If
+        strbldr.Append(City)
+
+        FullName = String.Empty
+        FullName = IDData.LastName & "$" & IDData.FirstName
+        If Not String.IsNullOrEmpty(IDData.MI) Then
+            FullName += "$" & IDData.MI
+        End If
+        If FullName.Length < 35 Then
+            FullName += "^"
+        Else
+            FullName = FullName.Substring(0, 35)
+        End If
+        strbldr.Append(FullName)
+
+        If City.Length + FullName.Length + Street.Length < 77 Then
+            Street += "^"
+        Else
+            Street = Street.Substring(0, 77 - City.Length + FullName.Length)
+        End If
+        strbldr.Append(Street)
+
+        trackData = "%" + strbldr.ToString() + "?"
+
+        strbldr = New StringBuilder()
+        strbldr.Append("636014")    ' ISO Code for California
+        IDStation = ExtractIDStation(IDData)
+        IDNumber = ConvertDLToNumeric(ExtractDLNumber(IDData))
+
+        If IDNumber.Length <= 13 Then
+            strbldr.Append(IDNumber)
+        Else
+            strbldr.Append(IDNumber.Substring(0, 13))
+        End If
+        strbldr.Append("=")
+
+
+        Dim Year As String = (IDData.ExpirationDate.Year Mod 100).ToString("D02")
+        Dim Mo As String = IDData.ExpirationDate.Month.ToString("D02")
+        Dim Day As String
+
+        strbldr.Append(Year + Mo)
+
+        Year = IDData.DOB.Year.ToString("D04")
+        Mo = IDData.DOB.Month.ToString("D02")
+        Day = IDData.DOB.Day.ToString("D02")
+        strbldr.Append(Year + Mo + Day)
+
+        If IDNumber.Length > 13 Then
+            IDNumber = IDNumber.Substring(13)
+            If IDNumber.Length > 5 Then
+                IDNumber = IDNumber.Substring(0, 5)
+            End If
+            strbldr.Append(IDNumber)
+        End If
+
+        trackData += ";" + strbldr.ToString() + "?"
+
+        strbldr = New StringBuilder()
+        strbldr.Append("!!")  ' Version
+        strbldr.Append(ZIP)
+        strbldr.Append(New String(" ", 2))  ' Class
+        strbldr.Append(New String(" ", 10)) ' Restrictions
+        strbldr.Append(New String(" ", 4))  ' Endorcements
+
+        strbldr.Append(IDData.Sex)
+
+        Height = IDData.Height.PadRight(3).Substring(0, 3)
+        Dim ht As Integer
+        If Not Integer.TryParse(IDData.Height, ht) Then ht = 0
+        If ht < 100 Then
+            Height = (ht \ 12).ToString("D1") + (ht Mod 12).ToString("D02")
+        End If
+        strbldr.Append(Height)
+
+        Weight = IDData.Weight.PadRight(3).Substring(0, 3)
+        strbldr.Append(Weight)
+
+        Hair = IDData.Hair.PadRight(3).Substring(0, 3)
+        strbldr.Append(Hair)
+
+        Eyes = IDData.Eyes.PadRight(3).Substring(0, 3)
+        strbldr.Append(Eyes)
+
+        strbldr.Append(New String(" ", 12))
+
+        IDStation = IDStation.PadRight(4).Substring(0, 4)
+        strbldr.Append(IDStation)
+
+        Year = IDData.IssueDate.Year.ToString("D04")
+        Mo = IDData.IssueDate.Month.ToString("D02")
+        Day = IDData.IssueDate.Day.ToString("D02")
+        strbldr.Append(Year + Mo + Day)
+
+        strbldr.Append(New String(" ", 2))
+
+        Dim SSN As Double = ExtractNumber(IDData.SSN)
+        strbldr.Append(BintoB32(SSN, 6))
+        strbldr.Append(IDData.Rank.PadRight(3).Substring(0, 3))
+
+        If (IDData.PayGrade(0) = "O" Or IDData.PayGrade(0) = "E" Or IDData.PayGrade(0) = "W") _
+                AndAlso IDData.PayGrade(2) >= "1" AndAlso IDData.PayGrade(2) <= "9" Then
+            strbldr.Append(IDData.PayGrade.Substring(0, 1))
+            strbldr.Append(IDData.PayGrade.Substring(2, 1))
+        Else
+            strbldr.Append(New String(" ", 2))
+        End If
+
+        '37 - 12 - 4 - 8 - 2 - 6 - 3 - 2 = 0
+        trackData += "%" + strbldr.ToString() + "?"
+
+        Return trackData.ToUpper
+    End Function
+
+    Public Shared Function ConvertDLToNumeric(ByVal data As String) As String
+        Dim IDN As String = ""
+        For Each iCH As Char In data
+            iCH = Char.ToUpper(iCH)
+            If Char.IsDigit(iCH) Then
+                IDN += iCH
+            ElseIf Char.IsLetter(iCH) Then
+                IDN += (Convert.ToInt32(iCH) - Convert.ToInt32("A"c) + 1).ToString("D02")
+            Else
+                ' Skip it
+            End If
+        Next
+        Return IDN
+    End Function
+
     Public Shared Function ExtractIDStation(ByVal data As IDCardData) As String
         Dim IDStation As String = ""
 
@@ -961,44 +1131,25 @@ Public Class FullSupport
 
     Public Shared Function ExtractIDNumber(ByVal data As IDCardData) As String
         Dim IDNumber As String = ""
-        If String.IsNullOrEmpty(data.DLData) Then
+
+        If Not String.IsNullOrEmpty(data.IdNumber) Then
             Dim IDNums() As String = data.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
             If IDNums.Length > 1 Then
                 IDNumber = IDNums(1)
             Else
                 IDNumber = data.IdNumber
             End If
-        Else
-            IDNumber = data.DLData
         End If
-
-        Dim IDN As String = ""
-        For Each iCH As Char In IDNumber
-            iCH = Char.ToUpper(iCH)
-            If Char.IsDigit(iCH) Then
-                IDN += iCH
-            ElseIf Char.IsLetter(iCH) Then
-                IDN += (Convert.ToInt32(iCH) - Convert.ToInt32("A"c) + 1).ToString("D02")
-            Else
-                ' Skip it
-            End If
-        Next
-        Return IDN
+        Return IDNumber
     End Function
 
     Public Shared Function ExtractDLNumber(ByVal data As IDCardData) As String
         Dim IDNumber As String = ""
         If String.IsNullOrEmpty(data.DLData) Then
-            Dim IDNums() As String = data.IdNumber.Split(New String() {"-"}, StringSplitOptions.RemoveEmptyEntries)
-            If IDNums.Length > 1 Then
-                IDNumber = IDNums(1)
-            Else
-                IDNumber = data.IdNumber
-            End If
+            IDNumber = ExtractIDNumber(data)
         Else
             IDNumber = data.DLData
         End If
-
         Return IDNumber
     End Function
 
@@ -1058,6 +1209,32 @@ Public Class FullSupport
 
         Return ret
     End Function
+
+    Public Shared Function MakeFullNumber(ByVal Station As String, ByVal SSN As String, ByVal LastName As String) As String
+        Return Station + "-" + MakeIDNumber(SSN, LastName)
+    End Function
+
+    Public Shared Function MakeIDNumber(ByVal SSN As String, ByVal LastName As String) As String
+        Dim hash As New System.Security.Cryptography.HMACSHA256(System.Text.Encoding.UTF8.GetBytes("California State Military Reserve"))
+        hash.Initialize()
+        Dim BattleRosterNumber As String = LastName.ToUpper().Substring(0, 1) + SSN.Substring(SSN.Length() - 4, 4)
+        Dim idn() As Byte = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(BattleRosterNumber))
+        Dim byte_result1() As Byte = {idn(5), idn(0), idn(1), idn(11)}
+        Dim byte_result2() As Byte = {idn(15), idn(3), idn(22), idn(19)}
+        Dim int_result As UInt32 = BitConverter.ToUInt32(byte_result1, 0)
+        int_result = int_result Xor BitConverter.ToUInt32(byte_result2, 0)
+        Return (int_result Mod 1000000000).ToString("D9")
+    End Function
+
+    Public Shared Function MakeSerial() As String
+        Dim g() As Byte = Guid.NewGuid.ToByteArray()
+        Dim int_result As UInt32 = BitConverter.ToUInt32(g, 0)
+        int_result = int_result Xor BitConverter.ToUInt32(g, 4)
+        int_result = int_result Xor BitConverter.ToUInt32(g, 8)
+        int_result = int_result Xor BitConverter.ToUInt32(g, 12)
+        Return (int_result Mod 10000000000).ToString("D10")
+    End Function
+
 End Class
 
 
