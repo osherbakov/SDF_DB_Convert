@@ -1,23 +1,18 @@
+Imports System.Collections.Generic
+
 ''' <summary>
 ''' 
 ''' This class implements the serial buffer made out of 8-bit bytes
 ''' </summary>
 Public Class SerialBuffer
-    Private m_Buffer As New System.Collections.Generic.List(Of Byte)
+    Private m_Buffer As New List(Of Byte)
 
     Public Sub New()
     End Sub
 
-    Public Sub New(ByVal value As Char)
-        m_Buffer.Add(Convert.ToByte(value))
-    End Sub
-
-    Public Sub New(ByVal value As Byte)
-        m_Buffer.Add(value)
-    End Sub
-
     Public Shared Operator +(ByVal a As SerialBuffer, ByVal b As Char) As SerialBuffer
-        a.m_Buffer.Add(Convert.ToByte(b))
+        Dim arr() As Char = {b}
+        a.m_Buffer.AddRange(Text.Encoding.UTF8.GetBytes(arr))
         Return a
     End Operator
 
@@ -32,9 +27,7 @@ Public Class SerialBuffer
     End Operator
 
     Public Shared Operator +(ByVal a As SerialBuffer, ByVal b As String) As SerialBuffer
-        For Each iCh As Char In b
-            a.m_Buffer.Add(Convert.ToByte(iCh))
-        Next
+        a.m_Buffer.AddRange(Text.Encoding.UTF8.GetBytes(b))
         Return a
     End Operator
 
@@ -92,6 +85,7 @@ Public Class SerialBuffer
     Public Function IndexOf(ByVal search() As Byte, ByVal index As Integer) As Integer
         If search Is Nothing Then Return -1
         If search.Length = 0 Then Return 0
+        If search.Length = 1 Then Return m_Buffer.IndexOf(search(0))
         Dim idx As Integer = m_Buffer.IndexOf(search(0), index)
         Dim found As Boolean = False
         Do While idx <> -1
@@ -128,6 +122,7 @@ Public Class SerialBuffer
     Public Function LastIndexOf(ByVal search() As Byte) As Integer
         If search Is Nothing Then Return -1
         If search.Length = 0 Then Return 0
+        If search.Length = 1 Then Return m_Buffer.LastIndexOf(search(0))
         Dim idx As Integer = m_Buffer.LastIndexOf(search(0))
         If idx = -1 Then Return -1
         If idx + search.Length > m_Buffer.Count Then Return -1
@@ -141,21 +136,11 @@ Public Class SerialBuffer
 
     Public Shadows Function ToString(ByVal index As Integer, ByVal length As Integer) As String
         If index = -1 OrElse length = 0 Then Return ""
-        Dim str As New System.Text.StringBuilder
-        Do While length <> 0
-            str.Append(Convert.ToString(m_Buffer(index)))
-            index += 1
-            length -= 1
-        Loop
-        Return str.ToString()
+        Return Text.Encoding.UTF8.GetString(m_Buffer.ToArray(), index, Count)
     End Function
 
     Public Shadows Function ToString() As String
-        Dim str As New System.Text.StringBuilder
-        For Each iBy As Byte In m_Buffer
-            str.Append(Convert.ToChar(iBy))
-        Next
-        Return str.ToString()
+        Return Text.Encoding.UTF8.GetString(m_Buffer.ToArray())
     End Function
 
     Public Shared Function ASCII(ByVal value As Byte) As Char
