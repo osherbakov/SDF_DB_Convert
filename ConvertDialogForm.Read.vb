@@ -92,7 +92,7 @@ Partial Public Class ConvertDialogForm
     End Sub
 
     ' This is the event handler for the Scanner received data event
-    Private Sub ScannerDataReady(ByVal sender As Object, ByVal e As HHPScanner.DataReceivedEventArgs)
+    Private Sub ScannerDataReady(ByVal sender As Object, ByVal e As Scanners.DataReceivedEventArgs)
         m_curr_id.Clear()
         If Support.DecodeAAMVAPDF417Data(m_curr_id, e.StringData) Then
             Me.BeginInvoke(New MethodInvoker(AddressOf UpdateDataSourceAAMVA))

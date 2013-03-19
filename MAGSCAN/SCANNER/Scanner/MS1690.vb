@@ -1,58 +1,59 @@
-Imports System.Threading
+ï»¿Imports System.Threading
 Imports System.IO.Ports
 Imports SerialBuffer
 Imports System.Collections.Generic
 
 
-Public Class HHPScanner
+Public Class Scanners
+    Public Class DataReceivedEventArgs
+        Inherits System.EventArgs
+        Private m_Data As Byte()
+
+        Public ReadOnly Property BinaryData() As Byte()
+            Get
+                Return m_Data
+            End Get
+        End Property
+        Public ReadOnly Property StringData() As String
+            Get
+                Dim str As New System.Text.StringBuilder
+                For Each iBy As Byte In m_Data
+                    str.Append(Convert.ToChar(iBy))
+                Next
+                Return str.ToString()
+            End Get
+        End Property
+
+        Sub New(ByVal value As Byte())
+            m_Data = value
+        End Sub
+    End Class
+End Class
+
+Public Class MS1690
 
     Public Delegate Sub DataReceivedEventHandler(ByVal sender As System.Object, ByVal e As Scanners.DataReceivedEventArgs)
     Public Event DataReceived As DataReceivedEventHandler
 
-    Private Const ESC As Byte = &H1B
-    Private Const FS As Byte = &H1C
-    Private Const DigitZero As Byte = &H30
+    Private Const STX As Byte = &H2
+    Private Const ETX As Byte = &H3
 
     Private Const SYN As Byte = &H16
     Private Const CR As Byte = &HD
-    Private Const M As Byte = &H4D
 
     Private Const ACK As Byte = &H6
-    Private Const ENQ As Byte = &H5
     Private Const NAK As Byte = &H15
 
-    Private Const DEFAULTVALUE As Byte = &H5E   ' ^
-    Private Const CURRENTVALUE As Byte = &H3F   ' ?
-    Private Const RANGEOFVALUES As Byte = &H2A  ' *
 
-    Private Const NVRAM As Byte = &H2E      ' .
-    Private Const RAM As Byte = &H21        ' !
+    Private PREFIX As Byte() = {STX}
+    Private SUFFIX As Byte() = {ETX}
+    Private Const ENTER_CONFIG As String = "999999"
+    Private Const EXIT_CONFIG As String = "999999"
 
-
-    '^ What is the default value for the setting(s).
-    '? What is the device’s current value for the setting(s).
-    '* What is the range of possible values for the setting(s). (The device’s
-    'response uses a dash (-) to indicate a continuous range of
-    'values. A pipe (|) separates items in a list of non-continuous values.)
-    ' Activate: SYN T CR
-    ' Deactivate: SYN U CR
-
-    ' Command - enable all symbols - ALLENA0
-
-
-    Private PREFIX As Byte() = {SYN, M, CR}
-
-    Private Const TRIG As Byte = &H54
-    Private Const UNTRIG As Byte = &H55
-
-    Private ACTIVATETRIGGER As Byte() = {SYN, TRIG, CR}
-    Private DEACTIVATETRIGGER As Byte() = {SYN, UNTRIG, CR}
-
-    Private ENABLEALL As String = "ALLENA" + "1"
-    Private SETPDFMIN As String = "PDFMIN" + "1"
-    Private SETPDFMAX As String = "PDFMAX" + "2750"
-    Private ADDCRSUFFIX As String = "VSUFCR"
-    Private TRIGGERMODE As String = "TRGMOD" + "0"
+    Private Const RECALL_DEFAULTS As String = "999998"
+    Private Const DISABLE_LF_SUFFIX As String = "116602"
+    Private Const DISABLE_CR_SUFFIX As String = "116603"
+    Private Const ENABLE_ETX_SUFFIX As String = "116614"
 
 
 #Region "Private members"
@@ -61,14 +62,15 @@ Public Class HHPScanner
     Private m_CancelFlag As Boolean = False
     Private m_SerialBuffer As New SerialBuffer()
     Private m_Timer As New Timer(New TimerCallback(AddressOf TimerCallback))
+    Friend WithEvents m_SerialPort As New System.IO.Ports.SerialPort()
 #End Region
 
     Private Sub TimerCallback(ByVal state As Object)
         Dim ReceivedData As Byte() = {}
         Dim Do_RaiseEvent As Boolean = False
         SyncLock m_SerialBuffer
-            ' Check if we got the full datablock - should end with {CR]
-            Dim term As Integer = m_SerialBuffer.LastIndexOf(CR)
+            ' Check if we got the full datablock - should end with {ETX]
+            Dim term As Integer = m_SerialBuffer.LastIndexOf(ETX)
             If term <> -1 AndAlso term = (m_SerialBuffer.Count - 1) Then
                 ReceivedData = m_SerialBuffer.ToArray()
                 m_SerialBuffer.Clear()
@@ -125,13 +127,13 @@ Public Class HHPScanner
 
         If m_SerialPort.IsOpen Then
             SyncLock m_SerialBuffer
-                m_SerialPort.DataBits = 8
-                m_SerialPort.Parity = IO.Ports.Parity.None
+                m_SerialPort.DataBits = 7
+                m_SerialPort.Parity = IO.Ports.Parity.Space
                 m_SerialPort.DiscardNull = False
                 m_SerialPort.DtrEnable = True
                 m_SerialPort.RtsEnable = True
                 m_SerialPort.Handshake = Handshake.None
-                m_SerialPort.BaudRate = 921600
+                m_SerialPort.BaudRate = 9600
                 m_CancelFlag = False
                 m_SerialBuffer.Clear()
                 m_SerialPort.DiscardInBuffer()
@@ -153,8 +155,8 @@ Public Class HHPScanner
         m_SerialPort.Open()
         If m_SerialPort.IsOpen Then
             SyncLock m_SerialBuffer
-                m_SerialPort.DataBits = 8
-                m_SerialPort.Parity = IO.Ports.Parity.None
+                m_SerialPort.DataBits = 7
+                m_SerialPort.Parity = IO.Ports.Parity.Space
                 m_SerialPort.DiscardNull = False
                 m_SerialPort.DtrEnable = True
                 m_SerialPort.RtsEnable = True
@@ -198,26 +200,6 @@ Public Class HHPScanner
         Return 0
     End Function
 
-
-    Private Function CMD_Wait_Response(ByVal Timeout As Integer) As Integer
-        Dim Signalled As Boolean
-        Dim ret As Integer = -1
-        Do
-            Signalled = m_DataReady.WaitOne(Timeout, False)
-            SyncLock m_SerialBuffer
-                If m_CancelFlag OrElse Not Signalled Then Exit Do
-                Dim idx As Integer = m_SerialBuffer.LastIndexOf(ACK)
-                If idx <> -1 Then
-                    ret = 0
-                    m_SerialBuffer.Clear()
-                    Exit Do
-                End If
-                m_DataReady.Reset()
-            End SyncLock
-        Loop
-        Return ret
-    End Function
-
     Private Function CMD_Wait_AnyResponse(ByVal Timeout As Integer) As Integer
         Dim Signalled As Boolean
         Dim ret As Integer = -1
@@ -228,7 +210,26 @@ Public Class HHPScanner
                 If m_CancelFlag OrElse Not Signalled Then Exit Do
                 Dim idx As Integer = m_SerialBuffer.LastIndexOf(ACK)
                 If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(NAK)
-                If idx = -1 Then idx = m_SerialBuffer.LastIndexOf(ENQ)
+                If idx <> -1 Then
+                    ret = m_SerialBuffer(idx)
+                    m_SerialBuffer.Clear()
+                    Exit Do
+                End If
+                m_DataReady.Reset()
+            End SyncLock
+        Loop
+        Return ret
+    End Function
+
+    Private Function CMD_Wait_Response(ByVal Timeout As Integer) As Integer
+        Dim Signalled As Boolean
+        Dim ret As Integer = -1
+
+        Do
+            Signalled = m_DataReady.WaitOne(Timeout, False)
+            SyncLock m_SerialBuffer
+                If m_CancelFlag OrElse Not Signalled Then Exit Do
+                Dim idx As Integer = m_SerialBuffer.LastIndexOf(ACK)
                 If idx <> -1 Then
                     ret = m_SerialBuffer(idx)
                     m_SerialBuffer.Clear()
@@ -244,11 +245,44 @@ Public Class HHPScanner
         Dim ret As Integer = -1
         Dim Cmd As New SerialBuffer
         Try
-            Cmd += ACTIVATETRIGGER
+            Cmd += PREFIX
+            Cmd += ENTER_CONFIG
+            Cmd += SUFFIX
             CMD_Send(Cmd)
             ret = CMD_Wait_AnyResponse(300)
+
             Cmd.Clear()
-            Cmd += DEACTIVATETRIGGER
+            Cmd += PREFIX
+            Cmd += RECALL_DEFAULTS
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += DISABLE_LF_SUFFIX
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += DISABLE_CR_SUFFIX
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += ENABLE_ETX_SUFFIX
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += EXIT_CONFIG
+            Cmd += SUFFIX
             CMD_Send(Cmd)
             ret = CMD_Wait_AnyResponse(300)
         Catch ex As Exception
@@ -259,14 +293,31 @@ Public Class HHPScanner
 
     Public Function CMD_Test(ByVal Timeout As Integer) As Integer
         Dim ret As Integer = -1
+        Dim response1, response2 As Integer
         Dim Cmd As New SerialBuffer
         Try
             Cmd += PREFIX
-            Cmd += ENABLEALL
-            Cmd += NVRAM
+            Cmd += ENTER_CONFIG
+            Cmd += SUFFIX
             CMD_Send(Cmd)    ' Send assembled command
-            ret = CMD_Wait_AnyResponse(Timeout)
-            If ret = ACK OrElse ret = NAK OrElse ret = ENQ Then ret = 0
+            response1 = CMD_Wait_AnyResponse(Timeout)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += RECALL_DEFAULTS
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            response2 = CMD_Wait_AnyResponse(Timeout)
+
+            ' If both responses are OK, then exit programming
+            If response1 = ACK AndAlso response2 = ACK Then
+                Cmd += PREFIX
+                Cmd += EXIT_CONFIG
+                Cmd += SUFFIX
+                CMD_Send(Cmd)    ' Send assembled command
+                response1 = CMD_Wait_AnyResponse(Timeout)
+                If response1 = ACK Then ret = 0
+            End If
         Catch ex As Exception
             m_ScannerFoundOnPort = Nothing
         End Try
@@ -278,19 +329,46 @@ Public Class HHPScanner
         Dim Cmd As New SerialBuffer
         Try
             Cmd += PREFIX
-            Cmd += ENABLEALL
-            Cmd += ";"
-            Cmd += SETPDFMIN
-            Cmd += ";"
-            Cmd += SETPDFMAX
-            Cmd += ";"
-            Cmd += ADDCRSUFFIX
-            Cmd += ";"
-            Cmd += TRIGGERMODE
-            Cmd += NVRAM
-            CMD_Send(Cmd)    ' Send assembled command
-            ret = CMD_Wait_Response(500)
-            If ret = ACK OrElse ret = NAK OrElse ret = ENQ Then ret = 0
+            Cmd += ENTER_CONFIG
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += RECALL_DEFAULTS
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += DISABLE_LF_SUFFIX
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += DISABLE_CR_SUFFIX
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += ENABLE_ETX_SUFFIX
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
+            Cmd.Clear()
+            Cmd += PREFIX
+            Cmd += EXIT_CONFIG
+            Cmd += SUFFIX
+            CMD_Send(Cmd)
+            ret = CMD_Wait_AnyResponse(300)
+
         Catch ex As Exception
             m_ScannerFoundOnPort = Nothing
         End Try

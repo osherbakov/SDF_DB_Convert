@@ -106,13 +106,14 @@ Public Class MSR206
 
     Private Sub TimerCallback(ByVal state As Object)
         Dim track1(0), track2(0), track3(0) As Byte
-        Dim GenerateEvent As Boolean = False
+        Dim Do_RaiseEvent As Boolean = False
         SyncLock m_SerialBuffer
             If DecodeRaw(track1, track2, track3) <> -1 Then
-                GenerateEvent = True
+                m_SerialBuffer.Clear()
+                Do_RaiseEvent = True
             End If
         End SyncLock
-        If GenerateEvent Then
+        If Do_RaiseEvent Then
             RaiseEvent DataReceived(Me, New DataReceivedEventArgs(track1, track2, track3))
         End If
     End Sub
@@ -487,32 +488,39 @@ Public Class MSR206
 
 
     Private Function CMD_Wait_Response() As Integer
-        Dim idx As Integer
+        Dim ret As Integer = -1
         Do
             m_DataReady.WaitOne(Timeout.Infinite, False)
             SyncLock m_SerialBuffer
                 If m_CancelFlag Then Exit Do
-                idx = m_SerialBuffer.LastIndexOf(ESC)
+                Dim idx As Integer = m_SerialBuffer.LastIndexOf(ESC)
                 If idx <> -1 AndAlso m_SerialBuffer.Length = (idx + 2) Then
-                    Return (m_SerialBuffer(idx + 1) - DigitZero)
+                    ret = (m_SerialBuffer(idx + 1) - DigitZero)
+                    m_SerialBuffer.Clear()
+                    Exit Do
                 End If
+                m_DataReady.Reset()
             End SyncLock
         Loop
-        Return -1
+        Return ret
     End Function
 
     Private Function CMD_Wait_Response(ByVal responceExpected As Byte(), ByVal Timeout As Integer) As Integer
-        Dim idx As Integer
+        Dim Signalled As Boolean
+        Dim ret As Integer = -1
         Do
+            Signalled = m_DataReady.WaitOne(Timeout, False)
             SyncLock m_SerialBuffer
-                If Not m_DataReady.WaitOne(Timeout, False) OrElse m_CancelFlag Then Exit Do
-                idx = m_SerialBuffer.LastIndexOf(responceExpected)
+                If Not Signalled OrElse m_CancelFlag Then Exit Do
+                Dim idx As Integer = m_SerialBuffer.LastIndexOf(responceExpected)
                 If idx <> -1 Then
-                    Return 0
+                    ret = 0
+                    m_SerialBuffer.Clear()
                 End If
+                m_DataReady.Reset()
             End SyncLock
         Loop
-        Return -1
+        Return ret
     End Function
 
 
@@ -550,6 +558,7 @@ Public Class MSR206
                         ret = m_SerialBuffer(idx + 3) - DigitZero
                         Exit Do
                     End If
+                    m_DataReady.Reset()
                 End SyncLock
             Loop
 
@@ -762,7 +771,6 @@ Public Class MSR206
         Dim Cmd As New SerialBuffer
         Dim idx, len As Integer
         Dim ret As Integer = -1
-        Dim rdy As Boolean
         Dim data As New System.Collections.Generic.List(Of Byte)
 
         If m_EncoderFoundOnPort Is Nothing Then Return -1
@@ -770,19 +778,18 @@ Public Class MSR206
         Try
             CMD_Send(New Byte() {ESC, ASCII("m")})
 
-            rdy = False
             Do
-                m_DataReady.WaitOne(Timeout.Infinite, False)
-
+                m_DataReady.WaitOne()
                 SyncLock m_SerialBuffer
                     If m_CancelFlag Then Return ret
                     idx = m_SerialBuffer.LastIndexOf(New Byte() {ASCII("?"), FS, ESC})
                     If idx <> -1 AndAlso m_SerialBuffer.Length = idx + 4 Then
                         ret = m_SerialBuffer(idx + 3) - DigitZero
-                        rdy = True
+                        Exit Do
                     End If
+                    m_DataReady.Reset()
                 End SyncLock
-            Loop Until rdy
+            Loop
 
             data.Clear()
             If Track1 IsNot Nothing Then
