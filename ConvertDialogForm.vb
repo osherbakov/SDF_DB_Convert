@@ -124,6 +124,9 @@ Public Class ConvertDialogForm
         If HHP4600_Scan.IsScannerDetected Then HHP4600_Scan.CMD_Reset()
         HHP4600_Scan.Close()
 
+        If MS1690_Scan.IsScannerDetected Then MS1690_Scan.CMD_Reset()
+        MS1690_Scan.Close()
+
         'Tell the system that Validation events CANNOT cancel closing!!!
         e.Cancel = False
     End Sub

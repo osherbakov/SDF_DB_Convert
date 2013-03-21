@@ -9,7 +9,8 @@ Partial Public Class ConvertDialogForm
     End Enum
 
     Private m_Mag_Status As STATUS
-    Private m_Scan_Status As STATUS
+    Private m_HHScan_Status As STATUS
+    Private m_MSScan_Status As STATUS
     Private m_curr_Position As Integer
 
     Private Sub TabPage_Encoder_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Encoder.Leave

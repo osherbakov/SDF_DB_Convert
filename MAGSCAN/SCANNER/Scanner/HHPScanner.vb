@@ -9,6 +9,12 @@ Public Class HHPScanner
     Public Delegate Sub DataReceivedEventHandler(ByVal sender As System.Object, ByVal e As Scanners.DataReceivedEventArgs)
     Public Event DataReceived As DataReceivedEventHandler
 
+    Public ReadOnly Property Port() As String
+        Get
+            Return m_ScannerFoundOnPort
+        End Get
+    End Property
+
     Private Const ESC As Byte = &H1B
     Private Const FS As Byte = &H1C
     Private Const DigitZero As Byte = &H30

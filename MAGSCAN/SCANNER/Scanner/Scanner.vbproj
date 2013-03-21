@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{59DC46B5-7CCE-457F-9E20-EC2DC469EAB4}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -67,7 +67,11 @@
     <Compile Include="HHPScanner.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MS1690.Designer.vb">
+      <DependentUpon>MS1690.vb</DependentUpon>
+    </Compile>
     <Compile Include="MS1690.vb">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -88,6 +92,10 @@
   <ItemGroup>
     <EmbeddedResource Include="HHPScanner.resx">
       <DependentUpon>HHPScanner.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MS1690.resx">
+      <DependentUpon>MS1690.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">

@@ -3,9 +3,7 @@ Imports SerialBuffer
 Imports System.Collections.Generic
 Imports Microsoft.VisualBasic
 
-
-Public Class MSR206
-
+Public Class MagReaders
     Public Class DataReceivedEventArgs
         Inherits System.EventArgs
         Private m_Track1(0) As Byte
@@ -29,7 +27,7 @@ Public Class MSR206
         End Property
         Public ReadOnly Property StringData() As String
             Get
-                Return DecodeTrack(m_Track1, Encoding.BITS6, 8) + DecodeTrack(m_Track2, Encoding.BITS4, 8) + DecodeTrack(m_Track3, Encoding.BITS6, 8)
+                Return MSR206.DecodeTrack(m_Track1, MSR206.Encoding.BITS6, 8) + MSR206.DecodeTrack(m_Track2, MSR206.Encoding.BITS4, 8) + MSR206.DecodeTrack(m_Track3, MSR206.Encoding.BITS6, 8)
             End Get
         End Property
 
@@ -39,8 +37,11 @@ Public Class MSR206
             m_Track3 = track3
         End Sub
     End Class
+End Class
 
-    Public Delegate Sub DataReceivedEventHandler(ByVal sender As System.Object, ByVal e As MSR206.DataReceivedEventArgs)
+Public Class MSR206
+
+    Public Delegate Sub DataReceivedEventHandler(ByVal sender As System.Object, ByVal e As MagReaders.DataReceivedEventArgs)
     Public Event DataReceived As DataReceivedEventHandler
 
 
@@ -65,6 +66,11 @@ Public Class MSR206
     Private m_SerialBuffer As New SerialBuffer()
     Private m_Timer As New Timer(New TimerCallback(AddressOf TimerCallback), Nothing, Timeout.Infinite, Timeout.Infinite)
 
+    Public ReadOnly Property Port() As String
+        Get
+            Return m_EncoderFoundOnPort
+        End Get
+    End Property
 
 
     Public Enum Parity
@@ -114,7 +120,7 @@ Public Class MSR206
             End If
         End SyncLock
         If Do_RaiseEvent Then
-            RaiseEvent DataReceived(Me, New DataReceivedEventArgs(track1, track2, track3))
+            RaiseEvent DataReceived(Me, New MagReaders.DataReceivedEventArgs(track1, track2, track3))
         End If
     End Sub
 

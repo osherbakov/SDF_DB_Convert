@@ -3,38 +3,16 @@ Imports System.IO.Ports
 Imports SerialBuffer
 Imports System.Collections.Generic
 
-
-Public Class Scanners
-    Public Class DataReceivedEventArgs
-        Inherits System.EventArgs
-        Private m_Data As Byte()
-
-        Public ReadOnly Property BinaryData() As Byte()
-            Get
-                Return m_Data
-            End Get
-        End Property
-        Public ReadOnly Property StringData() As String
-            Get
-                Dim str As New System.Text.StringBuilder
-                For Each iBy As Byte In m_Data
-                    str.Append(Convert.ToChar(iBy))
-                Next
-                Return str.ToString()
-            End Get
-        End Property
-
-        Sub New(ByVal value As Byte())
-            m_Data = value
-        End Sub
-    End Class
-End Class
-
 Public Class MS1690
 
     Public Delegate Sub DataReceivedEventHandler(ByVal sender As System.Object, ByVal e As Scanners.DataReceivedEventArgs)
     Public Event DataReceived As DataReceivedEventHandler
 
+    Public ReadOnly Property Port() As String
+        Get
+            Return m_ScannerFoundOnPort
+        End Get
+    End Property
     Private Const STX As Byte = &H2
     Private Const ETX As Byte = &H3
 
@@ -49,8 +27,9 @@ Public Class MS1690
     Private SUFFIX As Byte() = {ETX}
     Private Const ENTER_CONFIG As String = "999999"
     Private Const EXIT_CONFIG As String = "999999"
+    Private Const ENABLE_PDF417 As String = "100010"
 
-    Private Const RECALL_DEFAULTS As String = "999998"
+    Private Const ENABLE_BIDIR_USB As String = "316470"
     Private Const DISABLE_LF_SUFFIX As String = "116602"
     Private Const DISABLE_CR_SUFFIX As String = "116603"
     Private Const ENABLE_ETX_SUFFIX As String = "116614"
@@ -62,7 +41,8 @@ Public Class MS1690
     Private m_CancelFlag As Boolean = False
     Private m_SerialBuffer As New SerialBuffer()
     Private m_Timer As New Timer(New TimerCallback(AddressOf TimerCallback))
-    Friend WithEvents m_SerialPort As New System.IO.Ports.SerialPort()
+    Friend WithEvents m_SerialPort As System.IO.Ports.SerialPort
+    ' Private components As System.ComponentModel.IContainer
 #End Region
 
     Private Sub TimerCallback(ByVal state As Object)
@@ -241,82 +221,47 @@ Public Class MS1690
         Return ret
     End Function
 
-    Public Function CMD_Reset() As Integer
+    Public Function CMD_String(ByVal command As String, ByVal Timeout As Integer) As Integer
         Dim ret As Integer = -1
         Dim Cmd As New SerialBuffer
         Try
             Cmd += PREFIX
-            Cmd += ENTER_CONFIG
+            Cmd += command
             Cmd += SUFFIX
             CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += RECALL_DEFAULTS
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += DISABLE_LF_SUFFIX
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += DISABLE_CR_SUFFIX
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += ENABLE_ETX_SUFFIX
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += EXIT_CONFIG
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
+            ret = CMD_Wait_AnyResponse(Timeout)
         Catch ex As Exception
             m_ScannerFoundOnPort = Nothing
         End Try
-        Return 0
+        Return ret
+    End Function
+
+    Public Function CMD_Reset() As Integer
+        Dim ret As Integer = -1
+        Try
+            ret = CMD_String(ENTER_CONFIG, 300)
+            If ret <> -1 Then CMD_String(EXIT_CONFIG, 300)
+        Catch ex As Exception
+            m_ScannerFoundOnPort = Nothing
+        End Try
+        Return ret
     End Function
 
     Public Function CMD_Test(ByVal Timeout As Integer) As Integer
         Dim ret As Integer = -1
-        Dim response1, response2 As Integer
+        Dim response1 As Integer = -1
+        Dim response2 As Integer = -1
         Dim Cmd As New SerialBuffer
         Try
-            Cmd += PREFIX
-            Cmd += ENTER_CONFIG
-            Cmd += SUFFIX
-            CMD_Send(Cmd)    ' Send assembled command
-            response1 = CMD_Wait_AnyResponse(Timeout)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += RECALL_DEFAULTS
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            response2 = CMD_Wait_AnyResponse(Timeout)
+            response1 = CMD_String(ENTER_CONFIG, Timeout)
+            If response1 <> -1 Then
+                response2 = CMD_String(ENABLE_PDF417, Timeout)
+            End If
 
             ' If both responses are OK, then exit programming
-            If response1 = ACK AndAlso response2 = ACK Then
-                Cmd += PREFIX
-                Cmd += EXIT_CONFIG
-                Cmd += SUFFIX
-                CMD_Send(Cmd)    ' Send assembled command
-                response1 = CMD_Wait_AnyResponse(Timeout)
-                If response1 = ACK Then ret = 0
+            If response1 <> -1 AndAlso response2 = -1 Then
+                response1 = CMD_String(EXIT_CONFIG, Timeout)
+                If response1 <> -1 Then ret = 0
             End If
         Catch ex As Exception
             m_ScannerFoundOnPort = Nothing
@@ -328,47 +273,12 @@ Public Class MS1690
         Dim ret As Integer = -1
         Dim Cmd As New SerialBuffer
         Try
-            Cmd += PREFIX
-            Cmd += ENTER_CONFIG
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += RECALL_DEFAULTS
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += DISABLE_LF_SUFFIX
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += DISABLE_CR_SUFFIX
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += ENABLE_ETX_SUFFIX
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
-            Cmd.Clear()
-            Cmd += PREFIX
-            Cmd += EXIT_CONFIG
-            Cmd += SUFFIX
-            CMD_Send(Cmd)
-            ret = CMD_Wait_AnyResponse(300)
-
+            ret = CMD_String(ENTER_CONFIG, 300)
+            ret = CMD_String(ENABLE_PDF417, 300)
+            ret = CMD_String(DISABLE_LF_SUFFIX, 300)
+            ret = CMD_String(DISABLE_CR_SUFFIX, 300)
+            ret = CMD_String(ENABLE_ETX_SUFFIX, 300)
+            ret = CMD_String(EXIT_CONFIG, 300)
         Catch ex As Exception
             m_ScannerFoundOnPort = Nothing
         End Try
@@ -400,4 +310,29 @@ Public Class MS1690
 
 End Class
 
+Public Class Scanners
 
+    Public Class DataReceivedEventArgs
+        Inherits System.EventArgs
+        Private m_Data As Byte()
+
+        Public ReadOnly Property BinaryData() As Byte()
+            Get
+                Return m_Data
+            End Get
+        End Property
+        Public ReadOnly Property StringData() As String
+            Get
+                Dim str As New System.Text.StringBuilder
+                For Each iBy As Byte In m_Data
+                    str.Append(Convert.ToChar(iBy))
+                Next
+                Return str.ToString()
+            End Get
+        End Property
+
+        Sub New(ByVal value As Byte())
+            m_Data = value
+        End Sub
+    End Class
+End Class

@@ -17,6 +17,7 @@ Partial Public Class ConvertDialogForm
         'Attach handlers
         AddHandler MSR206_Enc.DataReceived, AddressOf MagReaderDataReady
         AddHandler HHP4600_Scan.DataReceived, AddressOf ScannerDataReady
+        AddHandler MS1690_Scan.DataReceived, AddressOf ScannerDataReady
     End Sub
 
     Private Sub TabPage_Scanner_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Scanner.Leave
@@ -25,6 +26,7 @@ Partial Public Class ConvertDialogForm
         MSR206_Enc.Cancel()
         ' Stop and close Scanner
         HHP4600_Scan.Cancel()
+        MS1690_Scan.Cancel()
 
         While BackgroundWorkerThread.IsBusy
             Application.DoEvents()
@@ -34,10 +36,13 @@ Partial Public Class ConvertDialogForm
         MSR206_Enc.Close()
         If HHP4600_Scan.IsScannerDetected Then HHP4600_Scan.CMD_Reset()
         HHP4600_Scan.Close()
+        If MS1690_Scan.IsScannerDetected Then MS1690_Scan.CMD_Reset()
+        MS1690_Scan.Close()
 
         IDCardDataBindingSource.SuspendBinding()
         RemoveHandler MSR206_Enc.DataReceived, AddressOf MagReaderDataReady
         RemoveHandler HHP4600_Scan.DataReceived, AddressOf ScannerDataReady
+        RemoveHandler MS1690_Scan.DataReceived, AddressOf ScannerDataReady
     End Sub
 
     Private m_curr_id As New IDCardData()
@@ -60,7 +65,7 @@ Partial Public Class ConvertDialogForm
         If Barcode_Status.InvokeRequired Then
             Barcode_Status.BeginInvoke(New MethodInvoker(AddressOf UpdateScannerStatus))
         Else
-            If m_Scan_Status = STATUS.DISCONNECTED Then
+            If m_HHScan_Status = STATUS.DISCONNECTED AndAlso m_MSScan_Status = STATUS.DISCONNECTED Then
                 Barcode_Status.ForeColor = Color.Red
                 Barcode_Status.Text = "Please connect Barcode Reader"
             Else
@@ -105,7 +110,7 @@ Partial Public Class ConvertDialogForm
     End Sub
 
     ' This is the event handler for the MagReader received data event
-    Private Sub MagReaderDataReady(ByVal sender As Object, ByVal e As MSR206.DataReceivedEventArgs)
+    Private Sub MagReaderDataReady(ByVal sender As Object, ByVal e As MagReaders.DataReceivedEventArgs)
         m_curr_id.Clear()
         If Support.DecodeAAMVAMagData(m_curr_id, MSR206.DecodeTrack(e.Track1, MSR206.Encoding.BITS6, 8), _
                     MSR206.DecodeTrack(e.Track2, MSR206.Encoding.BITS4, 8), MSR206.DecodeTrack(e.Track3, MSR206.Encoding.BITS6, 8)) Then
@@ -123,6 +128,7 @@ Partial Public Class ConvertDialogForm
         ' Start with un-initialized Readers
         MSR206_Enc.Close()
         HHP4600_Scan.Close()
+        MS1690_Scan.Close()
 
         Do
             ' Check if the Mag Reader is connected
@@ -154,16 +160,34 @@ Partial Public Class ConvertDialogForm
 
             ' Check for the Scanner connected
             If Not HHP4600_Scan.IsScannerDetected() Then
-                m_Scan_Status = STATUS.DISCONNECTED
+                m_HHScan_Status = STATUS.DISCONNECTED
                 UpdateScannerStatus()
 
                 ' Try to detect the Scanner
                 HHP4600_Scan.DetectScanner()
                 If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
                 If HHP4600_Scan.IsScannerDetected() Then
-                    m_Scan_Status = STATUS.CONNECTED
+                    m_HHScan_Status = STATUS.CONNECTED
                     UpdateScannerStatus()
                     HHP4600_Scan.CMD_Setup()
+                End If
+            End If
+
+            ' Check for the Cancel request
+            If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+
+            ' Check for the Scanner connected
+            If Not MS1690_Scan.IsScannerDetected() Then
+                m_MSScan_Status = STATUS.DISCONNECTED
+                UpdateScannerStatus()
+
+                ' Try to detect the Scanner
+                MS1690_Scan.DetectScanner()
+                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+                If MS1690_Scan.IsScannerDetected() Then
+                    m_MSScan_Status = STATUS.CONNECTED
+                    UpdateScannerStatus()
+                    MS1690_Scan.CMD_Setup()
                 End If
             End If
 

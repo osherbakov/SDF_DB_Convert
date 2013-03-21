@@ -199,6 +199,7 @@ Partial Class ConvertDialogForm
         Me.BackgroundWorkerThread = New System.ComponentModel.BackgroundWorker
         Me.MSR206_Enc = New MSR206(Me.components)
         Me.HHP4600_Scan = New HHPScanner(Me.components)
+        Me.MS1690_Scan = New MS1690(Me.components)
         Me.OpenFileDialog_Photo = New System.Windows.Forms.OpenFileDialog
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
@@ -2078,6 +2079,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents MSR206_Enc As MSR206
     Friend WithEvents MI_Enc As System.Windows.Forms.Label
     Friend WithEvents HHP4600_Scan As HHPScanner
+    Friend WithEvents MS1690_Scan As MS1690
     Friend WithEvents AddressTextBox1 As System.Windows.Forms.TextBox
     Friend WithEvents IDCardDataBindingSource As System.Windows.Forms.BindingSource
     Friend WithEvents BloodTypeTextBox As System.Windows.Forms.TextBox
