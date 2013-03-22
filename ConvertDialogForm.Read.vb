@@ -4,9 +4,14 @@ Imports VB = Microsoft.VisualBasic
 Partial Public Class ConvertDialogForm
 
     Private Sub TabPage_Scanner_Enter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Scanner.Enter
+        ' Set up the first item in the dataset to be active
         IDCardDataBindingSource.DataSource = m_curr_id
         IDCardDataBindingSource.ResumeBinding()
         IDCardDataBindingSource.ResetItem(0)
+
+        ' Update the initial state of the readers and scanners
+        UpdateReaderStatus()
+        UpdateScannerStatus()
 
         While BackgroundWorkerThread.IsBusy
             Application.DoEvents()
@@ -43,6 +48,10 @@ Partial Public Class ConvertDialogForm
         RemoveHandler MSR206_Enc.DataReceived, AddressOf MagReaderDataReady
         RemoveHandler HHP4600_Scan.DataReceived, AddressOf ScannerDataReady
         RemoveHandler MS1690_Scan.DataReceived, AddressOf ScannerDataReady
+
+        UpdateReaderStatus()
+        UpdateScannerStatus()
+
     End Sub
 
     Private m_curr_id As New IDCardData()
@@ -51,12 +60,12 @@ Partial Public Class ConvertDialogForm
         If MagReader_Status.InvokeRequired Then
             MagReader_Status.BeginInvoke(New MethodInvoker(AddressOf UpdateReaderStatus))
         Else
-            If m_Mag_Status = STATUS.DISCONNECTED Then
-                MagReader_Status.ForeColor = Color.Red
-                MagReader_Status.Text = "Please connect MagReader"
-            Else
+            If MSR206_Enc.IsMSR206Detected Then
                 MagReader_Status.ForeColor = Color.DarkBlue
                 MagReader_Status.Text = "Please swipe ID Card thru MagReader"
+            Else
+                MagReader_Status.ForeColor = Color.Red
+                MagReader_Status.Text = "Please connect MagReader"
             End If
         End If
     End Sub
@@ -65,12 +74,12 @@ Partial Public Class ConvertDialogForm
         If Barcode_Status.InvokeRequired Then
             Barcode_Status.BeginInvoke(New MethodInvoker(AddressOf UpdateScannerStatus))
         Else
-            If m_HHScan_Status = STATUS.DISCONNECTED AndAlso m_MSScan_Status = STATUS.DISCONNECTED Then
-                Barcode_Status.ForeColor = Color.Red
-                Barcode_Status.Text = "Please connect Barcode Reader"
-            Else
+            If HHP4600_Scan.IsScannerDetected OrElse MS1690_Scan.IsScannerDetected Then
                 Barcode_Status.ForeColor = Color.DarkBlue
                 Barcode_Status.Text = "Please scan ID Card Barcode"
+            Else
+                Barcode_Status.ForeColor = Color.Red
+                Barcode_Status.Text = "Please connect Barcode Reader"
             End If
         End If
     End Sub
@@ -133,13 +142,11 @@ Partial Public Class ConvertDialogForm
         Do
             ' Check if the Mag Reader is connected
             If Not MSR206_Enc.IsMSR206Detected Then
-                m_Mag_Status = STATUS.DISCONNECTED
                 UpdateReaderStatus()
                 MSR206_Enc.DetectMSR206()
                 If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
                 If MSR206_Enc.IsMSR206Detected Then
                     ' Found - update status
-                    m_Mag_Status = STATUS.CONNECTED
                     UpdateReaderStatus()
                     ' Try to program the MAG stripe reader
                     Dim Result As Boolean
@@ -160,14 +167,12 @@ Partial Public Class ConvertDialogForm
 
             ' Check for the Scanner connected
             If Not HHP4600_Scan.IsScannerDetected() Then
-                m_HHScan_Status = STATUS.DISCONNECTED
                 UpdateScannerStatus()
 
                 ' Try to detect the Scanner
                 HHP4600_Scan.DetectScanner()
                 If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
                 If HHP4600_Scan.IsScannerDetected() Then
-                    m_HHScan_Status = STATUS.CONNECTED
                     UpdateScannerStatus()
                     HHP4600_Scan.CMD_Setup()
                 End If
@@ -178,14 +183,12 @@ Partial Public Class ConvertDialogForm
 
             ' Check for the Scanner connected
             If Not MS1690_Scan.IsScannerDetected() Then
-                m_MSScan_Status = STATUS.DISCONNECTED
                 UpdateScannerStatus()
 
                 ' Try to detect the Scanner
                 MS1690_Scan.DetectScanner()
                 If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
                 If MS1690_Scan.IsScannerDetected() Then
-                    m_MSScan_Status = STATUS.CONNECTED
                     UpdateScannerStatus()
                     MS1690_Scan.CMD_Setup()
                 End If

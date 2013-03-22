@@ -111,8 +111,8 @@ Public Class HHPScanner
                 m_SerialPort.DiscardOutBuffer()
                 m_SerialPort.ReadExisting()
                 m_SerialPort.ReceivedBytesThreshold = 1
-                m_SerialPort.ReadTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
-                m_SerialPort.WriteTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+                m_SerialPort.ReadTimeout = 300
+                m_SerialPort.WriteTimeout = 300
                 m_SerialPort.Close()
             End If
         Finally
@@ -143,8 +143,8 @@ Public Class HHPScanner
                 m_SerialPort.DiscardInBuffer()
                 m_SerialPort.DiscardOutBuffer()
                 m_SerialPort.ReceivedBytesThreshold = 1
-                m_SerialPort.ReadTimeout = SerialPort.InfiniteTimeout
-                m_SerialPort.WriteTimeout = SerialPort.InfiniteTimeout
+                m_SerialPort.ReadTimeout = 300
+                m_SerialPort.WriteTimeout = 300
                 m_SerialPort.NewLine = Microsoft.VisualBasic.vbCr
                 m_SerialPort.ReadExisting()
             End SyncLock
@@ -186,8 +186,8 @@ Public Class HHPScanner
             m_DataReady.Reset()
             m_CancelFlag = False
             m_SerialBuffer.Clear()
-            m_SerialPort.Write(ByteData, 0, ByteData.Length)
         End SyncLock
+        m_SerialPort.Write(ByteData, 0, ByteData.Length)
         Return 0
     End Function
 
@@ -199,8 +199,8 @@ Public Class HHPScanner
             m_DataReady.Reset()
             m_CancelFlag = False
             m_SerialBuffer.Clear()
-            m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
         End SyncLock
+        m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
         Return 0
     End Function
 

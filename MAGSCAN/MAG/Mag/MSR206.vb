@@ -156,8 +156,8 @@ Public Class MSR206
                 m_SerialPort.DiscardOutBuffer()
                 m_SerialPort.ReadExisting()
                 m_SerialPort.ReceivedBytesThreshold = 1
-                m_SerialPort.ReadTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
-                m_SerialPort.WriteTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+                m_SerialPort.ReadTimeout = 300
+                m_SerialPort.WriteTimeout = 300
                 m_SerialPort.Close()
             End If
         Finally
@@ -185,8 +185,8 @@ Public Class MSR206
                 m_SerialPort.DiscardOutBuffer()
                 m_SerialPort.ReadExisting()
                 m_SerialPort.ReceivedBytesThreshold = 1
-                m_SerialPort.ReadTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
-                m_SerialPort.WriteTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+                m_SerialPort.ReadTimeout = 500
+                m_SerialPort.WriteTimeout = 500
             End SyncLock
         End If
     End Sub
@@ -474,8 +474,8 @@ Public Class MSR206
             m_DataReady.Reset()
             m_CancelFlag = False
             m_SerialBuffer.Clear()
-            m_SerialPort.Write(ByteData, 0, ByteData.Length)
         End SyncLock
+        m_SerialPort.Write(ByteData, 0, ByteData.Length)
         Return 0
     End Function
 
@@ -487,8 +487,8 @@ Public Class MSR206
             m_DataReady.Reset()
             m_CancelFlag = False
             m_SerialBuffer.Clear()
-            m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
         End SyncLock
+        m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
         Return 0
     End Function
 

@@ -3,14 +3,6 @@ Imports VB = Microsoft.VisualBasic
 
 Partial Public Class ConvertDialogForm
 
-    Private Enum STATUS
-        DISCONNECTED = 0
-        CONNECTED = 1
-    End Enum
-
-    Private m_Mag_Status As STATUS
-    Private m_HHScan_Status As STATUS
-    Private m_MSScan_Status As STATUS
     Private m_curr_Position As Integer
 
     Private Sub TabPage_Encoder_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Encoder.Leave
@@ -58,12 +50,12 @@ Partial Public Class ConvertDialogForm
         If MagEncoder_Status.InvokeRequired Then
             MagEncoder_Status.BeginInvoke(New MethodInvoker(AddressOf UpdateEncStatus))
         Else
-            If m_Mag_Status = STATUS.DISCONNECTED Then
-                MagEncoder_Status.ForeColor = Color.Red
-                MagEncoder_Status.Text = "Please connect the MSR206 Encoder to the serial port of the computer"
-            Else
+            If MSR206_Enc.IsMSR206Detected Then
                 MagEncoder_Status.ForeColor = Color.DarkBlue
                 MagEncoder_Status.Text = "Please select the printed ID Card and swipe it thru the MSR206 Encoder"
+            Else
+                MagEncoder_Status.ForeColor = Color.Red
+                MagEncoder_Status.Text = "Please connect the MSR206 Encoder to the serial port of the computer"
             End If
         End If
     End Sub
@@ -84,7 +76,6 @@ Partial Public Class ConvertDialogForm
         Do
             ' Check if the Mag Encoder is connected
             If Not MSR206_Enc.IsMSR206Detected Then
-                m_Mag_Status = STATUS.DISCONNECTED
                 UpdateEncStatus()
 
                 ' Try to detect the Encoder
@@ -93,7 +84,6 @@ Partial Public Class ConvertDialogForm
 
                 ' Found - update status and program Encoder
                 If MSR206_Enc.IsMSR206Detected Then
-                    m_Mag_Status = STATUS.CONNECTED
                     UpdateEncStatus()
 
                     Result = MSR206_Enc.CMD_SetCo(MSR206.Coercity.HIGH) = 0 AndAlso _
@@ -109,7 +99,6 @@ Partial Public Class ConvertDialogForm
             ' Encode card if detected and there are records to program
             If MSR206_Enc.IsMSR206Detected AndAlso ID_CARDSBindingSource.Count <> 0 Then
                 If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
-                m_Mag_Status = STATUS.CONNECTED
                 UpdateEncStatus()
 
                 Result = MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW) = 0

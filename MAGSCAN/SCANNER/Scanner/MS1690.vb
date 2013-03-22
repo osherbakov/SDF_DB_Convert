@@ -28,6 +28,7 @@ Public Class MS1690
     Private Const ENTER_CONFIG As String = "999999"
     Private Const EXIT_CONFIG As String = "999999"
     Private Const ENABLE_PDF417 As String = "100010"
+    Private Const INVALID As String = "111111"
 
     Private Const ENABLE_BIDIR_USB As String = "316470"
     Private Const DISABLE_LF_SUFFIX As String = "116602"
@@ -87,8 +88,8 @@ Public Class MS1690
                 m_SerialPort.DiscardOutBuffer()
                 m_SerialPort.ReadExisting()
                 m_SerialPort.ReceivedBytesThreshold = 1
-                m_SerialPort.ReadTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
-                m_SerialPort.WriteTimeout = System.IO.Ports.SerialPort.InfiniteTimeout
+                m_SerialPort.ReadTimeout = 300
+                m_SerialPort.WriteTimeout = 300
                 m_SerialPort.Close()
             End If
         Finally
@@ -119,8 +120,8 @@ Public Class MS1690
                 m_SerialPort.DiscardInBuffer()
                 m_SerialPort.DiscardOutBuffer()
                 m_SerialPort.ReceivedBytesThreshold = 1
-                m_SerialPort.ReadTimeout = SerialPort.InfiniteTimeout
-                m_SerialPort.WriteTimeout = SerialPort.InfiniteTimeout
+                m_SerialPort.ReadTimeout = 300
+                m_SerialPort.WriteTimeout = 300
                 m_SerialPort.NewLine = Microsoft.VisualBasic.vbCr
                 m_SerialPort.ReadExisting()
             End SyncLock
@@ -162,8 +163,8 @@ Public Class MS1690
             m_DataReady.Reset()
             m_CancelFlag = False
             m_SerialBuffer.Clear()
-            m_SerialPort.Write(ByteData, 0, ByteData.Length)
         End SyncLock
+        m_SerialPort.Write(ByteData, 0, ByteData.Length)
         Return 0
     End Function
 
@@ -175,8 +176,8 @@ Public Class MS1690
             m_DataReady.Reset()
             m_CancelFlag = False
             m_SerialBuffer.Clear()
-            m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
         End SyncLock
+        m_SerialPort.Write(CType(ByteData, Byte()), 0, ByteData.Length)
         Return 0
     End Function
 
@@ -249,20 +250,11 @@ Public Class MS1690
 
     Public Function CMD_Test(ByVal Timeout As Integer) As Integer
         Dim ret As Integer = -1
-        Dim response1 As Integer = -1
-        Dim response2 As Integer = -1
+        Dim response As Integer = -1
         Dim Cmd As New SerialBuffer
         Try
-            response1 = CMD_String(ENTER_CONFIG, Timeout)
-            If response1 <> -1 Then
-                response2 = CMD_String(ENABLE_PDF417, Timeout)
-            End If
-
-            ' If both responses are OK, then exit programming
-            If response1 <> -1 AndAlso response2 = -1 Then
-                response1 = CMD_String(EXIT_CONFIG, Timeout)
-                If response1 <> -1 Then ret = 0
-            End If
+            response = CMD_String(INVALID, Timeout)
+            If response <> -1 Then ret = 0
         Catch ex As Exception
             m_ScannerFoundOnPort = Nothing
         End Try
