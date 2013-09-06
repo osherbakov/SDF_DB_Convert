@@ -204,7 +204,7 @@ Public Class ConvertDialogForm
                             od_data_set.Dispose()
                             cmd.Dispose()
                             nextTab = 0
-                            Button_CreateDB.Text = "Create Database"
+                            Button_CreateDB.Text = "Create Print DB"
                             m_SaveAdd = AddressOf SaveAccessDatabase
                         End If
                     Next
