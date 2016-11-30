@@ -1,0 +1,33 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Regex Toolkit">
+    <Files>
+      <File FileName="MAGSCAN\SCANNER\Scanner\MS1690.Designer.vb" Line="1" Column="1" />
+      <File FileName="MAGSCAN\SCANNER\Scanner\MS1690.vb" Line="1" Column="1" />
+      <File FileName="ConvertDialogForm.vb" Line="1" Column="1" />
+      <File FileName="ConvertDialogForm.Designer.vb" Line="1" Column="1" />
+      <File FileName="ConvertDialogForm.resx" Line="1" Column="1" />
+      <File FileName="MAGSCAN\MAG\Mag\My Project\Resources.resx" Line="1" Column="1" />
+      <File FileName="MAGSCAN\MAG\Mag\My Project\Resources.Designer.vb" Line="1" Column="1" />
+      <File FileName="Regex Toolkit" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="CSMR_DB_Convert" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="ConvertDialogForm.vb" expanded="True" />
+          </Node>
+          <Node name="Scanner" expanded="True" selected="True">
+            <Node name="HHPScanner.vb" expanded="True" />
+            <Node name="MS1690.vb" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

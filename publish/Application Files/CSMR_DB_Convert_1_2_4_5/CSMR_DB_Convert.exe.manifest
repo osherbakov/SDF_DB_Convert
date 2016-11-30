@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly manifestVersion="1.0" xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1">
+  <asmv1:assemblyIdentity version="1.2.4.5" name="CSMR_DB_Convert.exe" publicKeyToken="ed29b7155a2e89be" language="neutral" processorArchitecture="msil" type="win32" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="CSMR_DB_Convert" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="CSMR_DB_Convert.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!-- UAC Manifest Options
+            If you want to change the Windows User Account Control level replace the 
+            requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+            If you want to utilize File and Registry Virtualization for backward 
+            compatibility then delete the requestedExecutionLevel node.
+        -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="2.0.50727.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="System.Core" version="3.5.0.0" publicKeyToken="b77a5c561934e089" language="neutral" processorArchitecture="msil" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="WindowsBase" version="3.0.0.0" publicKeyToken="31bf3856ad364e35" language="neutral" processorArchitecture="msil" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="CSMR_DB_Convert.exe" size="190464">
+      <assemblyIdentity name="CSMR_DB_Convert" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>RNbTG9p7VFiblvC9hByDRZ7wQzQ=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Interop.ADOX.dll" size="36864">
+      <assemblyIdentity name="Interop.ADOX" version="2.8.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>fAXsmjhI4oFgXBS7rhxarNp2ye0=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Mag.dll" size="24576">
+      <assemblyIdentity name="Mag" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>Jxuqu/DaJP9RDh0v5TzAMae/bL8=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Scanner.dll" size="17408">
+      <assemblyIdentity name="Scanner" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>NUXhtb1j/9CKiwCzY6E8FiqlaG4=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Serial.dll" size="8192">
+      <assemblyIdentity name="Serial" version="0.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>Yxhaal3GmZwBRSPLoBQr16pzt3Q=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SupportFunc.dll" size="33792">
+      <assemblyIdentity name="SupportFunc" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>Z0lBrQVfXmlcQfKgsHpavjXR7gY=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="CSMR_DB_Convert.exe.config" size="1390">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>oo4yCHjwQdCChwaeev0fT//xs6g=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Empty.jpg" size="8422">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>4V0jVnmEe5gqJEK5JEN6jGhlblE=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=OLEGMACBOOKAIR\Admin" issuerKeyHash="fc8e7bcf8148150584c0a2f4510e4f649029561b" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>V/5dNSFQl8k6uGOk1H34xHLIuAU=</DigestValue></Reference></SignedInfo><SignatureValue>XlNH/7GBMtgCsleWulnBZweAlf2Z+imQruhi2lrisnYzaOrhH+/ku9Ypi/F4VlBBRoY51XiHsYOhpEWFX9B8qq6rP78m5MErYyj/RqFc4PLFM1hYZdO4gMlDeBuUTG8bP1K5SoGKIcxOSi/JvU73E+465n4N1VN85zr5ObwLei0=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>qRd3x4VZOwn0YCkmSR/j1T6OJe7ghR8vi1GBNPzEfqGefSzW9yGq7BnLHNlMXh1ddsGIo1/D+tjkXy8A4CENU4CpuWoa8D5bFzspLNWBN6m8XVF2IA3gjG76lU4Tk7nj++b7V5TKtTdJLNt/kqkTh4L2gRJREQhh6D7IWPML5IE=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="05b8c872c4f87dd4a463b83ac9975021355dfe57" Description="" Url=""><as:assemblyIdentity version="1.2.4.5" name="CSMR_DB_Convert.exe" publicKeyToken="ed29b7155a2e89be" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=OLEGMACBOOKAIR\Admin</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>OFdlu29FtxCsA/GHVk9LSNIN1IA=</DigestValue></Reference></SignedInfo><SignatureValue>oKxbalc3OyB8LBow6Rsij5GSiuNHNvZ1C65vG7OnV09CuuMXsckPuXp9d3pLpyRzN0AGO68r1a80RNf4Gr0MlQMUtRogxa3hAqIJ9y+KSpVbnQ1XQfEAT8mQghF/Px5pODmaT2yrIYuwyDxmXi3FHgJ7ITKd6A3LKU44xJX8JjU=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>qRd3x4VZOwn0YCkmSR/j1T6OJe7ghR8vi1GBNPzEfqGefSzW9yGq7BnLHNlMXh1ddsGIo1/D+tjkXy8A4CENU4CpuWoa8D5bFzspLNWBN6m8XVF2IA3gjG76lU4Tk7nj++b7V5TKtTdJLNt/kqkTh4L2gRJREQhh6D7IWPML5IE=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB6TCCAVKgAwIBAgIQf16NwyAfMqBCVs75gnhuFjANBgkqhkiG9w0BAQUFADAzMTEwLwYDVQQDHigATwBMAEUARwBNAEEAQwBCAE8ATwBLAEEASQBSAFwAQQBkAG0AaQBuMB4XDTEzMDMxMjA2MTgzMloXDTE0MDMxMjEyMTgzMlowMzExMC8GA1UEAx4oAE8ATABFAEcATQBBAEMAQgBPAE8ASwBBAEkAUgBcAEEAZABtAGkAbjCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAqRd3x4VZOwn0YCkmSR/j1T6OJe7ghR8vi1GBNPzEfqGefSzW9yGq7BnLHNlMXh1ddsGIo1/D+tjkXy8A4CENU4CpuWoa8D5bFzspLNWBN6m8XVF2IA3gjG76lU4Tk7nj++b7V5TKtTdJLNt/kqkTh4L2gRJREQhh6D7IWPML5IECAwEAATANBgkqhkiG9w0BAQUFAAOBgQBKIVEnw/d2e3SRDY/Fj/3ObziDVBWlV/Dqq+bqN3HPUQuBaAzkjo5IPG46AMDQeKV8/maWGhJn7Cg4y/zffDuIdFTfyprsCFTBMYiOgBGKTHDF/+N8CLGI3vXCeM8On9SciNFosp99lrm1IlCtMzsMUb2+0AWaV+imPf/AWJMLZQ==</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>
