@@ -1069,7 +1069,7 @@ Partial Class ConvertDialogForm
         Me.RankComboBox_ID.FormattingEnabled = True
         Me.RankComboBox_ID.Location = New System.Drawing.Point(375, 175)
         Me.RankComboBox_ID.Name = "RankComboBox_ID"
-        Me.RankComboBox_ID.Size = New System.Drawing.Size(51, 21)
+        Me.RankComboBox_ID.Size = New System.Drawing.Size(68, 21)
         Me.RankComboBox_ID.TabIndex = 47
         '
         'ID_CARDSBindingSource
@@ -1344,7 +1344,7 @@ Partial Class ConvertDialogForm
         Me.PayGradeTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "PayGrade", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
         Me.PayGradeTextBox.Location = New System.Drawing.Point(375, 204)
         Me.PayGradeTextBox.Name = "PayGradeTextBox"
-        Me.PayGradeTextBox.Size = New System.Drawing.Size(51, 20)
+        Me.PayGradeTextBox.Size = New System.Drawing.Size(68, 20)
         Me.PayGradeTextBox.TabIndex = 30
         '
         'HeightTextBox
@@ -1368,7 +1368,7 @@ Partial Class ConvertDialogForm
         Me.SexTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Sex", True))
         Me.SexTextBox.Location = New System.Drawing.Point(375, 230)
         Me.SexTextBox.Name = "SexTextBox"
-        Me.SexTextBox.Size = New System.Drawing.Size(51, 20)
+        Me.SexTextBox.Size = New System.Drawing.Size(68, 20)
         Me.SexTextBox.TabIndex = 38
         '
         'SerialNumberTextBox

@@ -9,14 +9,22 @@ Partial Public Class ConvertDialogForm
     Private Shared RankToGrade() As String = { _
 "CIV       ", _
 "PVT   E 1 ", "PV2   E 2 ", "PFC   E 3 ", "SPC   E 4 ", "CPL   E 4 ", _
-"SGT   E 5 ", "SSG   E 6 ", "SFC   E 7 ", "MSG   E 8 ", "1SG   E 8 ", "SGM   E 9 ", _
-"CSM   E 9 ", "WOC   E 5 ", "WO1   W 1 ", "CW2   W 2 ", "CW3   W 3 ", "CW4   W 4 ", _
-"CW5   W 5 ", "OCS   E 6 ", "2LT   O 1 ", "1LT   O 2 ", "CPT   O 3 ", "MAJ   O 4 ", _
+"SGT   E 5 ", "SSG   E 6 ", "SFC   E 7 ", "MSG   E 8 ", "1SG   E 8 ", "SGM   E 9 ", "CSM   E 9 ", _
+"WOC   E 5 ", _
+"WO1   W 1 ", "CW2   W 2 ", "CW3   W 3 ", "CW4   W 4 ", "CW5   W 5 ", _
+"OCS   E 6 ", _
+"2LT   O 1 ", "1LT   O 2 ", "CPT   O 3 ", "MAJ   O 4 ", _
 "LTC   O 5 ", "COL   O 6 ", "BG    O 7 ", "MG    O 8 ", "LG    O 9 ", _
 "AB    E 1 ", "Amn   E 2 ", "A1C   E 3 ", "SrA   E 4 ", _
 "SSgt  E 5 ", "TSgt  E 6 ", "MSgt  E 7 ", "SMSgt E 8 ", "CMSgt E 9 ", "CCM   E 9 ", _
-"2nd LtO 1 ", "1st LtO 2 ", "Cpt   O 3 ", "Maj   O 4 ", _
-"Lt ColO 5 ", "Col   O 6 ", "Brig GO 7 ", "Maj GeO 8 ", "Lt GenO 9 "}
+"2d  LtO 1 ", "1st LtO 2 ", "Capt  O 3 ", "Maj   O 4 ", _
+"Lt ColO 5 ", "Col   O 6 ", "Brig GO 7 ", "Maj GeO 8 ", "Lt GenO 9 ", _
+"CWO2  W 2 ", "CWO3  W 3 ", "CWO4  W 4 ", "CWO5  W 5 ", _
+"SR    E 1 ", "SA    E 2 ", "SN    E 3 ", "PO3   E 4 ", _
+"PO2   E 5 ", "PO1   E 6 ", "CPO   E 7 ", "SCPO  E 8 ", "MCPO  E 9 ", _
+"ENS   O 1 ", "LTJG  O 2 ", "LT    O 3 ", "LCDR  O 4 ", _
+"CDR   O 5 ", "CPT   O 6 ", "RDML  O 7 ", "RADM  O 8 ", "VADM  O 9 " _
+}
 
     Private Shared EyesColors() As String = {"BLK", "BLU", "BRO", "BRN", "GRY", "GRN", "HAZ", "MAR", "PNK", "DIC", "UNK"}
     Private Shared HairColors() As String = {"BAL", "BLK", "BLN", "BRO", "BRN", "GRY", "RED", "SDY", "WHI", "UNK"}
@@ -147,7 +155,8 @@ Partial Public Class ConvertDialogForm
             '
             ' TODO: To check for empty records
             '
-            If dr.IsDOBNull OrElse dr.IsH_ADDRNull OrElse dr.SSN = 0 Then
+            'If dr.IsDOBNull OrElse dr.IsH_ADDRNull OrElse dr.SSN = 0 Then
+            If dr.IsLAST_NAMENull Then
                 EmptyRecords_CSMR_ID.Add(dr)
                 Continue For
             End If
@@ -415,7 +424,10 @@ Partial Public Class ConvertDialogForm
                 End With
             Next
             Me.ID_CARDSTableAdapter.Connection.Close()
-            TabControl_ID.SelectTab(2)
+            '
+            '    After Saving the DB switch into MagStripe programming
+            '
+            '            TabControl_ID.SelectTab(2)
         End If
     End Sub
 
