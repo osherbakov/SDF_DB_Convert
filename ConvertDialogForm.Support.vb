@@ -23,7 +23,7 @@ Partial Public Class ConvertDialogForm
 "SR    E 1 ", "SA    E 2 ", "SN    E 3 ", "PO3   E 4 ", _
 "PO2   E 5 ", "PO1   E 6 ", "CPO   E 7 ", "SCPO  E 8 ", "MCPO  E 9 ", _
 "ENS   O 1 ", "LTJG  O 2 ", "LT    O 3 ", "LCDR  O 4 ", _
-"CDR   O 5 ", "CPT   O 6 ", "RDML  O 7 ", "RADM  O 8 ", "VADM  O 9 " _
+"CDR   O 5 ", "CAPT  O 6 ", "RDML  O 7 ", "RADM  O 8 ", "VADM  O 9 " _
 }
 
     Private Shared EyesColors() As String = {"BLK", "BLU", "BRO", "BRN", "GRY", "GRN", "HAZ", "MAR", "PNK", "DIC", "UNK"}
