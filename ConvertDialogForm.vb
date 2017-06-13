@@ -11,6 +11,8 @@ Public Class ConvertDialogForm
 
 
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        'TODO: This line of code loads data into the 'ID_CARDS_2017DataSet.ID_CARDS' table. You can move, or remove it, as needed.
+        Me.ID_CARDSTableAdapter1.Fill(Me.ID_CARDS_2017DataSet.ID_CARDS)
 
         Me.InitLists()
 
@@ -27,16 +29,16 @@ Public Class ConvertDialogForm
     Private Sub Convert_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Convert.Click
         ' Start converting data into ID_CARDS format
         '        Dim id_card As New IDCardData()
-        Dim id_row As ID_CARDS_DataSet.ID_CARDSRow
+        Dim id_row As ID_CARDS_2017DataSet.ID_CARDSRow
 
         ProgressBar1.Minimum = 0
         ProgressBar1.Value = 0
         ProgressBar1.Maximum = CSMR_ID_DataSet.CSMR_ID.Count()
 
-        ID_CARDS_DataSet.ID_CARDS.BeginLoadData()
+        ID_CARDS_2017DataSet.ID_CARDS.BeginLoadData()
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
             '           id_card = New IDCardData()
-            id_row = ID_CARDS_DataSet.ID_CARDS.NewID_CARDSRow()
+            id_row = ID_CARDS_2017DataSet.ID_CARDS.NewID_CARDSRow()
 
             With id_row
                 .Address = dr.H_ADDR + VB.vbCrLf + dr.H_CITY + ", CA " + dr.H_ZIP
@@ -74,12 +76,19 @@ Public Class ConvertDialogForm
                 .Photo = GetImageFile(.LastName, .FirstName, .MI)
                 .IDNumber = Support.MakeFullNumber(IssuingStation.Text, .SSN, .LastName)
                 .SerialNumber = Support.MakeSerial()
+                If .PayGrade.Contains("CIV") Then
+                    .Affiliation = "Civilian"
+                    .Abbreviation = "ESGR"
+                Else
+                    .Affiliation = "Reserve"
+                    .Abbreviation = "CSMR"
+                End If
             End With
 
-            ID_CARDS_DataSet.ID_CARDS.AddID_CARDSRow(id_row)
+            ID_CARDS_2017DataSet.ID_CARDS.AddID_CARDSRow(id_row)
             ProgressBar1.PerformStep()
         Next
-        ID_CARDS_DataSet.ID_CARDS.EndLoadData()
+        ID_CARDS_2017DataSet.ID_CARDS.EndLoadData()
         TabControl_ID.SelectTab(1)
     End Sub
 
@@ -103,6 +112,11 @@ Public Class ConvertDialogForm
                 PayGradeTextBox.Text = rankgrade.Substring(6)
             End If
         Next
+        If PayGradeTextBox.Text.Contains("CIV") Then
+            AbbreviationTextBox.Text = "ESGR"
+        Else
+            AbbreviationTextBox.Text = "CSMR"
+        End If
     End Sub
 
  
@@ -132,7 +146,7 @@ Public Class ConvertDialogForm
     End Sub
 
     Private Sub TabPage_ID_CARDS_Validating(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles TabPage_ID_CARDS.Validating
-        If Button_CreateDB.Enabled AndAlso Not ValidateRecord(ID_CARDS_DataSet.ID_CARDS(ID_CARDSBindingSource.Position)) Then
+        If Button_CreateDB.Enabled AndAlso Not ValidateRecord(ID_CARDS_2017DataSet.ID_CARDS(ID_CARDSBindingSource.Position)) Then
             e.Cancel = True
         End If
     End Sub
@@ -183,7 +197,7 @@ Public Class ConvertDialogForm
 
                             Dim oda As New OleDbDataAdapter(cmd)
                             oda.Fill(od_data_set)
-                            ImportRecords(od_data_set, ID_CARDS_DataSet)
+                            ImportRecords(od_data_set, ID_CARDS_2017DataSet)
                             od_data_set.Dispose()
                             cmd.Dispose()
                             nextTab = 1
@@ -229,7 +243,7 @@ Public Class ConvertDialogForm
             Dim stream As New IO.FileStream(FileName, IO.FileMode.Open, IO.FileAccess.Read)
             Dim photo(fi.Length) As Byte
             stream.Read(photo, 0, fi.Length())
-            ID_CARDS_DataSet.ID_CARDS(ID_CARDSBindingSource.Position).Photo = photo
+            ID_CARDS_2017DataSet.ID_CARDS(ID_CARDSBindingSource.Position).Photo = photo
             stream.Close()
             stream = Nothing
             fi = Nothing

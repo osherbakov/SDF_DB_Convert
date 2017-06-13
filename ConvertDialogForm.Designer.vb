@@ -71,6 +71,7 @@ Partial Class ConvertDialogForm
         Dim SSNLabel2 As System.Windows.Forms.Label
         Dim WeightLabel1 As System.Windows.Forms.Label
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ConvertDialogForm))
+        Dim AbbreviationLabel As System.Windows.Forms.Label
         Me.TabControl_ID = New System.Windows.Forms.TabControl
         Me.TabPage_CSMR_ID = New System.Windows.Forms.TabPage
         Me.ProgressBar1 = New System.Windows.Forms.ProgressBar
@@ -108,7 +109,7 @@ Partial Class ConvertDialogForm
         Me.Button_ID_Photo = New System.Windows.Forms.Button
         Me.RankComboBox_ID = New System.Windows.Forms.ComboBox
         Me.ID_CARDSBindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.ID_CARDS_DataSet = New CSMR_DB_Convert.ID_CARDS_DataSet
+        Me.ID_CARDS_2017DataSet = New CSMR_DB_Convert.ID_CARDS_2017DataSet
         Me.DLDataTextBox = New System.Windows.Forms.TextBox
         Me.BloodTypeComboBox = New System.Windows.Forms.ComboBox
         Me.EyesComboBox = New System.Windows.Forms.ComboBox
@@ -201,6 +202,11 @@ Partial Class ConvertDialogForm
         Me.HHP4600_Scan = New HHPScanner(Me.components)
         Me.MS1690_Scan = New MS1690(Me.components)
         Me.OpenFileDialog_Photo = New System.Windows.Forms.OpenFileDialog
+        Me.ID_CARDS_2017DataSet = New CSMR_DB_Convert.ID_CARDS_2017DataSet
+        Me.ID_CARDS_2017BindingSource = New System.Windows.Forms.BindingSource(Me.components)
+        Me.ID_CARDSTableAdapter1 = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
+        Me.TableAdapterManager2 = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
+        Me.AbbreviationTextBox = New System.Windows.Forms.TextBox
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -248,6 +254,7 @@ Partial Class ConvertDialogForm
         SexLabel1 = New System.Windows.Forms.Label
         SSNLabel2 = New System.Windows.Forms.Label
         WeightLabel1 = New System.Windows.Forms.Label
+        AbbreviationLabel = New System.Windows.Forms.Label
         Me.TabControl_ID.SuspendLayout()
         Me.TabPage_CSMR_ID.SuspendLayout()
         CType(Me.CSMR_IDBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -256,7 +263,7 @@ Partial Class ConvertDialogForm
         Me.CSMR_IDBindingNavigator.SuspendLayout()
         Me.TabPage_ID_CARDS.SuspendLayout()
         CType(Me.ID_CARDSBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ID_CARDS_DataSet, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ID_CARDS_2017DataSet, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ID_CARDSBindingNavigator, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ID_CARDSBindingNavigator.SuspendLayout()
         CType(Me.PhotoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -267,6 +274,8 @@ Partial Class ConvertDialogForm
         Me.TabPage_Scanner.SuspendLayout()
         CType(Me.IDCardDataBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ID_CARDS_2017DataSet, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ID_CARDS_2017BindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'SSNLabel
@@ -1005,6 +1014,8 @@ Partial Class ConvertDialogForm
         'TabPage_ID_CARDS
         '
         Me.TabPage_ID_CARDS.AutoScroll = True
+        Me.TabPage_ID_CARDS.Controls.Add(AbbreviationLabel)
+        Me.TabPage_ID_CARDS.Controls.Add(Me.AbbreviationTextBox)
         Me.TabPage_ID_CARDS.Controls.Add(Me.Button_ID_Photo)
         Me.TabPage_ID_CARDS.Controls.Add(RankLabel1)
         Me.TabPage_ID_CARDS.Controls.Add(Me.RankComboBox_ID)
@@ -1075,13 +1086,13 @@ Partial Class ConvertDialogForm
         'ID_CARDSBindingSource
         '
         Me.ID_CARDSBindingSource.DataMember = "ID_CARDS"
-        Me.ID_CARDSBindingSource.DataSource = Me.ID_CARDS_DataSet
+        Me.ID_CARDSBindingSource.DataSource = Me.ID_CARDS_2017DataSet
         '
         'ID_CARDS_DataSet
         '
-        Me.ID_CARDS_DataSet.DataSetName = "ID_CARDS_DataSet"
-        Me.ID_CARDS_DataSet.EnforceConstraints = False
-        Me.ID_CARDS_DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        Me.ID_CARDS_2017DataSet.DataSetName = "ID_CARDS_DataSet"
+        Me.ID_CARDS_2017DataSet.EnforceConstraints = False
+        Me.ID_CARDS_2017DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
         '
         'DLDataTextBox
         '
@@ -1936,6 +1947,45 @@ Partial Class ConvertDialogForm
         Me.OpenFileDialog_Photo.InitialDirectory = "."
         Me.OpenFileDialog_Photo.Title = "Select a Photo image"
         '
+        'ID_CARDS_2017DataSet
+        '
+        Me.ID_CARDS_2017DataSet.DataSetName = "ID_CARDS_2017DataSet"
+        Me.ID_CARDS_2017DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
+        'ID_CARDS_2017BindingSource
+        '
+        Me.ID_CARDS_2017BindingSource.DataMember = "ID_CARDS"
+        Me.ID_CARDS_2017BindingSource.DataSource = Me.ID_CARDS_2017DataSet
+        '
+        'ID_CARDSTableAdapter1
+        '
+        Me.ID_CARDSTableAdapter1.ClearBeforeFill = True
+        '
+        'TableAdapterManager2
+        '
+        Me.TableAdapterManager2.BackupDataSetBeforeUpdate = False
+        Me.TableAdapterManager2.ID_CARDSTableAdapter = Me.ID_CARDSTableAdapter1
+        Me.TableAdapterManager2.UpdateOrder = CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete
+        '
+        'AbbreviationLabel
+        '
+        AbbreviationLabel.AutoSize = True
+        AbbreviationLabel.Location = New System.Drawing.Point(51, 152)
+        AbbreviationLabel.Name = "AbbreviationLabel"
+        AbbreviationLabel.Size = New System.Drawing.Size(69, 13)
+        AbbreviationLabel.TabIndex = 48
+        AbbreviationLabel.Text = "Abbreviation:"
+        '
+        'AbbreviationTextBox
+        '
+        Me.AbbreviationTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_2017BindingSource, "Abbreviation", True))
+        Me.AbbreviationTextBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.AbbreviationTextBox.Location = New System.Drawing.Point(158, 144)
+        Me.AbbreviationTextBox.Name = "AbbreviationTextBox"
+        Me.AbbreviationTextBox.Size = New System.Drawing.Size(100, 26)
+        Me.AbbreviationTextBox.TabIndex = 49
+        Me.AbbreviationTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
         'ConvertDialogForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1957,7 +2007,7 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS.ResumeLayout(False)
         Me.TabPage_ID_CARDS.PerformLayout()
         CType(Me.ID_CARDSBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ID_CARDS_DataSet, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ID_CARDS_2017DataSet, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.ID_CARDSBindingNavigator, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ID_CARDSBindingNavigator.ResumeLayout(False)
         Me.ID_CARDSBindingNavigator.PerformLayout()
@@ -1972,6 +2022,8 @@ Partial Class ConvertDialogForm
         Me.TabPage_Scanner.PerformLayout()
         CType(Me.IDCardDataBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ID_CARDS_2017DataSet, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ID_CARDS_2017BindingSource, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -2006,7 +2058,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents DOBDateTimePicker As System.Windows.Forms.DateTimePicker
     Friend WithEvents Convert As System.Windows.Forms.Button
     Friend WithEvents Button_CreateDB As System.Windows.Forms.Button
-    Friend WithEvents ID_CARDS_DataSet As CSMR_DB_Convert.ID_CARDS_DataSet
+    Friend WithEvents ID_CARDS_2017DataSet As CSMR_DB_Convert.ID_CARDS_2017DataSet
     Friend WithEvents ID_CARDSBindingSource As System.Windows.Forms.BindingSource
     Friend WithEvents IDNumberTextBox As System.Windows.Forms.TextBox
     Friend WithEvents LastNameTextBox As System.Windows.Forms.TextBox
@@ -2105,5 +2157,10 @@ Partial Class ConvertDialogForm
     Friend WithEvents Barcode_Status As System.Windows.Forms.Label
     Friend WithEvents OpenFileDialog_Photo As System.Windows.Forms.OpenFileDialog
     Friend WithEvents Button_ID_Photo As System.Windows.Forms.Button
+    ' Friend WithEvents ID_CARDS_2017DataSet As CSMR_DB_Convert.ID_CARDS_2017DataSet
+    Friend WithEvents ID_CARDS_2017BindingSource As System.Windows.Forms.BindingSource
+    Friend WithEvents ID_CARDSTableAdapter1 As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
+    Friend WithEvents TableAdapterManager2 As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
+    Friend WithEvents AbbreviationTextBox As System.Windows.Forms.TextBox
 
 End Class

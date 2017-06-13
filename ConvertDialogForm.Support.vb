@@ -255,11 +255,11 @@ Partial Public Class ConvertDialogForm
         '
         ProgressBar1.Minimum = 0
         ProgressBar1.Value = 0
-        ProgressBar1.Maximum = ID_CARDS_DataSet.ID_CARDS.Rows.Count
-        ID_CARDS_DataSet.ID_CARDS.BeginLoadData()   ' Freeze index updates
+        ProgressBar1.Maximum = ID_CARDS_2017DataSet.ID_CARDS.Rows.Count
+        ID_CARDS_2017DataSet.ID_CARDS.BeginLoadData()   ' Freeze index updates
 
-        Dim EmptyRecords_ID_CARDS As New List(Of ID_CARDS_DataSet.ID_CARDSRow)
-        For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
+        Dim EmptyRecords_ID_CARDS As New List(Of ID_CARDS_2017DataSet.ID_CARDSRow)
+        For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_2017DataSet.ID_CARDS
             ' Weed out empty records
             If dr.IsLastNameNull OrElse String.IsNullOrEmpty(dr.LastName) OrElse _
                 dr.IsFirstNameNull OrElse String.IsNullOrEmpty(dr.FirstName) OrElse _
@@ -287,15 +287,15 @@ Partial Public Class ConvertDialogForm
         ProgressBar1.Maximum = EmptyRecords_ID_CARDS.Count
 
         ' Remove empty records from the dataset
-        For Each dr As ID_CARDS_DataSet.ID_CARDSRow In EmptyRecords_ID_CARDS
+        For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In EmptyRecords_ID_CARDS
             dr.Delete()
             Application.DoEvents()
             ProgressBar1.PerformStep()
         Next
-        ID_CARDS_DataSet.ID_CARDS.EndLoadData()
+        ID_CARDS_2017DataSet.ID_CARDS.EndLoadData()
     End Sub
 
-    Private Function ValidateRecord(ByVal dr As ID_CARDS_DataSet.ID_CARDSRow) As Boolean
+    Private Function ValidateRecord(ByVal dr As ID_CARDS_2017DataSet.ID_CARDSRow) As Boolean
         Dim IsValid As Boolean = True
 
         ' Clear all errors first
@@ -374,11 +374,11 @@ Partial Public Class ConvertDialogForm
 
     Private Function CheckOutputRecords() As Boolean
         Dim curr_idx As Integer
-        Dim dr As ID_CARDS_DataSet.ID_CARDSRow
+        Dim dr As ID_CARDS_2017DataSet.ID_CARDSRow
 
         ' Loop thru all records and do verification
-        For curr_idx = 0 To ID_CARDS_DataSet.ID_CARDS.Count() - 1
-            dr = ID_CARDS_DataSet.ID_CARDS(curr_idx)
+        For curr_idx = 0 To ID_CARDS_2017DataSet.ID_CARDS.Count() - 1
+            dr = ID_CARDS_2017DataSet.ID_CARDS(curr_idx)
             If Not ValidateRecord(dr) Then
                 ID_CARDSBindingSource.Position = curr_idx
                 ID_CARDSBindingSource.ResetItem(curr_idx)
@@ -403,7 +403,7 @@ Partial Public Class ConvertDialogForm
             Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileName
             Me.ID_CARDSTableAdapter.Connection.Open()
 
-            For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS
+            For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_2017DataSet.ID_CARDS
 
                 Dim id_card_data As IDCardData = GetIDCardData(dr)
                 With dr
@@ -415,11 +415,11 @@ Partial Public Class ConvertDialogForm
                     .CACPDF = Support.EncodeCACPDF417Data(id_card_data)
                     .AAMVACode39 = ""
                     .CACCode39 = ""
-                    Me.ID_CARDSTableAdapter.Insert(.IDNumber, .LastName, .FirstName, .MI, _
+                    Me.ID_CARDSTableAdapter1.Insert(.IDNumber, .LastName, .FirstName, .MI, _
                                                     .DOB, "XXX-XX-" + .SSN.Substring(.SSN.Length() - 4, 4), .Address, .H_Address, .H_City, .H_ZIP, _
                                                     .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
                                                     .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
-                                                    .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
+                                                    .Sex, .SerialNumber, .Affiliation, .Abbreviation, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
                                                     .AAMVACode39, .CACCode39)
                 End With
             Next
@@ -480,7 +480,7 @@ Partial Public Class ConvertDialogForm
 
                             ' Go thru all records and only add unique ones
                             Dim rec_count As Integer = 0
-                            For Each data_rec As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DataSet.ID_CARDS.Rows
+                            For Each data_rec As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_2017DataSet.ID_CARDS.Rows
                                 With data_rec
                                     cmdCheck.Parameters.Clear()
                                     cmdCheck.Parameters.AddWithValue("@IDNumber", .IDNumber)
@@ -505,7 +505,7 @@ Partial Public Class ConvertDialogForm
                             dba.Dispose()
                             cmdCheck.Dispose()
                             MessageBox.Show(String.Format("Added {0} records out of {1}", _
-                                                          rec_count, ID_CARDS_DataSet.ID_CARDS.Rows.Count), _
+                                                          rec_count, ID_CARDS_2017DataSet.ID_CARDS.Rows.Count), _
                                                             "Records added to the Database")
                             My.Settings.SummaryDBFile = ID_CARDS_SaveFileDialog.FileName
                         End If
@@ -521,7 +521,7 @@ Partial Public Class ConvertDialogForm
     End Sub
 
 
-    Private Function GetIDCardData(ByVal dr As CSMR_DB_Convert.ID_CARDS_DataSet.ID_CARDSRow) As IDCardData
+    Private Function GetIDCardData(ByVal dr As CSMR_DB_Convert.ID_CARDS_2017DataSet.ID_CARDSRow) As IDCardData
         Dim card_data As New IDCardData()
         With card_data
             Try
