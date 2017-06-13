@@ -49,7 +49,7 @@ Public Class IDCardData
 
     Public Sub New()
         m_IssueDate = Date.Today()
-        m_ExpirationDate = m_IssueDate.AddYears(3)
+        m_ExpirationDate = m_IssueDate.AddYears(2)
     End Sub
 
     Public Sub Clear()

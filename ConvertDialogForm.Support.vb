@@ -7,7 +7,7 @@ Imports System.Data.OleDb
 Partial Public Class ConvertDialogForm
     ' Rank is 6 characters, PayGrade is 4
     Private Shared RankToGrade() As String = { _
-"CIV       ", _
+"AMB   CIV ", _
 "PVT   E 1 ", "PV2   E 2 ", "PFC   E 3 ", "SPC   E 4 ", "CPL   E 4 ", _
 "SGT   E 5 ", "SSG   E 6 ", "SFC   E 7 ", "MSG   E 8 ", "1SG   E 8 ", "SGM   E 9 ", "CSM   E 9 ", _
 "WOC   E 5 ", _
@@ -409,7 +409,7 @@ Partial Public Class ConvertDialogForm
                 With dr
                     ' Update all MAG and PDF field
                     .IssueDate = Date.Today()
-                    .ExpirationDate = .IssueDate.AddYears(3)
+                    .ExpirationDate = .IssueDate.AddYears(2)
                     .AAMVAMAG = Support.EncodeAAMVAMagData(id_card_data)
                     .AAMVAPDF = Support.EncodeAAMVAPDF417Data(id_card_data)
                     .CACPDF = Support.EncodeCACPDF417Data(id_card_data)
@@ -637,6 +637,8 @@ Partial Public Class ConvertDialogForm
         "[DLData]         TEXT (255)," + _
         "[Sex]            TEXT (255)," + _
         "[SerialNumber]   TEXT (255)," + _
+        "[Affiliation]    TEXT (255)," + _
+        "[Abbreviation    TEXT (255)," + _
         "[CACPDF]         MEMO,     " + _
         "[AAMVAPDF]       MEMO,     " + _
         "[AAMVAMAG]       MEMO,     " + _
