@@ -13,11 +13,11 @@ Partial Public Class ConvertDialogForm
         UpdateReaderStatus()
         UpdateScannerStatus()
 
-        While BackgroundWorkerThread.IsBusy
+        While BackgroundThread.IsBusy
             Application.DoEvents()
         End While
-        AddHandler BackgroundWorkerThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkReader
-        BackgroundWorkerThread.RunWorkerAsync()
+        AddHandler BackgroundThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkReader
+        BackgroundThread.RunWorkerAsync()
 
         'Attach handlers
         AddHandler MSR206_Enc.DataReceived, AddressOf MagReaderDataReady
@@ -26,17 +26,17 @@ Partial Public Class ConvertDialogForm
     End Sub
 
     Private Sub TabPage_Scanner_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Scanner.Leave
-        BackgroundWorkerThread.CancelAsync()
+        BackgroundThread.CancelAsync()
         ' Stop and close MAG Reader 
         MSR206_Enc.Cancel()
         ' Stop and close Scanner
         HHP4600_Scan.Cancel()
         MS1690_Scan.Cancel()
 
-        While BackgroundWorkerThread.IsBusy
+        While BackgroundThread.IsBusy
             Application.DoEvents()
         End While
-        RemoveHandler BackgroundWorkerThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkReader
+        RemoveHandler BackgroundThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkReader
         If MSR206_Enc.IsMSR206Detected Then MSR206_Enc.CMD_Reset()
         MSR206_Enc.Close()
         If HHP4600_Scan.IsScannerDetected Then HHP4600_Scan.CMD_Reset()
@@ -144,7 +144,7 @@ Partial Public Class ConvertDialogForm
             If Not MSR206_Enc.IsMSR206Detected Then
                 UpdateReaderStatus()
                 MSR206_Enc.DetectMSR206()
-                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+                If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
                 If MSR206_Enc.IsMSR206Detected Then
                     ' Found - update status
                     UpdateReaderStatus()
@@ -163,7 +163,7 @@ Partial Public Class ConvertDialogForm
             End If
 
             ' Check for the Cancel request
-            If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+            If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
 
             ' Check for the Scanner connected
             If Not HHP4600_Scan.IsScannerDetected() Then
@@ -171,7 +171,7 @@ Partial Public Class ConvertDialogForm
 
                 ' Try to detect the Scanner
                 HHP4600_Scan.DetectScanner()
-                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+                If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
                 If HHP4600_Scan.IsScannerDetected() Then
                     UpdateScannerStatus()
                     HHP4600_Scan.CMD_Setup()
@@ -179,7 +179,7 @@ Partial Public Class ConvertDialogForm
             End If
 
             ' Check for the Cancel request
-            If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+            If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
 
             ' Check for the Scanner connected
             If Not MS1690_Scan.IsScannerDetected() Then
@@ -187,7 +187,7 @@ Partial Public Class ConvertDialogForm
 
                 ' Try to detect the Scanner
                 MS1690_Scan.DetectScanner()
-                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+                If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
                 If MS1690_Scan.IsScannerDetected() Then
                     UpdateScannerStatus()
                     MS1690_Scan.CMD_Setup()
@@ -196,7 +196,7 @@ Partial Public Class ConvertDialogForm
 
             Threading.Thread.Sleep(500)
             ' Check for the Cancel request
-            If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+            If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
         Loop
     End Sub
 

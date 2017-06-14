@@ -70,18 +70,18 @@ Partial Class ConvertDialogForm
         Dim SexLabel1 As System.Windows.Forms.Label
         Dim SSNLabel2 As System.Windows.Forms.Label
         Dim WeightLabel1 As System.Windows.Forms.Label
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ConvertDialogForm))
         Dim AbbreviationLabel As System.Windows.Forms.Label
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ConvertDialogForm))
         Me.TabControl_ID = New System.Windows.Forms.TabControl
         Me.TabPage_CSMR_ID = New System.Windows.Forms.TabPage
         Me.ProgressBar1 = New System.Windows.Forms.ProgressBar
         Me.RANKComboBox = New System.Windows.Forms.ComboBox
-        Me.CSMR_IDBindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.CSMR_ID_DataSet = New CSMR_DB_Convert.CSMR_ID_DataSet
+        Me.CSMR_ID_BS = New System.Windows.Forms.BindingSource(Me.components)
+        Me.CSMR_ID_DS = New CSMR_DB_Convert.CSMR_ID_DataSet
         Me.IssuingStation = New System.Windows.Forms.TextBox
         Me.Label1 = New System.Windows.Forms.Label
         Me.Convert = New System.Windows.Forms.Button
-        Me.CSMR_IDBindingNavigator = New System.Windows.Forms.BindingNavigator(Me.components)
+        Me.CSMR_ID_BN = New System.Windows.Forms.BindingNavigator(Me.components)
         Me.BindingNavigatorAddNewItem = New System.Windows.Forms.ToolStripButton
         Me.BindingNavigatorCountItem = New System.Windows.Forms.ToolStripLabel
         Me.BindingNavigatorDeleteItem = New System.Windows.Forms.ToolStripButton
@@ -106,15 +106,16 @@ Partial Class ConvertDialogForm
         Me.H_ZIPTextBox = New System.Windows.Forms.TextBox
         Me.DOBDateTimePicker = New System.Windows.Forms.DateTimePicker
         Me.TabPage_ID_CARDS = New System.Windows.Forms.TabPage
+        Me.AbbreviationTextBox = New System.Windows.Forms.TextBox
+        Me.ID_CARDS_BS = New System.Windows.Forms.BindingSource(Me.components)
+        Me.ID_CARDS_DS = New CSMR_DB_Convert.ID_CARDS_2017DataSet
         Me.Button_ID_Photo = New System.Windows.Forms.Button
         Me.RankComboBox_ID = New System.Windows.Forms.ComboBox
-        Me.ID_CARDSBindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.ID_CARDS_2017DataSet = New CSMR_DB_Convert.ID_CARDS_2017DataSet
         Me.DLDataTextBox = New System.Windows.Forms.TextBox
         Me.BloodTypeComboBox = New System.Windows.Forms.ComboBox
         Me.EyesComboBox = New System.Windows.Forms.ComboBox
         Me.HairComboBox = New System.Windows.Forms.ComboBox
-        Me.ID_CARDSBindingNavigator = New System.Windows.Forms.BindingNavigator(Me.components)
+        Me.ID_CARDS_BN = New System.Windows.Forms.BindingNavigator(Me.components)
         Me.AddItem = New System.Windows.Forms.ToolStripButton
         Me.ToolStripLabel1 = New System.Windows.Forms.ToolStripLabel
         Me.DeleteItem = New System.Windows.Forms.ToolStripButton
@@ -148,7 +149,7 @@ Partial Class ConvertDialogForm
         Me.AAMVAMAGTextBox_Enc = New System.Windows.Forms.TextBox
         Me.Label4 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
-        Me.BindingNavigator_Enc = New System.Windows.Forms.BindingNavigator(Me.components)
+        Me.Encoder_BN = New System.Windows.Forms.BindingNavigator(Me.components)
         Me.BindingNavigatorCountItem1 = New System.Windows.Forms.ToolStripLabel
         Me.BindingNavigatorMoveFirstItem1 = New System.Windows.Forms.ToolStripButton
         Me.BindingNavigatorMovePreviousItem1 = New System.Windows.Forms.ToolStripButton
@@ -190,23 +191,18 @@ Partial Class ConvertDialogForm
         Me.SexTextBox1 = New System.Windows.Forms.TextBox
         Me.SSNTextBox2 = New System.Windows.Forms.TextBox
         Me.WeightTextBox1 = New System.Windows.Forms.TextBox
-        Me.CSMR_IDTableAdapter = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
-        Me.TableAdapterManager = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
-        Me.ID_CARDSTableAdapter = New CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.ID_CARDSTableAdapter
-        Me.TableAdapterManager1 = New CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.TableAdapterManager
-        Me.CSMR_ID_OpenFileDialog = New System.Windows.Forms.OpenFileDialog
+        Me.CSMR_ID_TA = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
+        Me.CSMR_ID_TAM = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
+        Me.ID_CARDS_TA = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
+        Me.ID_CARDS_TAM = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
+        Me.OpenFileDialog_CSMR_ID = New System.Windows.Forms.OpenFileDialog
         Me.Form_error = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.ID_CARDS_SaveFileDialog = New System.Windows.Forms.SaveFileDialog
-        Me.BackgroundWorkerThread = New System.ComponentModel.BackgroundWorker
+        Me.SaveFileDialog_ID_CARDS = New System.Windows.Forms.SaveFileDialog
+        Me.BackgroundThread = New System.ComponentModel.BackgroundWorker
         Me.MSR206_Enc = New MSR206(Me.components)
         Me.HHP4600_Scan = New HHPScanner(Me.components)
         Me.MS1690_Scan = New MS1690(Me.components)
         Me.OpenFileDialog_Photo = New System.Windows.Forms.OpenFileDialog
-        Me.ID_CARDS_2017DataSet = New CSMR_DB_Convert.ID_CARDS_2017DataSet
-        Me.ID_CARDS_2017BindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.ID_CARDSTableAdapter1 = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
-        Me.TableAdapterManager2 = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
-        Me.AbbreviationTextBox = New System.Windows.Forms.TextBox
         SSNLabel = New System.Windows.Forms.Label
         NAME_INDLabel = New System.Windows.Forms.Label
         LAST_NAMELabel = New System.Windows.Forms.Label
@@ -257,25 +253,23 @@ Partial Class ConvertDialogForm
         AbbreviationLabel = New System.Windows.Forms.Label
         Me.TabControl_ID.SuspendLayout()
         Me.TabPage_CSMR_ID.SuspendLayout()
-        CType(Me.CSMR_IDBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.CSMR_ID_DataSet, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.CSMR_IDBindingNavigator, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.CSMR_IDBindingNavigator.SuspendLayout()
+        CType(Me.CSMR_ID_BS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.CSMR_ID_DS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.CSMR_ID_BN, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.CSMR_ID_BN.SuspendLayout()
         Me.TabPage_ID_CARDS.SuspendLayout()
-        CType(Me.ID_CARDSBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ID_CARDS_2017DataSet, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ID_CARDSBindingNavigator, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.ID_CARDSBindingNavigator.SuspendLayout()
+        CType(Me.ID_CARDS_BS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ID_CARDS_DS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ID_CARDS_BN, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.ID_CARDS_BN.SuspendLayout()
         CType(Me.PhotoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage_Encoder.SuspendLayout()
-        CType(Me.BindingNavigator_Enc, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.BindingNavigator_Enc.SuspendLayout()
+        CType(Me.Encoder_BN, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Encoder_BN.SuspendLayout()
         CType(Me.PhotoPicture_Enc, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage_Scanner.SuspendLayout()
         CType(Me.IDCardDataBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ID_CARDS_2017DataSet, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ID_CARDS_2017BindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'SSNLabel
@@ -701,6 +695,15 @@ Partial Class ConvertDialogForm
         WeightLabel1.TabIndex = 36
         WeightLabel1.Text = "Weight:"
         '
+        'AbbreviationLabel
+        '
+        AbbreviationLabel.AutoSize = True
+        AbbreviationLabel.Location = New System.Drawing.Point(51, 152)
+        AbbreviationLabel.Name = "AbbreviationLabel"
+        AbbreviationLabel.Size = New System.Drawing.Size(69, 13)
+        AbbreviationLabel.TabIndex = 48
+        AbbreviationLabel.Text = "Abbreviation:"
+        '
         'TabControl_ID
         '
         Me.TabControl_ID.Controls.Add(Me.TabPage_CSMR_ID)
@@ -723,7 +726,7 @@ Partial Class ConvertDialogForm
         Me.TabPage_CSMR_ID.Controls.Add(Me.IssuingStation)
         Me.TabPage_CSMR_ID.Controls.Add(Me.Label1)
         Me.TabPage_CSMR_ID.Controls.Add(Me.Convert)
-        Me.TabPage_CSMR_ID.Controls.Add(Me.CSMR_IDBindingNavigator)
+        Me.TabPage_CSMR_ID.Controls.Add(Me.CSMR_ID_BN)
         Me.TabPage_CSMR_ID.Controls.Add(GENDERLabel)
         Me.TabPage_CSMR_ID.Controls.Add(Me.GENDERTextBox)
         Me.TabPage_CSMR_ID.Controls.Add(SSNLabel)
@@ -764,23 +767,23 @@ Partial Class ConvertDialogForm
         '
         'RANKComboBox
         '
-        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "RANK", True))
+        Me.RANKComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "RANK", True))
         Me.RANKComboBox.FormattingEnabled = True
         Me.RANKComboBox.Location = New System.Drawing.Point(144, 158)
         Me.RANKComboBox.Name = "RANKComboBox"
         Me.RANKComboBox.Size = New System.Drawing.Size(80, 21)
         Me.RANKComboBox.TabIndex = 29
         '
-        'CSMR_IDBindingSource
+        'CSMR_ID_BS
         '
-        Me.CSMR_IDBindingSource.DataMember = "CSMR_ID"
-        Me.CSMR_IDBindingSource.DataSource = Me.CSMR_ID_DataSet
+        Me.CSMR_ID_BS.DataMember = "CSMR_ID"
+        Me.CSMR_ID_BS.DataSource = Me.CSMR_ID_DS
         '
-        'CSMR_ID_DataSet
+        'CSMR_ID_DS
         '
-        Me.CSMR_ID_DataSet.DataSetName = "CSMR_ID_DataSet"
-        Me.CSMR_ID_DataSet.EnforceConstraints = False
-        Me.CSMR_ID_DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        Me.CSMR_ID_DS.DataSetName = "CSMR_ID_DS"
+        Me.CSMR_ID_DS.EnforceConstraints = False
+        Me.CSMR_ID_DS.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
         '
         'IssuingStation
         '
@@ -808,24 +811,24 @@ Partial Class ConvertDialogForm
         Me.Convert.Text = "Convert to ID_CARD Database"
         Me.Convert.UseVisualStyleBackColor = True
         '
-        'CSMR_IDBindingNavigator
+        'CSMR_ID_BN
         '
-        Me.CSMR_IDBindingNavigator.AddNewItem = Me.BindingNavigatorAddNewItem
-        Me.CSMR_IDBindingNavigator.BindingSource = Me.CSMR_IDBindingSource
-        Me.CSMR_IDBindingNavigator.CountItem = Me.BindingNavigatorCountItem
-        Me.CSMR_IDBindingNavigator.DeleteItem = Me.BindingNavigatorDeleteItem
-        Me.CSMR_IDBindingNavigator.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
-        Me.CSMR_IDBindingNavigator.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BindingNavigatorMoveFirstItem, Me.BindingNavigatorMovePreviousItem, Me.BindingNavigatorSeparator, Me.BindingNavigatorPositionItem, Me.BindingNavigatorCountItem, Me.BindingNavigatorSeparator1, Me.BindingNavigatorMoveNextItem, Me.BindingNavigatorMoveLastItem, Me.BindingNavigatorSeparator2, Me.BindingNavigatorAddNewItem, Me.BindingNavigatorDeleteItem, Me.CSMR_IDBindingNavigatorSaveItem})
-        Me.CSMR_IDBindingNavigator.Location = New System.Drawing.Point(3, 3)
-        Me.CSMR_IDBindingNavigator.MoveFirstItem = Me.BindingNavigatorMoveFirstItem
-        Me.CSMR_IDBindingNavigator.MoveLastItem = Me.BindingNavigatorMoveLastItem
-        Me.CSMR_IDBindingNavigator.MoveNextItem = Me.BindingNavigatorMoveNextItem
-        Me.CSMR_IDBindingNavigator.MovePreviousItem = Me.BindingNavigatorMovePreviousItem
-        Me.CSMR_IDBindingNavigator.Name = "CSMR_IDBindingNavigator"
-        Me.CSMR_IDBindingNavigator.PositionItem = Me.BindingNavigatorPositionItem
-        Me.CSMR_IDBindingNavigator.Size = New System.Drawing.Size(808, 25)
-        Me.CSMR_IDBindingNavigator.TabIndex = 1
-        Me.CSMR_IDBindingNavigator.Text = "BindingNavigator_CSMR_ID"
+        Me.CSMR_ID_BN.AddNewItem = Me.BindingNavigatorAddNewItem
+        Me.CSMR_ID_BN.BindingSource = Me.CSMR_ID_BS
+        Me.CSMR_ID_BN.CountItem = Me.BindingNavigatorCountItem
+        Me.CSMR_ID_BN.DeleteItem = Me.BindingNavigatorDeleteItem
+        Me.CSMR_ID_BN.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
+        Me.CSMR_ID_BN.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BindingNavigatorMoveFirstItem, Me.BindingNavigatorMovePreviousItem, Me.BindingNavigatorSeparator, Me.BindingNavigatorPositionItem, Me.BindingNavigatorCountItem, Me.BindingNavigatorSeparator1, Me.BindingNavigatorMoveNextItem, Me.BindingNavigatorMoveLastItem, Me.BindingNavigatorSeparator2, Me.BindingNavigatorAddNewItem, Me.BindingNavigatorDeleteItem, Me.CSMR_IDBindingNavigatorSaveItem})
+        Me.CSMR_ID_BN.Location = New System.Drawing.Point(3, 3)
+        Me.CSMR_ID_BN.MoveFirstItem = Me.BindingNavigatorMoveFirstItem
+        Me.CSMR_ID_BN.MoveLastItem = Me.BindingNavigatorMoveLastItem
+        Me.CSMR_ID_BN.MoveNextItem = Me.BindingNavigatorMoveNextItem
+        Me.CSMR_ID_BN.MovePreviousItem = Me.BindingNavigatorMovePreviousItem
+        Me.CSMR_ID_BN.Name = "CSMR_ID_BN"
+        Me.CSMR_ID_BN.PositionItem = Me.BindingNavigatorPositionItem
+        Me.CSMR_ID_BN.Size = New System.Drawing.Size(808, 25)
+        Me.CSMR_ID_BN.TabIndex = 1
+        Me.CSMR_ID_BN.Text = "BindingNavigator_CSMR_ID"
         '
         'BindingNavigatorAddNewItem
         '
@@ -922,7 +925,7 @@ Partial Class ConvertDialogForm
         '
         'GENDERTextBox
         '
-        Me.GENDERTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "GENDER", True))
+        Me.GENDERTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "GENDER", True))
         Me.GENDERTextBox.Location = New System.Drawing.Point(571, 158)
         Me.GENDERTextBox.Name = "GENDERTextBox"
         Me.GENDERTextBox.Size = New System.Drawing.Size(72, 20)
@@ -930,7 +933,7 @@ Partial Class ConvertDialogForm
         '
         'SSNTextBox
         '
-        Me.SSNTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "SSN", True, System.Windows.Forms.DataSourceUpdateMode.OnValidation, Nothing, "000-00-0000"))
+        Me.SSNTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "SSN", True, System.Windows.Forms.DataSourceUpdateMode.OnValidation, Nothing, "000-00-0000"))
         Me.SSNTextBox.Location = New System.Drawing.Point(144, 41)
         Me.SSNTextBox.Name = "SSNTextBox"
         Me.SSNTextBox.Size = New System.Drawing.Size(200, 20)
@@ -938,7 +941,7 @@ Partial Class ConvertDialogForm
         '
         'NAME_INDTextBox
         '
-        Me.NAME_INDTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "NAME_IND", True))
+        Me.NAME_INDTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "NAME_IND", True))
         Me.NAME_INDTextBox.Location = New System.Drawing.Point(144, 68)
         Me.NAME_INDTextBox.Name = "NAME_INDTextBox"
         Me.NAME_INDTextBox.Size = New System.Drawing.Size(565, 20)
@@ -946,7 +949,7 @@ Partial Class ConvertDialogForm
         '
         'LAST_NAMETextBox
         '
-        Me.LAST_NAMETextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "LAST_NAME", True))
+        Me.LAST_NAMETextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "LAST_NAME", True))
         Me.LAST_NAMETextBox.Location = New System.Drawing.Point(144, 103)
         Me.LAST_NAMETextBox.Name = "LAST_NAMETextBox"
         Me.LAST_NAMETextBox.Size = New System.Drawing.Size(200, 20)
@@ -954,7 +957,7 @@ Partial Class ConvertDialogForm
         '
         'FIRST_NAMETextBox
         '
-        Me.FIRST_NAMETextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "FIRST_NAME", True))
+        Me.FIRST_NAMETextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "FIRST_NAME", True))
         Me.FIRST_NAMETextBox.Location = New System.Drawing.Point(361, 103)
         Me.FIRST_NAMETextBox.Name = "FIRST_NAMETextBox"
         Me.FIRST_NAMETextBox.Size = New System.Drawing.Size(164, 20)
@@ -962,7 +965,7 @@ Partial Class ConvertDialogForm
         '
         'MIDDLE_NAMETextBox
         '
-        Me.MIDDLE_NAMETextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "MIDDLE_NAME", True))
+        Me.MIDDLE_NAMETextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "MIDDLE_NAME", True))
         Me.MIDDLE_NAMETextBox.Location = New System.Drawing.Point(571, 103)
         Me.MIDDLE_NAMETextBox.Name = "MIDDLE_NAMETextBox"
         Me.MIDDLE_NAMETextBox.Size = New System.Drawing.Size(138, 20)
@@ -970,7 +973,7 @@ Partial Class ConvertDialogForm
         '
         'PAY_GRTextBox
         '
-        Me.PAY_GRTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "PAY_GR", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.PAY_GRTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "PAY_GR", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
         Me.PAY_GRTextBox.Location = New System.Drawing.Point(361, 159)
         Me.PAY_GRTextBox.Name = "PAY_GRTextBox"
         Me.PAY_GRTextBox.Size = New System.Drawing.Size(84, 20)
@@ -978,7 +981,7 @@ Partial Class ConvertDialogForm
         '
         'H_ADDRTextBox
         '
-        Me.H_ADDRTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "H_ADDR", True))
+        Me.H_ADDRTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "H_ADDR", True))
         Me.H_ADDRTextBox.Location = New System.Drawing.Point(144, 197)
         Me.H_ADDRTextBox.Name = "H_ADDRTextBox"
         Me.H_ADDRTextBox.Size = New System.Drawing.Size(298, 20)
@@ -986,7 +989,7 @@ Partial Class ConvertDialogForm
         '
         'H_CITYTextBox
         '
-        Me.H_CITYTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "H_CITY", True))
+        Me.H_CITYTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "H_CITY", True))
         Me.H_CITYTextBox.Location = New System.Drawing.Point(144, 223)
         Me.H_CITYTextBox.Name = "H_CITYTextBox"
         Me.H_CITYTextBox.Size = New System.Drawing.Size(200, 20)
@@ -994,7 +997,7 @@ Partial Class ConvertDialogForm
         '
         'H_ZIPTextBox
         '
-        Me.H_ZIPTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_IDBindingSource, "H_ZIP", True))
+        Me.H_ZIPTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.CSMR_ID_BS, "H_ZIP", True))
         Me.H_ZIPTextBox.Location = New System.Drawing.Point(361, 223)
         Me.H_ZIPTextBox.Name = "H_ZIPTextBox"
         Me.H_ZIPTextBox.Size = New System.Drawing.Size(81, 20)
@@ -1003,7 +1006,7 @@ Partial Class ConvertDialogForm
         'DOBDateTimePicker
         '
         Me.DOBDateTimePicker.CustomFormat = "   dd MMMM yyyy"
-        Me.DOBDateTimePicker.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.CSMR_IDBindingSource, "DOB", True))
+        Me.DOBDateTimePicker.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.CSMR_ID_BS, "DOB", True))
         Me.DOBDateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom
         Me.DOBDateTimePicker.Location = New System.Drawing.Point(571, 223)
         Me.DOBDateTimePicker.MinDate = New Date(1900, 1, 1, 0, 0, 0, 0)
@@ -1024,7 +1027,7 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS.Controls.Add(Me.BloodTypeComboBox)
         Me.TabPage_ID_CARDS.Controls.Add(Me.EyesComboBox)
         Me.TabPage_ID_CARDS.Controls.Add(Me.HairComboBox)
-        Me.TabPage_ID_CARDS.Controls.Add(Me.ID_CARDSBindingNavigator)
+        Me.TabPage_ID_CARDS.Controls.Add(Me.ID_CARDS_BN)
         Me.TabPage_ID_CARDS.Controls.Add(IDNumberLabel)
         Me.TabPage_ID_CARDS.Controls.Add(Me.IDNumberTextBox)
         Me.TabPage_ID_CARDS.Controls.Add(LastNameLabel)
@@ -1065,6 +1068,27 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS.Text = "ID_CARDS"
         Me.TabPage_ID_CARDS.UseVisualStyleBackColor = True
         '
+        'AbbreviationTextBox
+        '
+        Me.AbbreviationTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Abbreviation", True))
+        Me.AbbreviationTextBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.AbbreviationTextBox.Location = New System.Drawing.Point(158, 144)
+        Me.AbbreviationTextBox.Name = "AbbreviationTextBox"
+        Me.AbbreviationTextBox.Size = New System.Drawing.Size(100, 26)
+        Me.AbbreviationTextBox.TabIndex = 49
+        Me.AbbreviationTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'ID_CARDS_BS
+        '
+        Me.ID_CARDS_BS.DataMember = "ID_CARDS"
+        Me.ID_CARDS_BS.DataSource = Me.ID_CARDS_DS
+        '
+        'ID_CARDS_DS
+        '
+        Me.ID_CARDS_DS.DataSetName = "ID_CARDS_DS"
+        Me.ID_CARDS_DS.EnforceConstraints = False
+        Me.ID_CARDS_DS.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
         'Button_ID_Photo
         '
         Me.Button_ID_Photo.Location = New System.Drawing.Point(54, 301)
@@ -1076,27 +1100,19 @@ Partial Class ConvertDialogForm
         '
         'RankComboBox_ID
         '
-        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Rank", True))
+        Me.RankComboBox_ID.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Rank", True))
+        Me.RankComboBox_ID.DataSource = Me.ID_CARDS_BS
+        Me.RankComboBox_ID.DisplayMember = "Rank"
         Me.RankComboBox_ID.FormattingEnabled = True
         Me.RankComboBox_ID.Location = New System.Drawing.Point(375, 175)
         Me.RankComboBox_ID.Name = "RankComboBox_ID"
         Me.RankComboBox_ID.Size = New System.Drawing.Size(68, 21)
         Me.RankComboBox_ID.TabIndex = 47
-        '
-        'ID_CARDSBindingSource
-        '
-        Me.ID_CARDSBindingSource.DataMember = "ID_CARDS"
-        Me.ID_CARDSBindingSource.DataSource = Me.ID_CARDS_2017DataSet
-        '
-        'ID_CARDS_DataSet
-        '
-        Me.ID_CARDS_2017DataSet.DataSetName = "ID_CARDS_DataSet"
-        Me.ID_CARDS_2017DataSet.EnforceConstraints = False
-        Me.ID_CARDS_2017DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        Me.RankComboBox_ID.ValueMember = "Rank"
         '
         'DLDataTextBox
         '
-        Me.DLDataTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "DLData", True))
+        Me.DLDataTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "DLData", True))
         Me.DLDataTextBox.Location = New System.Drawing.Point(375, 284)
         Me.DLDataTextBox.Name = "DLDataTextBox"
         Me.DLDataTextBox.Size = New System.Drawing.Size(96, 20)
@@ -1104,10 +1120,10 @@ Partial Class ConvertDialogForm
         '
         'BloodTypeComboBox
         '
-        Me.BloodTypeComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDSBindingSource, "BloodType", True))
-        Me.BloodTypeComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "BloodType", True))
-        Me.BloodTypeComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "BloodType", True))
-        Me.BloodTypeComboBox.DataSource = Me.ID_CARDSBindingSource
+        Me.BloodTypeComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDS_BS, "BloodType", True))
+        Me.BloodTypeComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDS_BS, "BloodType", True))
+        Me.BloodTypeComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "BloodType", True))
+        Me.BloodTypeComboBox.DataSource = Me.ID_CARDS_BS
         Me.BloodTypeComboBox.DisplayMember = "BloodType"
         Me.BloodTypeComboBox.FormattingEnabled = True
         Me.BloodTypeComboBox.Location = New System.Drawing.Point(568, 233)
@@ -1118,10 +1134,10 @@ Partial Class ConvertDialogForm
         '
         'EyesComboBox
         '
-        Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDSBindingSource, "Eyes", True))
-        Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Eyes", True))
-        Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "Eyes", True))
-        Me.EyesComboBox.DataSource = Me.ID_CARDSBindingSource
+        Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDS_BS, "Eyes", True))
+        Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Eyes", True))
+        Me.EyesComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDS_BS, "Eyes", True))
+        Me.EyesComboBox.DataSource = Me.ID_CARDS_BS
         Me.EyesComboBox.DisplayMember = "Eyes"
         Me.EyesComboBox.FormattingEnabled = True
         Me.EyesComboBox.Location = New System.Drawing.Point(568, 204)
@@ -1132,10 +1148,10 @@ Partial Class ConvertDialogForm
         '
         'HairComboBox
         '
-        Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDSBindingSource, "Hair", True))
-        Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Hair", True))
-        Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDSBindingSource, "Hair", True))
-        Me.HairComboBox.DataSource = Me.ID_CARDSBindingSource
+        Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedItem", Me.ID_CARDS_BS, "Hair", True))
+        Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Hair", True))
+        Me.HairComboBox.DataBindings.Add(New System.Windows.Forms.Binding("SelectedValue", Me.ID_CARDS_BS, "Hair", True))
+        Me.HairComboBox.DataSource = Me.ID_CARDS_BS
         Me.HairComboBox.DisplayMember = "Hair"
         Me.HairComboBox.FormattingEnabled = True
         Me.HairComboBox.Location = New System.Drawing.Point(568, 177)
@@ -1144,25 +1160,25 @@ Partial Class ConvertDialogForm
         Me.HairComboBox.TabIndex = 42
         Me.HairComboBox.ValueMember = "Hair"
         '
-        'ID_CARDSBindingNavigator
+        'ID_CARDS_BN
         '
-        Me.ID_CARDSBindingNavigator.AddNewItem = Me.AddItem
-        Me.ID_CARDSBindingNavigator.BindingSource = Me.ID_CARDSBindingSource
-        Me.ID_CARDSBindingNavigator.CountItem = Me.ToolStripLabel1
-        Me.ID_CARDSBindingNavigator.DeleteItem = Me.DeleteItem
-        Me.ID_CARDSBindingNavigator.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
-        Me.ID_CARDSBindingNavigator.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripButton3, Me.ToolStripButton4, Me.ToolStripSeparator1, Me.ToolStripTextBox1, Me.ToolStripLabel1, Me.ToolStripSeparator2, Me.ToolStripButton5, Me.ToolStripButton6, Me.ToolStripSeparator3, Me.AddItem, Me.DeleteItem, Me.SaveItem})
-        Me.ID_CARDSBindingNavigator.Location = New System.Drawing.Point(3, 3)
-        Me.ID_CARDSBindingNavigator.MoveFirstItem = Me.ToolStripButton3
-        Me.ID_CARDSBindingNavigator.MoveLastItem = Me.ToolStripButton6
-        Me.ID_CARDSBindingNavigator.MoveNextItem = Me.ToolStripButton5
-        Me.ID_CARDSBindingNavigator.MovePreviousItem = Me.ToolStripButton4
-        Me.ID_CARDSBindingNavigator.Name = "ID_CARDSBindingNavigator"
-        Me.ID_CARDSBindingNavigator.PositionItem = Me.ToolStripTextBox1
-        Me.ID_CARDSBindingNavigator.Size = New System.Drawing.Size(808, 25)
-        Me.ID_CARDSBindingNavigator.Stretch = True
-        Me.ID_CARDSBindingNavigator.TabIndex = 41
-        Me.ID_CARDSBindingNavigator.Text = "ID_CARDSBindingNavigator"
+        Me.ID_CARDS_BN.AddNewItem = Me.AddItem
+        Me.ID_CARDS_BN.BindingSource = Me.ID_CARDS_BS
+        Me.ID_CARDS_BN.CountItem = Me.ToolStripLabel1
+        Me.ID_CARDS_BN.DeleteItem = Me.DeleteItem
+        Me.ID_CARDS_BN.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
+        Me.ID_CARDS_BN.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripButton3, Me.ToolStripButton4, Me.ToolStripSeparator1, Me.ToolStripTextBox1, Me.ToolStripLabel1, Me.ToolStripSeparator2, Me.ToolStripButton5, Me.ToolStripButton6, Me.ToolStripSeparator3, Me.AddItem, Me.DeleteItem, Me.SaveItem})
+        Me.ID_CARDS_BN.Location = New System.Drawing.Point(3, 3)
+        Me.ID_CARDS_BN.MoveFirstItem = Me.ToolStripButton3
+        Me.ID_CARDS_BN.MoveLastItem = Me.ToolStripButton6
+        Me.ID_CARDS_BN.MoveNextItem = Me.ToolStripButton5
+        Me.ID_CARDS_BN.MovePreviousItem = Me.ToolStripButton4
+        Me.ID_CARDS_BN.Name = "ID_CARDS_BN"
+        Me.ID_CARDS_BN.PositionItem = Me.ToolStripTextBox1
+        Me.ID_CARDS_BN.Size = New System.Drawing.Size(808, 25)
+        Me.ID_CARDS_BN.Stretch = True
+        Me.ID_CARDS_BN.TabIndex = 41
+        Me.ID_CARDS_BN.Text = "ID_CARDSBindingNavigator"
         '
         'AddItem
         '
@@ -1259,7 +1275,7 @@ Partial Class ConvertDialogForm
         '
         'IDNumberTextBox
         '
-        Me.IDNumberTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "IDNumber", True))
+        Me.IDNumberTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "IDNumber", True))
         Me.IDNumberTextBox.Location = New System.Drawing.Point(141, 330)
         Me.IDNumberTextBox.Name = "IDNumberTextBox"
         Me.IDNumberTextBox.ReadOnly = True
@@ -1268,7 +1284,7 @@ Partial Class ConvertDialogForm
         '
         'LastNameTextBox
         '
-        Me.LastNameTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "LastName", True))
+        Me.LastNameTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "LastName", True))
         Me.LastNameTextBox.Location = New System.Drawing.Point(141, 32)
         Me.LastNameTextBox.Name = "LastNameTextBox"
         Me.LastNameTextBox.Size = New System.Drawing.Size(200, 20)
@@ -1276,7 +1292,7 @@ Partial Class ConvertDialogForm
         '
         'FirstNameTextBox
         '
-        Me.FirstNameTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "FirstName", True))
+        Me.FirstNameTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "FirstName", True))
         Me.FirstNameTextBox.Location = New System.Drawing.Point(359, 32)
         Me.FirstNameTextBox.Name = "FirstNameTextBox"
         Me.FirstNameTextBox.Size = New System.Drawing.Size(106, 20)
@@ -1284,7 +1300,7 @@ Partial Class ConvertDialogForm
         '
         'MITextBox
         '
-        Me.MITextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "MI", True))
+        Me.MITextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "MI", True))
         Me.MITextBox.Location = New System.Drawing.Point(480, 32)
         Me.MITextBox.Name = "MITextBox"
         Me.MITextBox.Size = New System.Drawing.Size(169, 20)
@@ -1293,7 +1309,7 @@ Partial Class ConvertDialogForm
         'DOBDateTimePicker1
         '
         Me.DOBDateTimePicker1.CustomFormat = "   dd MMMM yyyy"
-        Me.DOBDateTimePicker1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.ID_CARDSBindingSource, "DOB", True))
+        Me.DOBDateTimePicker1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.ID_CARDS_BS, "DOB", True))
         Me.DOBDateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom
         Me.DOBDateTimePicker1.Location = New System.Drawing.Point(480, 61)
         Me.DOBDateTimePicker1.MinDate = New Date(1900, 1, 1, 0, 0, 0, 0)
@@ -1303,7 +1319,7 @@ Partial Class ConvertDialogForm
         '
         'SSNTextBox1
         '
-        Me.SSNTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "SSN", True))
+        Me.SSNTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "SSN", True))
         Me.SSNTextBox1.Location = New System.Drawing.Point(141, 58)
         Me.SSNTextBox1.Name = "SSNTextBox1"
         Me.SSNTextBox1.Size = New System.Drawing.Size(200, 20)
@@ -1311,7 +1327,7 @@ Partial Class ConvertDialogForm
         '
         'AddressTextBox
         '
-        Me.AddressTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Address", True))
+        Me.AddressTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Address", True))
         Me.AddressTextBox.Location = New System.Drawing.Point(141, 96)
         Me.AddressTextBox.Multiline = True
         Me.AddressTextBox.Name = "AddressTextBox"
@@ -1321,7 +1337,7 @@ Partial Class ConvertDialogForm
         'IssueDateDateTimePicker
         '
         Me.IssueDateDateTimePicker.CustomFormat = "   dd MMMM yyyy"
-        Me.IssueDateDateTimePicker.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.ID_CARDSBindingSource, "IssueDate", True))
+        Me.IssueDateDateTimePicker.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.ID_CARDS_BS, "IssueDate", True))
         Me.IssueDateDateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom
         Me.IssueDateDateTimePicker.Location = New System.Drawing.Point(568, 99)
         Me.IssueDateDateTimePicker.Name = "IssueDateDateTimePicker"
@@ -1331,7 +1347,7 @@ Partial Class ConvertDialogForm
         'ExpirationDateDateTimePicker
         '
         Me.ExpirationDateDateTimePicker.CustomFormat = "   dd MMMM yyyy"
-        Me.ExpirationDateDateTimePicker.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.ID_CARDSBindingSource, "ExpirationDate", True))
+        Me.ExpirationDateDateTimePicker.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.ID_CARDS_BS, "ExpirationDate", True))
         Me.ExpirationDateDateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom
         Me.ExpirationDateDateTimePicker.Location = New System.Drawing.Point(568, 125)
         Me.ExpirationDateDateTimePicker.Name = "ExpirationDateDateTimePicker"
@@ -1340,7 +1356,7 @@ Partial Class ConvertDialogForm
         '
         'PhotoPictureBox
         '
-        Me.PhotoPictureBox.DataBindings.Add(New System.Windows.Forms.Binding("Image", Me.ID_CARDSBindingSource, "Photo", True))
+        Me.PhotoPictureBox.DataBindings.Add(New System.Windows.Forms.Binding("Image", Me.ID_CARDS_BS, "Photo", True))
         Me.PhotoPictureBox.ErrorImage = Global.CSMR_DB_Convert.My.Resources.Resources.Empty
         Me.PhotoPictureBox.Image = CType(resources.GetObject("PhotoPictureBox.Image"), System.Drawing.Image)
         Me.PhotoPictureBox.Location = New System.Drawing.Point(141, 171)
@@ -1352,7 +1368,7 @@ Partial Class ConvertDialogForm
         '
         'PayGradeTextBox
         '
-        Me.PayGradeTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "PayGrade", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.PayGradeTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "PayGrade", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
         Me.PayGradeTextBox.Location = New System.Drawing.Point(375, 204)
         Me.PayGradeTextBox.Name = "PayGradeTextBox"
         Me.PayGradeTextBox.Size = New System.Drawing.Size(68, 20)
@@ -1360,7 +1376,7 @@ Partial Class ConvertDialogForm
         '
         'HeightTextBox
         '
-        Me.HeightTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Height", True))
+        Me.HeightTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Height", True))
         Me.HeightTextBox.Location = New System.Drawing.Point(713, 175)
         Me.HeightTextBox.Name = "HeightTextBox"
         Me.HeightTextBox.Size = New System.Drawing.Size(55, 20)
@@ -1368,7 +1384,7 @@ Partial Class ConvertDialogForm
         '
         'WeightTextBox
         '
-        Me.WeightTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Weight", True))
+        Me.WeightTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Weight", True))
         Me.WeightTextBox.Location = New System.Drawing.Point(713, 200)
         Me.WeightTextBox.Name = "WeightTextBox"
         Me.WeightTextBox.Size = New System.Drawing.Size(55, 20)
@@ -1376,7 +1392,7 @@ Partial Class ConvertDialogForm
         '
         'SexTextBox
         '
-        Me.SexTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Sex", True))
+        Me.SexTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Sex", True))
         Me.SexTextBox.Location = New System.Drawing.Point(375, 230)
         Me.SexTextBox.Name = "SexTextBox"
         Me.SexTextBox.Size = New System.Drawing.Size(68, 20)
@@ -1384,7 +1400,7 @@ Partial Class ConvertDialogForm
         '
         'SerialNumberTextBox
         '
-        Me.SerialNumberTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "SerialNumber", True))
+        Me.SerialNumberTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "SerialNumber", True))
         Me.SerialNumberTextBox.Location = New System.Drawing.Point(375, 330)
         Me.SerialNumberTextBox.Name = "SerialNumberTextBox"
         Me.SerialNumberTextBox.ReadOnly = True
@@ -1406,7 +1422,7 @@ Partial Class ConvertDialogForm
         Me.TabPage_Encoder.Controls.Add(Me.AAMVAMAGTextBox_Enc)
         Me.TabPage_Encoder.Controls.Add(Me.Label4)
         Me.TabPage_Encoder.Controls.Add(Me.Label2)
-        Me.TabPage_Encoder.Controls.Add(Me.BindingNavigator_Enc)
+        Me.TabPage_Encoder.Controls.Add(Me.Encoder_BN)
         Me.TabPage_Encoder.Controls.Add(Me.FirstName_Enc)
         Me.TabPage_Encoder.Controls.Add(Me.LastName_Enc)
         Me.TabPage_Encoder.Controls.Add(Me.Label3)
@@ -1425,7 +1441,7 @@ Partial Class ConvertDialogForm
         '
         'MI_Enc
         '
-        Me.MI_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "MI", True))
+        Me.MI_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "MI", True))
         Me.MI_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
         Me.MI_Enc.Location = New System.Drawing.Point(339, 272)
         Me.MI_Enc.Name = "MI_Enc"
@@ -1435,7 +1451,7 @@ Partial Class ConvertDialogForm
         '
         'AAMVAMAGTextBox_Enc
         '
-        Me.AAMVAMAGTextBox_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "AAMVAMAG", True))
+        Me.AAMVAMAGTextBox_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "AAMVAMAG", True))
         Me.AAMVAMAGTextBox_Enc.Location = New System.Drawing.Point(281, 72)
         Me.AAMVAMAGTextBox_Enc.Multiline = True
         Me.AAMVAMAGTextBox_Enc.Name = "AAMVAMAGTextBox_Enc"
@@ -1463,26 +1479,26 @@ Partial Class ConvertDialogForm
         Me.Label2.TabIndex = 14
         Me.Label2.Text = "Grade"
         '
-        'BindingNavigator_Enc
+        'Encoder_BN
         '
-        Me.BindingNavigator_Enc.AddNewItem = Nothing
-        Me.BindingNavigator_Enc.BindingSource = Me.ID_CARDSBindingSource
-        Me.BindingNavigator_Enc.CountItem = Me.BindingNavigatorCountItem1
-        Me.BindingNavigator_Enc.DeleteItem = Nothing
-        Me.BindingNavigator_Enc.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
-        Me.BindingNavigator_Enc.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BindingNavigatorMoveFirstItem1, Me.BindingNavigatorMovePreviousItem1, Me.BindingNavigatorSeparator3, Me.BindingNavigatorPositionItem1, Me.BindingNavigatorCountItem1, Me.BindingNavigatorSeparator4, Me.BindingNavigatorMoveNextItem1, Me.BindingNavigatorMoveLastItem1, Me.BindingNavigatorSeparator5})
-        Me.BindingNavigator_Enc.Location = New System.Drawing.Point(3, 3)
-        Me.BindingNavigator_Enc.MoveFirstItem = Me.BindingNavigatorMoveFirstItem1
-        Me.BindingNavigator_Enc.MoveLastItem = Me.BindingNavigatorMoveLastItem1
-        Me.BindingNavigator_Enc.MoveNextItem = Me.BindingNavigatorMoveNextItem1
-        Me.BindingNavigator_Enc.MovePreviousItem = Me.BindingNavigatorMovePreviousItem1
-        Me.BindingNavigator_Enc.Name = "BindingNavigator_Enc"
-        Me.BindingNavigator_Enc.PositionItem = Me.BindingNavigatorPositionItem1
-        Me.BindingNavigator_Enc.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
-        Me.BindingNavigator_Enc.Size = New System.Drawing.Size(808, 25)
-        Me.BindingNavigator_Enc.Stretch = True
-        Me.BindingNavigator_Enc.TabIndex = 13
-        Me.BindingNavigator_Enc.Text = "BindingNavigator_Enc"
+        Me.Encoder_BN.AddNewItem = Nothing
+        Me.Encoder_BN.BindingSource = Me.ID_CARDS_BS
+        Me.Encoder_BN.CountItem = Me.BindingNavigatorCountItem1
+        Me.Encoder_BN.DeleteItem = Nothing
+        Me.Encoder_BN.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
+        Me.Encoder_BN.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BindingNavigatorMoveFirstItem1, Me.BindingNavigatorMovePreviousItem1, Me.BindingNavigatorSeparator3, Me.BindingNavigatorPositionItem1, Me.BindingNavigatorCountItem1, Me.BindingNavigatorSeparator4, Me.BindingNavigatorMoveNextItem1, Me.BindingNavigatorMoveLastItem1, Me.BindingNavigatorSeparator5})
+        Me.Encoder_BN.Location = New System.Drawing.Point(3, 3)
+        Me.Encoder_BN.MoveFirstItem = Me.BindingNavigatorMoveFirstItem1
+        Me.Encoder_BN.MoveLastItem = Me.BindingNavigatorMoveLastItem1
+        Me.Encoder_BN.MoveNextItem = Me.BindingNavigatorMoveNextItem1
+        Me.Encoder_BN.MovePreviousItem = Me.BindingNavigatorMovePreviousItem1
+        Me.Encoder_BN.Name = "Encoder_BN"
+        Me.Encoder_BN.PositionItem = Me.BindingNavigatorPositionItem1
+        Me.Encoder_BN.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
+        Me.Encoder_BN.Size = New System.Drawing.Size(808, 25)
+        Me.Encoder_BN.Stretch = True
+        Me.Encoder_BN.TabIndex = 13
+        Me.Encoder_BN.Text = "BindingNavigator_Enc"
         '
         'BindingNavigatorCountItem1
         '
@@ -1553,7 +1569,7 @@ Partial Class ConvertDialogForm
         '
         'FirstName_Enc
         '
-        Me.FirstName_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "FirstName", True))
+        Me.FirstName_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "FirstName", True))
         Me.FirstName_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.FirstName_Enc.Location = New System.Drawing.Point(106, 272)
         Me.FirstName_Enc.Name = "FirstName_Enc"
@@ -1563,7 +1579,7 @@ Partial Class ConvertDialogForm
         '
         'LastName_Enc
         '
-        Me.LastName_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "LastName", True))
+        Me.LastName_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "LastName", True))
         Me.LastName_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LastName_Enc.Location = New System.Drawing.Point(106, 252)
         Me.LastName_Enc.Name = "LastName_Enc"
@@ -1583,7 +1599,7 @@ Partial Class ConvertDialogForm
         '
         'PayGrade_Enc
         '
-        Me.PayGrade_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "PayGrade", True))
+        Me.PayGrade_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "PayGrade", True))
         Me.PayGrade_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.PayGrade_Enc.Location = New System.Drawing.Point(278, 322)
         Me.PayGrade_Enc.Name = "PayGrade_Enc"
@@ -1593,7 +1609,7 @@ Partial Class ConvertDialogForm
         '
         'ExpirationDate_Enc
         '
-        Me.ExpirationDate_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "ExpirationDate", True, System.Windows.Forms.DataSourceUpdateMode.OnValidation, Nothing, "yyyyMMMdd"))
+        Me.ExpirationDate_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "ExpirationDate", True, System.Windows.Forms.DataSourceUpdateMode.OnValidation, Nothing, "yyyyMMMdd"))
         Me.ExpirationDate_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ExpirationDate_Enc.Location = New System.Drawing.Point(278, 231)
         Me.ExpirationDate_Enc.Name = "ExpirationDate_Enc"
@@ -1603,7 +1619,7 @@ Partial Class ConvertDialogForm
         '
         'Rank_Enc
         '
-        Me.Rank_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDSBindingSource, "Rank", True))
+        Me.Rank_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Rank", True))
         Me.Rank_Enc.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Rank_Enc.Location = New System.Drawing.Point(339, 322)
         Me.Rank_Enc.Name = "Rank_Enc"
@@ -1613,7 +1629,7 @@ Partial Class ConvertDialogForm
         '
         'PhotoPicture_Enc
         '
-        Me.PhotoPicture_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Image", Me.ID_CARDSBindingSource, "Photo", True))
+        Me.PhotoPicture_Enc.DataBindings.Add(New System.Windows.Forms.Binding("Image", Me.ID_CARDS_BS, "Photo", True))
         Me.PhotoPicture_Enc.Location = New System.Drawing.Point(109, 72)
         Me.PhotoPicture_Enc.Name = "PhotoPicture_Enc"
         Me.PhotoPicture_Enc.Size = New System.Drawing.Size(152, 177)
@@ -1895,49 +1911,49 @@ Partial Class ConvertDialogForm
         Me.WeightTextBox1.Size = New System.Drawing.Size(46, 20)
         Me.WeightTextBox1.TabIndex = 37
         '
-        'CSMR_IDTableAdapter
+        'CSMR_ID_TA
         '
-        Me.CSMR_IDTableAdapter.ClearBeforeFill = True
+        Me.CSMR_ID_TA.ClearBeforeFill = True
         '
-        'TableAdapterManager
+        'CSMR_ID_TAM
         '
-        Me.TableAdapterManager.BackupDataSetBeforeUpdate = False
-        Me.TableAdapterManager.Connection = Nothing
-        Me.TableAdapterManager.UpdateOrder = CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete
+        Me.CSMR_ID_TAM.BackupDataSetBeforeUpdate = False
+        Me.CSMR_ID_TAM.Connection = Nothing
+        Me.CSMR_ID_TAM.UpdateOrder = CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete
         '
-        'ID_CARDSTableAdapter
+        'ID_CARDS_TA
         '
-        Me.ID_CARDSTableAdapter.ClearBeforeFill = True
+        Me.ID_CARDS_TA.ClearBeforeFill = True
         '
-        'TableAdapterManager1
+        'ID_CARDS_TAM
         '
-        Me.TableAdapterManager1.BackupDataSetBeforeUpdate = False
-        Me.TableAdapterManager1.ID_CARDSTableAdapter = Me.ID_CARDSTableAdapter
-        Me.TableAdapterManager1.UpdateOrder = CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete
+        Me.ID_CARDS_TAM.BackupDataSetBeforeUpdate = False
+        Me.ID_CARDS_TAM.ID_CARDSTableAdapter = Me.ID_CARDS_TA
+        Me.ID_CARDS_TAM.UpdateOrder = CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete
         '
-        'CSMR_ID_OpenFileDialog
+        'OpenFileDialog_CSMR_ID
         '
-        Me.CSMR_ID_OpenFileDialog.DefaultExt = "mdb"
-        Me.CSMR_ID_OpenFileDialog.FileName = "CSMR_ID.mdb"
-        Me.CSMR_ID_OpenFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
-        Me.CSMR_ID_OpenFileDialog.InitialDirectory = "."
-        Me.CSMR_ID_OpenFileDialog.Title = "Select file that contains ID Database"
+        Me.OpenFileDialog_CSMR_ID.DefaultExt = "mdb"
+        Me.OpenFileDialog_CSMR_ID.FileName = "CSMR_ID.mdb"
+        Me.OpenFileDialog_CSMR_ID.Filter = "Access DB Files|*.mdb|All Files|*.*"
+        Me.OpenFileDialog_CSMR_ID.InitialDirectory = "."
+        Me.OpenFileDialog_CSMR_ID.Title = "Select file that contains ID Database"
         '
         'Form_error
         '
         Me.Form_error.ContainerControl = Me
         '
-        'ID_CARDS_SaveFileDialog
+        'SaveFileDialog_ID_CARDS
         '
-        Me.ID_CARDS_SaveFileDialog.DefaultExt = "mdb"
-        Me.ID_CARDS_SaveFileDialog.FileName = "ID_CARDS.mdb"
-        Me.ID_CARDS_SaveFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
-        Me.ID_CARDS_SaveFileDialog.InitialDirectory = "."
-        Me.ID_CARDS_SaveFileDialog.Title = "Select a file to save Database into"
+        Me.SaveFileDialog_ID_CARDS.DefaultExt = "mdb"
+        Me.SaveFileDialog_ID_CARDS.FileName = "ID_CARDS.mdb"
+        Me.SaveFileDialog_ID_CARDS.Filter = "Access DB Files|*.mdb|All Files|*.*"
+        Me.SaveFileDialog_ID_CARDS.InitialDirectory = "."
+        Me.SaveFileDialog_ID_CARDS.Title = "Select a file to save Database into"
         '
-        'BackgroundWorkerThread
+        'BackgroundThread
         '
-        Me.BackgroundWorkerThread.WorkerSupportsCancellation = True
+        Me.BackgroundThread.WorkerSupportsCancellation = True
         '
         'OpenFileDialog_Photo
         '
@@ -1946,45 +1962,6 @@ Partial Class ConvertDialogForm
         Me.OpenFileDialog_Photo.Filter = "Image Files|*.jpg|All Files|*.*"
         Me.OpenFileDialog_Photo.InitialDirectory = "."
         Me.OpenFileDialog_Photo.Title = "Select a Photo image"
-        '
-        'ID_CARDS_2017DataSet
-        '
-        Me.ID_CARDS_2017DataSet.DataSetName = "ID_CARDS_2017DataSet"
-        Me.ID_CARDS_2017DataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
-        '
-        'ID_CARDS_2017BindingSource
-        '
-        Me.ID_CARDS_2017BindingSource.DataMember = "ID_CARDS"
-        Me.ID_CARDS_2017BindingSource.DataSource = Me.ID_CARDS_2017DataSet
-        '
-        'ID_CARDSTableAdapter1
-        '
-        Me.ID_CARDSTableAdapter1.ClearBeforeFill = True
-        '
-        'TableAdapterManager2
-        '
-        Me.TableAdapterManager2.BackupDataSetBeforeUpdate = False
-        Me.TableAdapterManager2.ID_CARDSTableAdapter = Me.ID_CARDSTableAdapter1
-        Me.TableAdapterManager2.UpdateOrder = CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete
-        '
-        'AbbreviationLabel
-        '
-        AbbreviationLabel.AutoSize = True
-        AbbreviationLabel.Location = New System.Drawing.Point(51, 152)
-        AbbreviationLabel.Name = "AbbreviationLabel"
-        AbbreviationLabel.Size = New System.Drawing.Size(69, 13)
-        AbbreviationLabel.TabIndex = 48
-        AbbreviationLabel.Text = "Abbreviation:"
-        '
-        'AbbreviationTextBox
-        '
-        Me.AbbreviationTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_2017BindingSource, "Abbreviation", True))
-        Me.AbbreviationTextBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.AbbreviationTextBox.Location = New System.Drawing.Point(158, 144)
-        Me.AbbreviationTextBox.Name = "AbbreviationTextBox"
-        Me.AbbreviationTextBox.Size = New System.Drawing.Size(100, 26)
-        Me.AbbreviationTextBox.TabIndex = 49
-        Me.AbbreviationTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'ConvertDialogForm
         '
@@ -1999,40 +1976,38 @@ Partial Class ConvertDialogForm
         Me.TabControl_ID.ResumeLayout(False)
         Me.TabPage_CSMR_ID.ResumeLayout(False)
         Me.TabPage_CSMR_ID.PerformLayout()
-        CType(Me.CSMR_IDBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.CSMR_ID_DataSet, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.CSMR_IDBindingNavigator, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.CSMR_IDBindingNavigator.ResumeLayout(False)
-        Me.CSMR_IDBindingNavigator.PerformLayout()
+        CType(Me.CSMR_ID_BS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.CSMR_ID_DS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.CSMR_ID_BN, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.CSMR_ID_BN.ResumeLayout(False)
+        Me.CSMR_ID_BN.PerformLayout()
         Me.TabPage_ID_CARDS.ResumeLayout(False)
         Me.TabPage_ID_CARDS.PerformLayout()
-        CType(Me.ID_CARDSBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ID_CARDS_2017DataSet, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ID_CARDSBindingNavigator, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.ID_CARDSBindingNavigator.ResumeLayout(False)
-        Me.ID_CARDSBindingNavigator.PerformLayout()
+        CType(Me.ID_CARDS_BS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ID_CARDS_DS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ID_CARDS_BN, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ID_CARDS_BN.ResumeLayout(False)
+        Me.ID_CARDS_BN.PerformLayout()
         CType(Me.PhotoPictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage_Encoder.ResumeLayout(False)
         Me.TabPage_Encoder.PerformLayout()
-        CType(Me.BindingNavigator_Enc, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.BindingNavigator_Enc.ResumeLayout(False)
-        Me.BindingNavigator_Enc.PerformLayout()
+        CType(Me.Encoder_BN, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Encoder_BN.ResumeLayout(False)
+        Me.Encoder_BN.PerformLayout()
         CType(Me.PhotoPicture_Enc, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage_Scanner.ResumeLayout(False)
         Me.TabPage_Scanner.PerformLayout()
         CType(Me.IDCardDataBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ID_CARDS_2017DataSet, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ID_CARDS_2017BindingSource, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
     Friend WithEvents TabControl_ID As System.Windows.Forms.TabControl
     Friend WithEvents TabPage_CSMR_ID As System.Windows.Forms.TabPage
     Friend WithEvents TabPage_ID_CARDS As System.Windows.Forms.TabPage
-    Friend WithEvents CSMR_ID_DataSet As CSMR_DB_Convert.CSMR_ID_DataSet
-    Friend WithEvents CSMR_IDBindingSource As System.Windows.Forms.BindingSource
-    Friend WithEvents CSMR_IDBindingNavigator As System.Windows.Forms.BindingNavigator
+    Friend WithEvents CSMR_ID_DS As CSMR_DB_Convert.CSMR_ID_DataSet
+    Friend WithEvents CSMR_ID_BS As System.Windows.Forms.BindingSource
+    Friend WithEvents CSMR_ID_BN As System.Windows.Forms.BindingNavigator
     Friend WithEvents BindingNavigatorAddNewItem As System.Windows.Forms.ToolStripButton
     Friend WithEvents BindingNavigatorCountItem As System.Windows.Forms.ToolStripLabel
     Friend WithEvents BindingNavigatorDeleteItem As System.Windows.Forms.ToolStripButton
@@ -2058,8 +2033,8 @@ Partial Class ConvertDialogForm
     Friend WithEvents DOBDateTimePicker As System.Windows.Forms.DateTimePicker
     Friend WithEvents Convert As System.Windows.Forms.Button
     Friend WithEvents Button_CreateDB As System.Windows.Forms.Button
-    Friend WithEvents ID_CARDS_2017DataSet As CSMR_DB_Convert.ID_CARDS_2017DataSet
-    Friend WithEvents ID_CARDSBindingSource As System.Windows.Forms.BindingSource
+    Friend WithEvents ID_CARDS_DS As CSMR_DB_Convert.ID_CARDS_2017DataSet
+    Friend WithEvents ID_CARDS_BS As System.Windows.Forms.BindingSource
     Friend WithEvents IDNumberTextBox As System.Windows.Forms.TextBox
     Friend WithEvents LastNameTextBox As System.Windows.Forms.TextBox
     Friend WithEvents FirstNameTextBox As System.Windows.Forms.TextBox
@@ -2075,7 +2050,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents WeightTextBox As System.Windows.Forms.TextBox
     Friend WithEvents SexTextBox As System.Windows.Forms.TextBox
     Friend WithEvents SerialNumberTextBox As System.Windows.Forms.TextBox
-    Friend WithEvents ID_CARDSBindingNavigator As System.Windows.Forms.BindingNavigator
+    Friend WithEvents ID_CARDS_BN As System.Windows.Forms.BindingNavigator
     Friend WithEvents AddItem As System.Windows.Forms.ToolStripButton
     Friend WithEvents ToolStripLabel1 As System.Windows.Forms.ToolStripLabel
     Friend WithEvents DeleteItem As System.Windows.Forms.ToolStripButton
@@ -2088,18 +2063,18 @@ Partial Class ConvertDialogForm
     Friend WithEvents ToolStripButton6 As System.Windows.Forms.ToolStripButton
     Friend WithEvents ToolStripSeparator3 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents SaveItem As System.Windows.Forms.ToolStripButton
-    Private WithEvents CSMR_IDTableAdapter As CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
-    Private WithEvents TableAdapterManager As CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
-    Private WithEvents ID_CARDSTableAdapter As CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.ID_CARDSTableAdapter
-    Private WithEvents TableAdapterManager1 As CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.TableAdapterManager
-    Friend WithEvents CSMR_ID_OpenFileDialog As System.Windows.Forms.OpenFileDialog
+    Private WithEvents CSMR_ID_TA As CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
+    Private WithEvents CSMR_ID_TAM As CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
+    Private WithEvents ID_CARDS_TA As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
+    Private WithEvents ID_CARDS_TAM As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
+    Friend WithEvents OpenFileDialog_CSMR_ID As System.Windows.Forms.OpenFileDialog
     Friend WithEvents Form_error As System.Windows.Forms.ErrorProvider
     Friend WithEvents HairComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents EyesComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents BloodTypeComboBox As System.Windows.Forms.ComboBox
     Friend WithEvents IssuingStation As System.Windows.Forms.TextBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
-    Friend WithEvents ID_CARDS_SaveFileDialog As System.Windows.Forms.SaveFileDialog
+    Friend WithEvents SaveFileDialog_ID_CARDS As System.Windows.Forms.SaveFileDialog
     Friend WithEvents RankComboBox_ID As System.Windows.Forms.ComboBox
     Friend WithEvents DLDataTextBox As System.Windows.Forms.TextBox
     Friend WithEvents RANKComboBox As System.Windows.Forms.ComboBox
@@ -2107,7 +2082,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents TabPage_Encoder As System.Windows.Forms.TabPage
     Friend WithEvents TabPage_Scanner As System.Windows.Forms.TabPage
     Friend WithEvents MagEncoder_Status As System.Windows.Forms.Label
-    Friend WithEvents BackgroundWorkerThread As System.ComponentModel.BackgroundWorker
+    Friend WithEvents BackgroundThread As System.ComponentModel.BackgroundWorker
     Friend WithEvents PhotoPicture_Enc As System.Windows.Forms.PictureBox
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents PayGrade_Enc As System.Windows.Forms.Label
@@ -2115,7 +2090,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents Rank_Enc As System.Windows.Forms.Label
     Friend WithEvents FirstName_Enc As System.Windows.Forms.Label
     Friend WithEvents LastName_Enc As System.Windows.Forms.Label
-    Friend WithEvents BindingNavigator_Enc As System.Windows.Forms.BindingNavigator
+    Friend WithEvents Encoder_BN As System.Windows.Forms.BindingNavigator
     Friend WithEvents BindingNavigatorCountItem1 As System.Windows.Forms.ToolStripLabel
     Friend WithEvents BindingNavigatorMoveFirstItem1 As System.Windows.Forms.ToolStripButton
     Friend WithEvents BindingNavigatorMovePreviousItem1 As System.Windows.Forms.ToolStripButton
@@ -2158,9 +2133,6 @@ Partial Class ConvertDialogForm
     Friend WithEvents OpenFileDialog_Photo As System.Windows.Forms.OpenFileDialog
     Friend WithEvents Button_ID_Photo As System.Windows.Forms.Button
     ' Friend WithEvents ID_CARDS_2017DataSet As CSMR_DB_Convert.ID_CARDS_2017DataSet
-    Friend WithEvents ID_CARDS_2017BindingSource As System.Windows.Forms.BindingSource
-    Friend WithEvents ID_CARDSTableAdapter1 As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
-    Friend WithEvents TableAdapterManager2 As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
     Friend WithEvents AbbreviationTextBox As System.Windows.Forms.TextBox
 
 End Class

@@ -26,7 +26,7 @@
     <ManifestCertificateThumbprint>72CED05667A674BB75350C58BB77A2087E81503B</ManifestCertificateThumbprint>
     <ManifestKeyFile>CSMR_DB_Convert_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
     <NoWin32Manifest>False</NoWin32Manifest>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -50,6 +50,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -90,7 +91,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -146,13 +146,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ID_CARDS_2017DataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="ID_CARDS_DataSet.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ID_CARDS_DataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="ID_CARDS_DataSet.vb">
-      <DependentUpon>ID_CARDS_DataSet.xsd</DependentUpon>
+    <Compile Include="ID_CARDS_2017DataSet.vb">
+      <DependentUpon>ID_CARDS_2017DataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -169,6 +164,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Settings.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ConvertDialogForm.resx">
@@ -186,7 +182,6 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="CSMR_DB_Convert_TemporaryKey.pfx" />
     <None Include="CSMR_ID_DataSet.xsc">
       <DependentUpon>CSMR_ID_DataSet.xsd</DependentUpon>
     </None>
@@ -208,17 +203,6 @@
     </None>
     <None Include="ID_CARDS_2017DataSet.xss">
       <DependentUpon>ID_CARDS_2017DataSet.xsd</DependentUpon>
-    </None>
-    <None Include="ID_CARDS_DataSet.xsc">
-      <DependentUpon>ID_CARDS_DataSet.xsd</DependentUpon>
-    </None>
-    <None Include="ID_CARDS_DataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ID_CARDS_DataSet.Designer.vb</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="ID_CARDS_DataSet.xss">
-      <DependentUpon>ID_CARDS_DataSet.xsd</DependentUpon>
     </None>
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">

@@ -12,7 +12,7 @@ Public Class ConvertDialogForm
 
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         'TODO: This line of code loads data into the 'ID_CARDS_2017DataSet.ID_CARDS' table. You can move, or remove it, as needed.
-        Me.ID_CARDSTableAdapter1.Fill(Me.ID_CARDS_2017DataSet.ID_CARDS)
+        Me.ID_CARDS_TA.Fill(Me.ID_CARDS_DS.ID_CARDS)
 
         Me.InitLists()
 
@@ -33,12 +33,12 @@ Public Class ConvertDialogForm
 
         ProgressBar1.Minimum = 0
         ProgressBar1.Value = 0
-        ProgressBar1.Maximum = CSMR_ID_DataSet.CSMR_ID.Count()
+        ProgressBar1.Maximum = CSMR_ID_DS.CSMR_ID.Count()
 
-        ID_CARDS_2017DataSet.ID_CARDS.BeginLoadData()
-        For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
+        ID_CARDS_DS.ID_CARDS.BeginLoadData()
+        For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DS.CSMR_ID
             '           id_card = New IDCardData()
-            id_row = ID_CARDS_2017DataSet.ID_CARDS.NewID_CARDSRow()
+            id_row = ID_CARDS_DS.ID_CARDS.NewID_CARDSRow()
 
             With id_row
                 .Address = dr.H_ADDR + VB.vbCrLf + dr.H_CITY + ", CA " + dr.H_ZIP
@@ -85,10 +85,10 @@ Public Class ConvertDialogForm
                 End If
             End With
 
-            ID_CARDS_2017DataSet.ID_CARDS.AddID_CARDSRow(id_row)
+            ID_CARDS_DS.ID_CARDS.AddID_CARDSRow(id_row)
             ProgressBar1.PerformStep()
         Next
-        ID_CARDS_2017DataSet.ID_CARDS.EndLoadData()
+        ID_CARDS_DS.ID_CARDS.EndLoadData()
         TabControl_ID.SelectTab(1)
     End Sub
 
@@ -119,16 +119,16 @@ Public Class ConvertDialogForm
         End If
     End Sub
 
- 
+
     Private Sub ConvertDialogForm_FormClosing(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
 
-        BackgroundWorkerThread.CancelAsync()
+        BackgroundThread.CancelAsync()
         ' Stop and close MAG Reader 
         MSR206_Enc.Cancel()
         ' Stop and close Scanner
         HHP4600_Scan.Cancel()
 
-        While BackgroundWorkerThread.IsBusy
+        While BackgroundThread.IsBusy
             Application.DoEvents()
         End While
 
@@ -146,7 +146,7 @@ Public Class ConvertDialogForm
     End Sub
 
     Private Sub TabPage_ID_CARDS_Validating(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles TabPage_ID_CARDS.Validating
-        If Button_CreateDB.Enabled AndAlso Not ValidateRecord(ID_CARDS_2017DataSet.ID_CARDS(ID_CARDSBindingSource.Position)) Then
+        If Button_CreateDB.Enabled AndAlso Not ValidateRecord(ID_CARDS_DS.ID_CARDS(ID_CARDS_BS.Position)) Then
             e.Cancel = True
         End If
     End Sub
@@ -158,13 +158,13 @@ Public Class ConvertDialogForm
         '
         ' On start present the FileOpen dialog and get the Database File
         '
-        CSMR_ID_OpenFileDialog.Filter = "Access DB Files|*.mdb|Excel 97-03 Files|*.xls|Excel 2007 Files|*.xlsx"
-        If CSMR_ID_OpenFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK AndAlso _
-            Not String.IsNullOrEmpty(CSMR_ID_OpenFileDialog.FileName()) AndAlso _
-                IO.File.Exists(CSMR_ID_OpenFileDialog.FileName()) Then
+        OpenFileDialog_CSMR_ID.Filter = "Access DB Files|*.mdb|Excel 97-03 Files|*.xls|Excel 2007 Files|*.xlsx"
+        If OpenFileDialog_CSMR_ID.ShowDialog() = Windows.Forms.DialogResult.OK AndAlso _
+            Not String.IsNullOrEmpty(OpenFileDialog_CSMR_ID.FileName()) AndAlso _
+                IO.File.Exists(OpenFileDialog_CSMR_ID.FileName()) Then
 
             ' Open the database and fill the data
-            Dim FileName As String = CSMR_ID_OpenFileDialog.FileName()
+            Dim FileName As String = OpenFileDialog_CSMR_ID.FileName()
             Dim extProp As String = ""
             Dim cb As OleDb.OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
             cb.DataSource = FileName
@@ -197,7 +197,7 @@ Public Class ConvertDialogForm
 
                             Dim oda As New OleDbDataAdapter(cmd)
                             oda.Fill(od_data_set)
-                            ImportRecords(od_data_set, ID_CARDS_2017DataSet)
+                            ImportRecords(od_data_set, ID_CARDS_DS)
                             od_data_set.Dispose()
                             cmd.Dispose()
                             nextTab = 1
@@ -214,7 +214,7 @@ Public Class ConvertDialogForm
 
                             Dim oda As New OleDbDataAdapter(cmd)
                             oda.Fill(od_data_set)
-                            ImportRecords(od_data_set, CSMR_ID_DataSet)
+                            ImportRecords(od_data_set, CSMR_ID_DS)
                             od_data_set.Dispose()
                             cmd.Dispose()
                             nextTab = 0
@@ -243,7 +243,7 @@ Public Class ConvertDialogForm
             Dim stream As New IO.FileStream(FileName, IO.FileMode.Open, IO.FileAccess.Read)
             Dim photo(fi.Length) As Byte
             stream.Read(photo, 0, fi.Length())
-            ID_CARDS_2017DataSet.ID_CARDS(ID_CARDSBindingSource.Position).Photo = photo
+            ID_CARDS_DS.ID_CARDS(ID_CARDS_BS.Position).Photo = photo
             stream.Close()
             stream = Nothing
             fi = Nothing

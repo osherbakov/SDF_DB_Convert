@@ -146,12 +146,12 @@ Partial Public Class ConvertDialogForm
 
         ProgressBar1.Minimum = 0
         ProgressBar1.Value = 0
-        ProgressBar1.Maximum = CSMR_ID_DataSet.CSMR_ID.Rows.Count
+        ProgressBar1.Maximum = CSMR_ID_DS.CSMR_ID.Rows.Count
 
         ' Freeze index updating
-        CSMR_ID_DataSet.CSMR_ID.BeginLoadData()
+        CSMR_ID_DS.CSMR_ID.BeginLoadData()
 
-        For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DataSet.CSMR_ID
+        For Each dr As CSMR_ID_DataSet.CSMR_IDRow In CSMR_ID_DS.CSMR_ID
             '
             ' TODO: To check for empty records
             '
@@ -246,20 +246,20 @@ Partial Public Class ConvertDialogForm
 
         ' Remove empty records from the dataset
         For Each dr As CSMR_ID_DataSet.CSMR_IDRow In EmptyRecords_CSMR_ID
-            CSMR_ID_DataSet.CSMR_ID.RemoveCSMR_IDRow(dr)
+            CSMR_ID_DS.CSMR_ID.RemoveCSMR_IDRow(dr)
         Next
-        CSMR_ID_DataSet.CSMR_ID.EndLoadData()
+        CSMR_ID_DS.CSMR_ID.EndLoadData()
 
         '
         ' Do the same for the ID_CARDS records
         '
         ProgressBar1.Minimum = 0
         ProgressBar1.Value = 0
-        ProgressBar1.Maximum = ID_CARDS_2017DataSet.ID_CARDS.Rows.Count
-        ID_CARDS_2017DataSet.ID_CARDS.BeginLoadData()   ' Freeze index updates
+        ProgressBar1.Maximum = ID_CARDS_DS.ID_CARDS.Rows.Count
+        ID_CARDS_DS.ID_CARDS.BeginLoadData()   ' Freeze index updates
 
         Dim EmptyRecords_ID_CARDS As New List(Of ID_CARDS_2017DataSet.ID_CARDSRow)
-        For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_2017DataSet.ID_CARDS
+        For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_DS.ID_CARDS
             ' Weed out empty records
             If dr.IsLastNameNull OrElse String.IsNullOrEmpty(dr.LastName) OrElse _
                 dr.IsFirstNameNull OrElse String.IsNullOrEmpty(dr.FirstName) OrElse _
@@ -292,7 +292,7 @@ Partial Public Class ConvertDialogForm
             Application.DoEvents()
             ProgressBar1.PerformStep()
         Next
-        ID_CARDS_2017DataSet.ID_CARDS.EndLoadData()
+        ID_CARDS_DS.ID_CARDS.EndLoadData()
     End Sub
 
     Private Function ValidateRecord(ByVal dr As ID_CARDS_2017DataSet.ID_CARDSRow) As Boolean
@@ -377,11 +377,11 @@ Partial Public Class ConvertDialogForm
         Dim dr As ID_CARDS_2017DataSet.ID_CARDSRow
 
         ' Loop thru all records and do verification
-        For curr_idx = 0 To ID_CARDS_2017DataSet.ID_CARDS.Count() - 1
-            dr = ID_CARDS_2017DataSet.ID_CARDS(curr_idx)
+        For curr_idx = 0 To ID_CARDS_DS.ID_CARDS.Count() - 1
+            dr = ID_CARDS_DS.ID_CARDS(curr_idx)
             If Not ValidateRecord(dr) Then
-                ID_CARDSBindingSource.Position = curr_idx
-                ID_CARDSBindingSource.ResetItem(curr_idx)
+                ID_CARDS_BS.Position = curr_idx
+                ID_CARDS_BS.ResetItem(curr_idx)
                 Return False
             End If
         Next
@@ -390,20 +390,20 @@ Partial Public Class ConvertDialogForm
 
     Private Sub SaveAccessDatabase()
         If Not CheckOutputRecords() Then Exit Sub
-        ID_CARDS_SaveFileDialog.FileName = IO.Path.ChangeExtension("ID_CARDS_" + Date.Today().ToString("ddMMMMyyyy"), "mdb")
-        ID_CARDS_SaveFileDialog.OverwritePrompt = True
+        SaveFileDialog_ID_CARDS.FileName = IO.Path.ChangeExtension("ID_CARDS_" + Date.Today().ToString("ddMMMMyyyy"), "mdb")
+        SaveFileDialog_ID_CARDS.OverwritePrompt = True
 
-        If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            Dim FileName As String = ID_CARDS_SaveFileDialog.FileName
+        If SaveFileDialog_ID_CARDS.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            Dim FileName As String = SaveFileDialog_ID_CARDS.FileName
             If FileIO.FileSystem.FileExists(FileName) Then
                 FileIO.FileSystem.DeleteFile(FileName)
             End If
 
             CreateAccessDatabase(FileName)
-            Me.ID_CARDSTableAdapter.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileName
-            Me.ID_CARDSTableAdapter.Connection.Open()
+            Me.ID_CARDS_TA.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileName
+            Me.ID_CARDS_TA.Connection.Open()
 
-            For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_2017DataSet.ID_CARDS
+            For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_DS.ID_CARDS
 
                 Dim id_card_data As IDCardData = GetIDCardData(dr)
                 With dr
@@ -415,7 +415,7 @@ Partial Public Class ConvertDialogForm
                     .CACPDF = Support.EncodeCACPDF417Data(id_card_data)
                     .AAMVACode39 = ""
                     .CACCode39 = ""
-                    Me.ID_CARDSTableAdapter1.Insert(.IDNumber, .LastName, .FirstName, .MI, _
+                    Me.ID_CARDS_TA.Insert(.IDNumber, .LastName, .FirstName, .MI, _
                                                     .DOB, "XXX-XX-" + .SSN.Substring(.SSN.Length() - 4, 4), .Address, .H_Address, .H_City, .H_ZIP, _
                                                     .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
                                                     .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
@@ -423,7 +423,7 @@ Partial Public Class ConvertDialogForm
                                                     .AAMVACode39, .CACCode39)
                 End With
             Next
-            Me.ID_CARDSTableAdapter.Connection.Close()
+            Me.ID_CARDS_TA.Connection.Close()
             '
             '    After Saving the DB switch into MagStripe programming
             '
@@ -433,13 +433,13 @@ Partial Public Class ConvertDialogForm
 
     Private Sub AddToAccessDatabase()
         If Not CheckOutputRecords() Then Exit Sub
-        ID_CARDS_SaveFileDialog.FileName = My.Settings.SummaryDBFile
-        ID_CARDS_SaveFileDialog.Filter = "Access DB Files|*.mdb|All Files|*.*"
-        ID_CARDS_SaveFileDialog.OverwritePrompt = False
-        ID_CARDS_SaveFileDialog.CreatePrompt = True
+        SaveFileDialog_ID_CARDS.FileName = My.Settings.SummaryDBFile
+        SaveFileDialog_ID_CARDS.Filter = "Access DB Files|*.mdb|All Files|*.*"
+        SaveFileDialog_ID_CARDS.OverwritePrompt = False
+        SaveFileDialog_ID_CARDS.CreatePrompt = True
 
-        If ID_CARDS_SaveFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            Dim FileName As String = ID_CARDS_SaveFileDialog.FileName
+        If SaveFileDialog_ID_CARDS.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            Dim FileName As String = SaveFileDialog_ID_CARDS.FileName
             Dim extProp As String = ""
             If String.IsNullOrEmpty(FileName) OrElse Not FileIO.FileSystem.FileExists(FileName) Then Exit Sub
 
@@ -468,7 +468,7 @@ Partial Public Class ConvertDialogForm
                         ' Check if the Table in ID_CARDS format
                         If TblName.ToUpper().Contains("ID_CARDS") Then
                             Dim cmdCheck As New OleDbCommand()
-                            Dim dba As New ID_CARDS_DataSetTableAdapters.ID_CARDSTableAdapter()
+                            Dim dba As New ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
                             dba.Connection = conn
                             cmdCheck.Connection = conn
                             cmdCheck.CommandText = "SELECT COUNT(1) FROM [" + TblName + "] WHERE " + _
@@ -480,7 +480,7 @@ Partial Public Class ConvertDialogForm
 
                             ' Go thru all records and only add unique ones
                             Dim rec_count As Integer = 0
-                            For Each data_rec As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_2017DataSet.ID_CARDS.Rows
+                            For Each data_rec As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_DS.ID_CARDS.Rows
                                 With data_rec
                                     cmdCheck.Parameters.Clear()
                                     cmdCheck.Parameters.AddWithValue("@IDNumber", .IDNumber)
@@ -496,7 +496,7 @@ Partial Public Class ConvertDialogForm
                                                         .DOB, .SSN, .Address, .H_Address, .H_City, .H_ZIP, _
                                                         .IssueDate, .ExpirationDate, .Photo, .Hair, .Eyes, _
                                                         .BloodType, .Rank, .PayGrade, .Height, .Weight, .DLData, _
-                                                        .Sex, .SerialNumber, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
+                                                        .Sex, .SerialNumber, .Affiliation, .Abbreviation, .CACPDF, .AAMVAPDF, .AAMVAMAG, _
                                                         .AAMVACode39, .CACCode39)
                                         rec_count += 1
                                     End If
@@ -505,9 +505,9 @@ Partial Public Class ConvertDialogForm
                             dba.Dispose()
                             cmdCheck.Dispose()
                             MessageBox.Show(String.Format("Added {0} records out of {1}", _
-                                                          rec_count, ID_CARDS_2017DataSet.ID_CARDS.Rows.Count), _
+                                                          rec_count, ID_CARDS_DS.ID_CARDS.Rows.Count), _
                                                             "Records added to the Database")
-                            My.Settings.SummaryDBFile = ID_CARDS_SaveFileDialog.FileName
+                            My.Settings.SummaryDBFile = SaveFileDialog_ID_CARDS.FileName
                         End If
                     Next
                     conn.Close()
@@ -561,7 +561,7 @@ Partial Public Class ConvertDialogForm
         ' See if photo exists - use LAST nams, then LAST_FIRST, then FIRST_LAST
         '
         Dim FileFound As Boolean = False
-        Dim CurrDir As String = IO.Path.GetDirectoryName(CSMR_ID_OpenFileDialog.FileName())
+        Dim CurrDir As String = IO.Path.GetDirectoryName(OpenFileDialog_CSMR_ID.FileName())
         Dim FileName As String = ""
         Dim PossibleFiles As New List(Of String)
         Dim result() As Byte
@@ -638,7 +638,7 @@ Partial Public Class ConvertDialogForm
         "[Sex]            TEXT (255)," + _
         "[SerialNumber]   TEXT (255)," + _
         "[Affiliation]    TEXT (255)," + _
-        "[Abbreviation    TEXT (255)," + _
+        "[Abbreviation]   TEXT (255)," + _
         "[CACPDF]         MEMO,     " + _
         "[AAMVAPDF]       MEMO,     " + _
         "[AAMVAMAG]       MEMO,     " + _

@@ -6,29 +6,29 @@ Partial Public Class ConvertDialogForm
     Private m_curr_Position As Integer
 
     Private Sub TabPage_Encoder_Leave(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Encoder.Leave
-        BackgroundWorkerThread.CancelAsync()
+        BackgroundThread.CancelAsync()
         MSR206_Enc.Cancel()
-        While BackgroundWorkerThread.IsBusy
+        While BackgroundThread.IsBusy
             Application.DoEvents()
         End While
-        RemoveHandler BackgroundWorkerThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkMAG
+        RemoveHandler BackgroundThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkMAG
         If MSR206_Enc.IsMSR206Detected Then MSR206_Enc.CMD_Reset()
         MSR206_Enc.Close()
     End Sub
 
     Private Sub TabPage_Encoder_Enter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Encoder.Enter
-        ID_CARDSBindingSource.MoveFirst()
+        ID_CARDS_BS.MoveFirst()
 
-        While BackgroundWorkerThread.IsBusy
+        While BackgroundThread.IsBusy
             Application.DoEvents()
         End While
-        AddHandler BackgroundWorkerThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkMAG
-        BackgroundWorkerThread.RunWorkerAsync()
+        AddHandler BackgroundThread.DoWork, AddressOf BackgroundWorkerThread_DoWorkMAG
+        BackgroundThread.RunWorkerAsync()
     End Sub
 
 
-    Private Sub ID_CARDSBindingSource_PositionChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ID_CARDSBindingSource.PositionChanged
-        If m_curr_Position <> ID_CARDSBindingSource.Position Then
+    Private Sub ID_CARDSBindingSource_PositionChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ID_CARDS_BS.PositionChanged
+        If m_curr_Position <> ID_CARDS_BS.Position Then
             MSR206_Enc.Cancel()
         End If
     End Sub
@@ -61,7 +61,7 @@ Partial Public Class ConvertDialogForm
     End Sub
 
     Private Sub MoveNextRecord()
-        ID_CARDSBindingSource.Position += 1
+        ID_CARDS_BS.Position += 1
     End Sub
 
     Private Sub BackgroundWorkerThread_DoWorkMAG(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs)
@@ -80,7 +80,7 @@ Partial Public Class ConvertDialogForm
 
                 ' Try to detect the Encoder
                 MSR206_Enc.DetectMSR206()
-                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+                If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
 
                 ' Found - update status and program Encoder
                 If MSR206_Enc.IsMSR206Detected Then
@@ -97,17 +97,17 @@ Partial Public Class ConvertDialogForm
             End If
 
             ' Encode card if detected and there are records to program
-            If MSR206_Enc.IsMSR206Detected AndAlso ID_CARDSBindingSource.Count <> 0 Then
-                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+            If MSR206_Enc.IsMSR206Detected AndAlso ID_CARDS_BS.Count <> 0 Then
+                If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
                 UpdateEncStatus()
 
                 Result = MSR206_Enc.CMD_LED(MSR206.LEDs.GREEN Or MSR206.LEDs.RED Or MSR206.LEDs.YELLOW) = 0
-                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+                If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
 
                 ' Get the current selected/displaying record
                 '   and extract the data
-                m_curr_Position = ID_CARDSBindingSource.Position
-                Dim curr_data As ID_CARDS_2017DataSet.ID_CARDSRow = ID_CARDS_2017DataSet.ID_CARDS.Rows(m_curr_Position)
+                m_curr_Position = ID_CARDS_BS.Position
+                Dim curr_data As ID_CARDS_2017DataSet.ID_CARDSRow = ID_CARDS_DS.ID_CARDS.Rows(m_curr_Position)
                 Dim rm As Match = rx_Split_Tracks.Match(curr_data.AAMVAMAG)
                 If rm.Success Then
                     g1 = rm.Groups("Track1").Value
@@ -117,10 +117,10 @@ Partial Public Class ConvertDialogForm
 
                 ' Try to program the MAG stripe 
                 Result = Result AndAlso MSR206_Enc.CMD_WriteRaw(g1, g2, g3) = 0
-                If BackgroundWorkerThread.CancellationPending Then e.Cancel = True : Exit Sub
+                If BackgroundThread.CancellationPending Then e.Cancel = True : Exit Sub
 
                 ' If successfully programmed - move to the next
-                If Result And (m_curr_Position = ID_CARDSBindingSource.Position) Then
+                If Result And (m_curr_Position = ID_CARDS_BS.Position) Then
                     Me.BeginInvoke(New MethodInvoker(AddressOf MoveNextRecord))
                 End If
             End If
