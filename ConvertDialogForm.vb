@@ -12,7 +12,7 @@ Public Class ConvertDialogForm
 
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         'TODO: This line of code loads data into the 'ID_CARDS_2017DataSet.ID_CARDS' table. You can move, or remove it, as needed.
-        Me.ID_CARDS_TA.Fill(Me.ID_CARDS_DS.ID_CARDS)
+        ' Me.ID_CARDS_TA.Fill(Me.ID_CARDS_DS.ID_CARDS)
 
         Me.InitLists()
 

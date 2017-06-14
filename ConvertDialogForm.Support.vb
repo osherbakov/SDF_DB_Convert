@@ -468,7 +468,7 @@ Partial Public Class ConvertDialogForm
                         ' Check if the Table in ID_CARDS format
                         If TblName.ToUpper().Contains("ID_CARDS") Then
                             Dim cmdCheck As New OleDbCommand()
-                            Dim dba As New ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
+                            Dim dba As New ID_CARDS_2017DataSetTableAdapters.ID_CARDS_TableAdapter
                             dba.Connection = conn
                             cmdCheck.Connection = conn
                             cmdCheck.CommandText = "SELECT COUNT(1) FROM [" + TblName + "] WHERE " + _

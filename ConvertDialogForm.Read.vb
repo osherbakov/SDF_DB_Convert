@@ -5,9 +5,9 @@ Partial Public Class ConvertDialogForm
 
     Private Sub TabPage_Scanner_Enter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TabPage_Scanner.Enter
         ' Set up the first item in the dataset to be active
-        IDCardDataBindingSource.DataSource = m_curr_id
-        IDCardDataBindingSource.ResumeBinding()
-        IDCardDataBindingSource.ResetItem(0)
+        IDCardData_BS.DataSource = m_curr_id
+        IDCardData_BS.ResumeBinding()
+        IDCardData_BS.ResetItem(0)
 
         ' Update the initial state of the readers and scanners
         UpdateReaderStatus()
@@ -44,7 +44,7 @@ Partial Public Class ConvertDialogForm
         If MS1690_Scan.IsScannerDetected Then MS1690_Scan.CMD_Reset()
         MS1690_Scan.Close()
 
-        IDCardDataBindingSource.SuspendBinding()
+        IDCardData_BS.SuspendBinding()
         RemoveHandler MSR206_Enc.DataReceived, AddressOf MagReaderDataReady
         RemoveHandler HHP4600_Scan.DataReceived, AddressOf ScannerDataReady
         RemoveHandler MS1690_Scan.DataReceived, AddressOf ScannerDataReady
@@ -86,7 +86,7 @@ Partial Public Class ConvertDialogForm
 
 
     Private Sub UpdateDataFileds()
-        IDCardDataBindingSource.ResetCurrentItem()
+        IDCardData_BS.ResetCurrentItem()
     End Sub
 
     Private Sub UpdateDataSourceMag()

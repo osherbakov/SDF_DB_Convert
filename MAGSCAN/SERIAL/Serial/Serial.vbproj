@@ -49,10 +49,6 @@
     <Compile Include="SerialBuffer.vb" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="My Project\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

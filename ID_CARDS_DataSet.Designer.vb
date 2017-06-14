@@ -1671,7 +1671,7 @@ Namespace ID_CARDS_2017DataSetTableAdapters
      Global.System.ComponentModel.DesignerAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterDesigner, Microsoft.VSDesigner"& _ 
         ", Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"),  _
      Global.System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")>  _
-    Partial Public Class ID_CARDSTableAdapter
+    Partial Public Class ID_CARDS_TableAdapter
         Inherits Global.System.ComponentModel.Component
         
         Private WithEvents _adapter As Global.System.Data.OleDb.OleDbDataAdapter
@@ -1857,7 +1857,6 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
         Private Sub InitConnection()
             Me._connection = New Global.System.Data.OleDb.OleDbConnection
-            Me._connection.ConnectionString = Global.CSMR_DB_Convert.My.MySettings.Default.ID_CARDS_2017
         End Sub
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
@@ -2132,7 +2131,7 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         
         Private _updateOrder As UpdateOrderOption
         
-        Private _iD_CARDSTableAdapter As ID_CARDSTableAdapter
+        Private _iD_CARDS_TableAdapter As ID_CARDS_TableAdapter
         
         Private _backupDataSetBeforeUpdate As Boolean
         
@@ -2152,12 +2151,12 @@ Namespace ID_CARDS_2017DataSetTableAdapters
          Global.System.ComponentModel.EditorAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterManagerPropertyEditor, Microso"& _ 
             "ft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"& _ 
             "", "System.Drawing.Design.UITypeEditor")>  _
-        Public Property ID_CARDSTableAdapter() As ID_CARDSTableAdapter
+        Public Property ID_CARDS_TableAdapter() As ID_CARDS_TableAdapter
             Get
-                Return Me._iD_CARDSTableAdapter
+                Return Me._iD_CARDS_TableAdapter
             End Get
             Set
-                Me._iD_CARDSTableAdapter = value
+                Me._iD_CARDS_TableAdapter = value
             End Set
         End Property
         
@@ -2178,9 +2177,9 @@ Namespace ID_CARDS_2017DataSetTableAdapters
                 If (Not (Me._connection) Is Nothing) Then
                     Return Me._connection
                 End If
-                If ((Not (Me._iD_CARDSTableAdapter) Is Nothing)  _
-                            AndAlso (Not (Me._iD_CARDSTableAdapter.Connection) Is Nothing)) Then
-                    Return Me._iD_CARDSTableAdapter.Connection
+                If ((Not (Me._iD_CARDS_TableAdapter) Is Nothing)  _
+                            AndAlso (Not (Me._iD_CARDS_TableAdapter.Connection) Is Nothing)) Then
+                    Return Me._iD_CARDS_TableAdapter.Connection
                 End If
                 Return Nothing
             End Get
@@ -2194,7 +2193,7 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         Public ReadOnly Property TableAdapterInstanceCount() As Integer
             Get
                 Dim count As Integer = 0
-                If (Not (Me._iD_CARDSTableAdapter) Is Nothing) Then
+                If (Not (Me._iD_CARDS_TableAdapter) Is Nothing) Then
                     count = (count + 1)
                 End If
                 Return count
@@ -2207,12 +2206,12 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
         Private Function UpdateUpdatedRows(ByVal dataSet As ID_CARDS_2017DataSet, ByVal allChangedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow), ByVal allAddedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow)) As Integer
             Dim result As Integer = 0
-            If (Not (Me._iD_CARDSTableAdapter) Is Nothing) Then
+            If (Not (Me._iD_CARDS_TableAdapter) Is Nothing) Then
                 Dim updatedRows() As Global.System.Data.DataRow = dataSet.ID_CARDS.Select(Nothing, Nothing, Global.System.Data.DataViewRowState.ModifiedCurrent)
                 updatedRows = Me.GetRealUpdatedRows(updatedRows, allAddedRows)
                 If ((Not (updatedRows) Is Nothing)  _
                             AndAlso (0 < updatedRows.Length)) Then
-                    result = (result + Me._iD_CARDSTableAdapter.Update(updatedRows))
+                    result = (result + Me._iD_CARDS_TableAdapter.Update(updatedRows))
                     allChangedRows.AddRange(updatedRows)
                 End If
             End If
@@ -2225,11 +2224,11 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
         Private Function UpdateInsertedRows(ByVal dataSet As ID_CARDS_2017DataSet, ByVal allAddedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow)) As Integer
             Dim result As Integer = 0
-            If (Not (Me._iD_CARDSTableAdapter) Is Nothing) Then
+            If (Not (Me._iD_CARDS_TableAdapter) Is Nothing) Then
                 Dim addedRows() As Global.System.Data.DataRow = dataSet.ID_CARDS.Select(Nothing, Nothing, Global.System.Data.DataViewRowState.Added)
                 If ((Not (addedRows) Is Nothing)  _
                             AndAlso (0 < addedRows.Length)) Then
-                    result = (result + Me._iD_CARDSTableAdapter.Update(addedRows))
+                    result = (result + Me._iD_CARDS_TableAdapter.Update(addedRows))
                     allAddedRows.AddRange(addedRows)
                 End If
             End If
@@ -2242,11 +2241,11 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
         Private Function UpdateDeletedRows(ByVal dataSet As ID_CARDS_2017DataSet, ByVal allChangedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow)) As Integer
             Dim result As Integer = 0
-            If (Not (Me._iD_CARDSTableAdapter) Is Nothing) Then
+            If (Not (Me._iD_CARDS_TableAdapter) Is Nothing) Then
                 Dim deletedRows() As Global.System.Data.DataRow = dataSet.ID_CARDS.Select(Nothing, Nothing, Global.System.Data.DataViewRowState.Deleted)
                 If ((Not (deletedRows) Is Nothing)  _
                             AndAlso (0 < deletedRows.Length)) Then
-                    result = (result + Me._iD_CARDSTableAdapter.Update(deletedRows))
+                    result = (result + Me._iD_CARDS_TableAdapter.Update(deletedRows))
                     allChangedRows.AddRange(deletedRows)
                 End If
             End If
@@ -2289,8 +2288,8 @@ Namespace ID_CARDS_2017DataSetTableAdapters
             If (dataSet.HasChanges = false) Then
                 Return 0
             End If
-            If ((Not (Me._iD_CARDSTableAdapter) Is Nothing)  _
-                        AndAlso (Me.MatchTableAdapterConnection(Me._iD_CARDSTableAdapter.Connection) = false)) Then
+            If ((Not (Me._iD_CARDS_TableAdapter) Is Nothing)  _
+                        AndAlso (Me.MatchTableAdapterConnection(Me._iD_CARDS_TableAdapter.Connection) = false)) Then
                 Throw New Global.System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s"& _ 
                         "tring.")
             End If
@@ -2326,13 +2325,13 @@ Namespace ID_CARDS_2017DataSetTableAdapters
             Try 
                 '---- Prepare for update -----------
                 '
-                If (Not (Me._iD_CARDSTableAdapter) Is Nothing) Then
-                    revertConnections.Add(Me._iD_CARDSTableAdapter, Me._iD_CARDSTableAdapter.Connection)
-                    Me._iD_CARDSTableAdapter.Connection = CType(workConnection,Global.System.Data.OleDb.OleDbConnection)
-                    Me._iD_CARDSTableAdapter.Transaction = CType(workTransaction,Global.System.Data.OleDb.OleDbTransaction)
-                    If Me._iD_CARDSTableAdapter.Adapter.AcceptChangesDuringUpdate Then
-                        Me._iD_CARDSTableAdapter.Adapter.AcceptChangesDuringUpdate = false
-                        adaptersWithAcceptChangesDuringUpdate.Add(Me._iD_CARDSTableAdapter.Adapter)
+                If (Not (Me._iD_CARDS_TableAdapter) Is Nothing) Then
+                    revertConnections.Add(Me._iD_CARDS_TableAdapter, Me._iD_CARDS_TableAdapter.Connection)
+                    Me._iD_CARDS_TableAdapter.Connection = CType(workConnection,Global.System.Data.OleDb.OleDbConnection)
+                    Me._iD_CARDS_TableAdapter.Transaction = CType(workTransaction,Global.System.Data.OleDb.OleDbTransaction)
+                    If Me._iD_CARDS_TableAdapter.Adapter.AcceptChangesDuringUpdate Then
+                        Me._iD_CARDS_TableAdapter.Adapter.AcceptChangesDuringUpdate = false
+                        adaptersWithAcceptChangesDuringUpdate.Add(Me._iD_CARDS_TableAdapter.Adapter)
                     End If
                 End If
                 '
@@ -2395,9 +2394,9 @@ Namespace ID_CARDS_2017DataSetTableAdapters
                 If workConnOpened Then
                     workConnection.Close
                 End If
-                If (Not (Me._iD_CARDSTableAdapter) Is Nothing) Then
-                    Me._iD_CARDSTableAdapter.Connection = CType(revertConnections(Me._iD_CARDSTableAdapter),Global.System.Data.OleDb.OleDbConnection)
-                    Me._iD_CARDSTableAdapter.Transaction = Nothing
+                If (Not (Me._iD_CARDS_TableAdapter) Is Nothing) Then
+                    Me._iD_CARDS_TableAdapter.Connection = CType(revertConnections(Me._iD_CARDS_TableAdapter),Global.System.Data.OleDb.OleDbConnection)
+                    Me._iD_CARDS_TableAdapter.Transaction = Nothing
                 End If
                 If (0 < adaptersWithAcceptChangesDuringUpdate.Count) Then
                     Dim adapters((adaptersWithAcceptChangesDuringUpdate.Count) - 1) As Global.System.Data.Common.DataAdapter

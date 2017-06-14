@@ -85,10 +85,6 @@
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Serial, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>MAGSCAN\SERIAL\Serial\bin\Debug\Serial.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -141,13 +137,13 @@
     <Compile Include="CSMR_ID_DataSet.vb">
       <DependentUpon>CSMR_ID_DataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="ID_CARDS_2017DataSet.Designer.vb">
+    <Compile Include="ID_CARDS_DataSet.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>ID_CARDS_2017DataSet.xsd</DependentUpon>
+      <DependentUpon>ID_CARDS_DataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="ID_CARDS_2017DataSet.vb">
-      <DependentUpon>ID_CARDS_2017DataSet.xsd</DependentUpon>
+    <Compile Include="ID_CARDS_DataSet.vb">
+      <DependentUpon>ID_CARDS_DataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -193,16 +189,16 @@
     <None Include="CSMR_ID_DataSet.xss">
       <DependentUpon>CSMR_ID_DataSet.xsd</DependentUpon>
     </None>
-    <None Include="ID_CARDS_2017DataSet.xsc">
-      <DependentUpon>ID_CARDS_2017DataSet.xsd</DependentUpon>
+    <None Include="ID_CARDS_DataSet.xsc">
+      <DependentUpon>ID_CARDS_DataSet.xsd</DependentUpon>
     </None>
-    <None Include="ID_CARDS_2017DataSet.xsd">
+    <None Include="ID_CARDS_DataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ID_CARDS_2017DataSet.Designer.vb</LastGenOutput>
+      <LastGenOutput>ID_CARDS_DataSet.Designer.vb</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <None Include="ID_CARDS_2017DataSet.xss">
-      <DependentUpon>ID_CARDS_2017DataSet.xsd</DependentUpon>
+    <None Include="ID_CARDS_DataSet.xss">
+      <DependentUpon>ID_CARDS_DataSet.xsd</DependentUpon>
     </None>
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">

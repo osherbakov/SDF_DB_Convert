@@ -172,7 +172,7 @@ Partial Class ConvertDialogForm
         Me.MagReader_Status = New System.Windows.Forms.Label
         Me.DataSourceLabel = New System.Windows.Forms.Label
         Me.AddressTextBox1 = New System.Windows.Forms.TextBox
-        Me.IDCardDataBindingSource = New System.Windows.Forms.BindingSource(Me.components)
+        Me.IDCardData_BS = New System.Windows.Forms.BindingSource(Me.components)
         Me.BloodTypeTextBox = New System.Windows.Forms.TextBox
         Me.DLDataTextBox1 = New System.Windows.Forms.TextBox
         Me.DOBDateTimePicker2 = New System.Windows.Forms.DateTimePicker
@@ -191,9 +191,8 @@ Partial Class ConvertDialogForm
         Me.SexTextBox1 = New System.Windows.Forms.TextBox
         Me.SSNTextBox2 = New System.Windows.Forms.TextBox
         Me.WeightTextBox1 = New System.Windows.Forms.TextBox
-        Me.CSMR_ID_TA = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
         Me.CSMR_ID_TAM = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
-        Me.ID_CARDS_TA = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
+        Me.ID_CARDS_TA = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDS_TableAdapter
         Me.ID_CARDS_TAM = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
         Me.OpenFileDialog_CSMR_ID = New System.Windows.Forms.OpenFileDialog
         Me.Form_error = New System.Windows.Forms.ErrorProvider(Me.components)
@@ -268,7 +267,7 @@ Partial Class ConvertDialogForm
         Me.Encoder_BN.SuspendLayout()
         CType(Me.PhotoPicture_Enc, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage_Scanner.SuspendLayout()
-        CType(Me.IDCardDataBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.IDCardData_BS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -1736,7 +1735,7 @@ Partial Class ConvertDialogForm
         '
         'AddressTextBox1
         '
-        Me.AddressTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Address", True))
+        Me.AddressTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "Address", True))
         Me.AddressTextBox1.Location = New System.Drawing.Point(100, 102)
         Me.AddressTextBox1.Multiline = True
         Me.AddressTextBox1.Name = "AddressTextBox1"
@@ -1744,14 +1743,14 @@ Partial Class ConvertDialogForm
         Me.AddressTextBox1.Size = New System.Drawing.Size(200, 60)
         Me.AddressTextBox1.TabIndex = 1
         '
-        'IDCardDataBindingSource
+        'IDCardData_BS
         '
-        Me.IDCardDataBindingSource.AllowNew = False
-        Me.IDCardDataBindingSource.DataSource = GetType(IDCardData)
+        Me.IDCardData_BS.AllowNew = False
+        Me.IDCardData_BS.DataSource = GetType(IDCardData)
         '
         'BloodTypeTextBox
         '
-        Me.BloodTypeTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "BloodType", True))
+        Me.BloodTypeTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "BloodType", True))
         Me.BloodTypeTextBox.Location = New System.Drawing.Point(473, 143)
         Me.BloodTypeTextBox.Name = "BloodTypeTextBox"
         Me.BloodTypeTextBox.ReadOnly = True
@@ -1760,7 +1759,7 @@ Partial Class ConvertDialogForm
         '
         'DLDataTextBox1
         '
-        Me.DLDataTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "DLData", True))
+        Me.DLDataTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "DLData", True))
         Me.DLDataTextBox1.Location = New System.Drawing.Point(100, 168)
         Me.DLDataTextBox1.Name = "DLDataTextBox1"
         Me.DLDataTextBox1.ReadOnly = True
@@ -1769,7 +1768,7 @@ Partial Class ConvertDialogForm
         '
         'DOBDateTimePicker2
         '
-        Me.DOBDateTimePicker2.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.IDCardDataBindingSource, "DOB", True))
+        Me.DOBDateTimePicker2.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.IDCardData_BS, "DOB", True))
         Me.DOBDateTimePicker2.Enabled = False
         Me.DOBDateTimePicker2.Location = New System.Drawing.Point(473, 229)
         Me.DOBDateTimePicker2.Name = "DOBDateTimePicker2"
@@ -1778,7 +1777,7 @@ Partial Class ConvertDialogForm
         '
         'ExpirationDateDateTimePicker1
         '
-        Me.ExpirationDateDateTimePicker1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.IDCardDataBindingSource, "ExpirationDate", True))
+        Me.ExpirationDateDateTimePicker1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.IDCardData_BS, "ExpirationDate", True))
         Me.ExpirationDateDateTimePicker1.Enabled = False
         Me.ExpirationDateDateTimePicker1.Location = New System.Drawing.Point(100, 305)
         Me.ExpirationDateDateTimePicker1.Name = "ExpirationDateDateTimePicker1"
@@ -1787,7 +1786,7 @@ Partial Class ConvertDialogForm
         '
         'EyesTextBox
         '
-        Me.EyesTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Eyes", True))
+        Me.EyesTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "Eyes", True))
         Me.EyesTextBox.Location = New System.Drawing.Point(473, 169)
         Me.EyesTextBox.Name = "EyesTextBox"
         Me.EyesTextBox.ReadOnly = True
@@ -1796,7 +1795,7 @@ Partial Class ConvertDialogForm
         '
         'FirstNameTextBox1
         '
-        Me.FirstNameTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "FirstName", True))
+        Me.FirstNameTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "FirstName", True))
         Me.FirstNameTextBox1.Location = New System.Drawing.Point(100, 76)
         Me.FirstNameTextBox1.Name = "FirstNameTextBox1"
         Me.FirstNameTextBox1.ReadOnly = True
@@ -1805,7 +1804,7 @@ Partial Class ConvertDialogForm
         '
         'HairTextBox
         '
-        Me.HairTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Hair", True))
+        Me.HairTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "Hair", True))
         Me.HairTextBox.Location = New System.Drawing.Point(473, 195)
         Me.HairTextBox.Name = "HairTextBox"
         Me.HairTextBox.ReadOnly = True
@@ -1814,7 +1813,7 @@ Partial Class ConvertDialogForm
         '
         'HeightTextBox1
         '
-        Me.HeightTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Height", True))
+        Me.HeightTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "Height", True))
         Me.HeightTextBox1.Location = New System.Drawing.Point(670, 143)
         Me.HeightTextBox1.Name = "HeightTextBox1"
         Me.HeightTextBox1.ReadOnly = True
@@ -1823,7 +1822,7 @@ Partial Class ConvertDialogForm
         '
         'IdNumberTextBox1
         '
-        Me.IdNumberTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "IdNumber", True))
+        Me.IdNumberTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "IdNumber", True))
         Me.IdNumberTextBox1.Location = New System.Drawing.Point(100, 220)
         Me.IdNumberTextBox1.Name = "IdNumberTextBox1"
         Me.IdNumberTextBox1.ReadOnly = True
@@ -1832,7 +1831,7 @@ Partial Class ConvertDialogForm
         '
         'IssueDateDateTimePicker1
         '
-        Me.IssueDateDateTimePicker1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.IDCardDataBindingSource, "IssueDate", True))
+        Me.IssueDateDateTimePicker1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Me.IDCardData_BS, "IssueDate", True))
         Me.IssueDateDateTimePicker1.Enabled = False
         Me.IssueDateDateTimePicker1.Location = New System.Drawing.Point(100, 279)
         Me.IssueDateDateTimePicker1.Name = "IssueDateDateTimePicker1"
@@ -1841,7 +1840,7 @@ Partial Class ConvertDialogForm
         '
         'LastNameTextBox1
         '
-        Me.LastNameTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "LastName", True))
+        Me.LastNameTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "LastName", True))
         Me.LastNameTextBox1.Location = New System.Drawing.Point(345, 76)
         Me.LastNameTextBox1.Name = "LastNameTextBox1"
         Me.LastNameTextBox1.ReadOnly = True
@@ -1850,7 +1849,7 @@ Partial Class ConvertDialogForm
         '
         'MITextBox1
         '
-        Me.MITextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "MI", True))
+        Me.MITextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "MI", True))
         Me.MITextBox1.Location = New System.Drawing.Point(254, 76)
         Me.MITextBox1.Name = "MITextBox1"
         Me.MITextBox1.ReadOnly = True
@@ -1859,7 +1858,7 @@ Partial Class ConvertDialogForm
         '
         'PayGradeTextBox1
         '
-        Me.PayGradeTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "PayGrade", True))
+        Me.PayGradeTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "PayGrade", True))
         Me.PayGradeTextBox1.Location = New System.Drawing.Point(670, 168)
         Me.PayGradeTextBox1.Name = "PayGradeTextBox1"
         Me.PayGradeTextBox1.ReadOnly = True
@@ -1868,7 +1867,7 @@ Partial Class ConvertDialogForm
         '
         'RankTextBox
         '
-        Me.RankTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Rank", True))
+        Me.RankTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "Rank", True))
         Me.RankTextBox.Location = New System.Drawing.Point(670, 194)
         Me.RankTextBox.Name = "RankTextBox"
         Me.RankTextBox.ReadOnly = True
@@ -1877,7 +1876,7 @@ Partial Class ConvertDialogForm
         '
         'SerialNumberTextBox1
         '
-        Me.SerialNumberTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "SerialNumber", True))
+        Me.SerialNumberTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "SerialNumber", True))
         Me.SerialNumberTextBox1.Location = New System.Drawing.Point(100, 246)
         Me.SerialNumberTextBox1.Name = "SerialNumberTextBox1"
         Me.SerialNumberTextBox1.ReadOnly = True
@@ -1886,7 +1885,7 @@ Partial Class ConvertDialogForm
         '
         'SexTextBox1
         '
-        Me.SexTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Sex", True))
+        Me.SexTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "Sex", True))
         Me.SexTextBox1.Location = New System.Drawing.Point(473, 116)
         Me.SexTextBox1.Name = "SexTextBox1"
         Me.SexTextBox1.ReadOnly = True
@@ -1895,7 +1894,7 @@ Partial Class ConvertDialogForm
         '
         'SSNTextBox2
         '
-        Me.SSNTextBox2.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "SSN", True))
+        Me.SSNTextBox2.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "SSN", True))
         Me.SSNTextBox2.Location = New System.Drawing.Point(100, 194)
         Me.SSNTextBox2.Name = "SSNTextBox2"
         Me.SSNTextBox2.ReadOnly = True
@@ -1904,16 +1903,12 @@ Partial Class ConvertDialogForm
         '
         'WeightTextBox1
         '
-        Me.WeightTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardDataBindingSource, "Weight", True))
+        Me.WeightTextBox1.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.IDCardData_BS, "Weight", True))
         Me.WeightTextBox1.Location = New System.Drawing.Point(670, 116)
         Me.WeightTextBox1.Name = "WeightTextBox1"
         Me.WeightTextBox1.ReadOnly = True
         Me.WeightTextBox1.Size = New System.Drawing.Size(46, 20)
         Me.WeightTextBox1.TabIndex = 37
-        '
-        'CSMR_ID_TA
-        '
-        Me.CSMR_ID_TA.ClearBeforeFill = True
         '
         'CSMR_ID_TAM
         '
@@ -1928,7 +1923,7 @@ Partial Class ConvertDialogForm
         'ID_CARDS_TAM
         '
         Me.ID_CARDS_TAM.BackupDataSetBeforeUpdate = False
-        Me.ID_CARDS_TAM.ID_CARDSTableAdapter = Me.ID_CARDS_TA
+        Me.ID_CARDS_TAM.ID_CARDS_TableAdapter = Me.ID_CARDS_TA
         Me.ID_CARDS_TAM.UpdateOrder = CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete
         '
         'OpenFileDialog_CSMR_ID
@@ -1997,7 +1992,7 @@ Partial Class ConvertDialogForm
         CType(Me.PhotoPicture_Enc, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage_Scanner.ResumeLayout(False)
         Me.TabPage_Scanner.PerformLayout()
-        CType(Me.IDCardDataBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.IDCardData_BS, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Form_error, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
@@ -2065,7 +2060,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents SaveItem As System.Windows.Forms.ToolStripButton
     Private WithEvents CSMR_ID_TA As CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
     Private WithEvents CSMR_ID_TAM As CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
-    Private WithEvents ID_CARDS_TA As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDSTableAdapter
+    Private WithEvents ID_CARDS_TA As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDS_TableAdapter
     Private WithEvents ID_CARDS_TAM As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
     Friend WithEvents OpenFileDialog_CSMR_ID As System.Windows.Forms.OpenFileDialog
     Friend WithEvents Form_error As System.Windows.Forms.ErrorProvider
@@ -2108,7 +2103,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents HHP4600_Scan As HHPScanner
     Friend WithEvents MS1690_Scan As MS1690
     Friend WithEvents AddressTextBox1 As System.Windows.Forms.TextBox
-    Friend WithEvents IDCardDataBindingSource As System.Windows.Forms.BindingSource
+    Friend WithEvents IDCardData_BS As System.Windows.Forms.BindingSource
     Friend WithEvents BloodTypeTextBox As System.Windows.Forms.TextBox
     Friend WithEvents DLDataTextBox1 As System.Windows.Forms.TextBox
     Friend WithEvents DOBDateTimePicker2 As System.Windows.Forms.DateTimePicker

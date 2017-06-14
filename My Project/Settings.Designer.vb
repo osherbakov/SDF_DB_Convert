@@ -65,17 +65,6 @@ Namespace My
                 Me("SummaryDBFile") = value
             End Set
         End Property
-        
-        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.SpecialSettingAttribute(Global.System.Configuration.SpecialSetting.ConnectionString),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\Admin\Desktop\ID_CARDS_08Fe"& _ 
-            "bruary2017.mdb")>  _
-        Public ReadOnly Property ID_CARDS_2017() As String
-            Get
-                Return CType(Me("ID_CARDS_2017"),String)
-            End Get
-        End Property
     End Class
 End Namespace
 
