@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="ID_CARDS_2017DataSet" targetNamespace="http://tempuri.org/ID_CARDS_08February2017DataSet1.xsd" xmlns:mstns="http://tempuri.org/ID_CARDS_08February2017DataSet1.xsd" xmlns="http://tempuri.org/ID_CARDS_08February2017DataSet1.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+<xs:schema id="ID_CARDS_DataSet" targetNamespace="http://tempuri.org/ID_CARDS_08February2017DataSet1.xsd" xmlns:mstns="http://tempuri.org/ID_CARDS_08February2017DataSet1.xsd" xmlns="http://tempuri.org/ID_CARDS_08February2017DataSet1.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
   <xs:annotation>
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
       <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
@@ -94,7 +94,7 @@
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="ID_CARDS_2017DataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="ID_CARDS_2017DataSet" msprop:Generator_DataSetName="ID_CARDS_2017DataSet" msprop:EnableTableAdapterManager="True">
+  <xs:element name="ID_CARDS_DataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="ID_CARDS_DataSet" msprop:Generator_DataSetName="ID_CARDS_DataSet" msprop:EnableTableAdapterManager="True">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="ID_CARDS" msprop:Generator_UserTableName="ID_CARDS" msprop:Generator_RowDeletedName="ID_CARDSRowDeleted" msprop:Generator_RowChangedName="ID_CARDSRowChanged" msprop:Generator_RowClassName="ID_CARDSRow" msprop:Generator_RowChangingName="ID_CARDSRowChanging" msprop:Generator_RowEvArgName="ID_CARDSRowChangeEvent" msprop:Generator_RowEvHandlerName="ID_CARDSRowChangeEventHandler" msprop:Generator_TableClassName="ID_CARDSDataTable" msprop:Generator_TableVarName="tableID_CARDS" msprop:Generator_RowDeletingName="ID_CARDSRowDeleting" msprop:Generator_TablePropName="ID_CARDS">

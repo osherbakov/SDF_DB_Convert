@@ -21,9 +21,9 @@ Option Explicit On
  Global.System.ComponentModel.DesignerCategoryAttribute("code"),  _
  Global.System.ComponentModel.ToolboxItem(true),  _
  Global.System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema"),  _
- Global.System.Xml.Serialization.XmlRootAttribute("ID_CARDS_2017DataSet"),  _
+ Global.System.Xml.Serialization.XmlRootAttribute("ID_CARDS_DataSet"),  _
  Global.System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")>  _
-Partial Public Class ID_CARDS_2017DataSet
+Partial Public Class ID_CARDS_DataSet
     Inherits Global.System.Data.DataSet
     
     Private tableID_CARDS As ID_CARDSDataTable
@@ -121,7 +121,7 @@ Partial Public Class ID_CARDS_2017DataSet
     
     <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
     Public Overrides Function Clone() As Global.System.Data.DataSet
-        Dim cln As ID_CARDS_2017DataSet = CType(MyBase.Clone,ID_CARDS_2017DataSet)
+        Dim cln As ID_CARDS_DataSet = CType(MyBase.Clone,ID_CARDS_DataSet)
         cln.InitVars
         cln.SchemaSerializationMode = Me.SchemaSerializationMode
         Return cln
@@ -185,7 +185,7 @@ Partial Public Class ID_CARDS_2017DataSet
     
     <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
     Private Sub InitClass()
-        Me.DataSetName = "ID_CARDS_2017DataSet"
+        Me.DataSetName = "ID_CARDS_DataSet"
         Me.Prefix = ""
         Me.Namespace = "http://tempuri.org/ID_CARDS_08February2017DataSet1.xsd"
         Me.EnforceConstraints = true
@@ -208,7 +208,7 @@ Partial Public Class ID_CARDS_2017DataSet
     
     <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
     Public Shared Function GetTypedDataSetSchema(ByVal xs As Global.System.Xml.Schema.XmlSchemaSet) As Global.System.Xml.Schema.XmlSchemaComplexType
-        Dim ds As ID_CARDS_2017DataSet = New ID_CARDS_2017DataSet
+        Dim ds As ID_CARDS_DataSet = New ID_CARDS_DataSet
         Dim type As Global.System.Xml.Schema.XmlSchemaComplexType = New Global.System.Xml.Schema.XmlSchemaComplexType
         Dim sequence As Global.System.Xml.Schema.XmlSchemaSequence = New Global.System.Xml.Schema.XmlSchemaSequence
         Dim any As Global.System.Xml.Schema.XmlSchemaAny = New Global.System.Xml.Schema.XmlSchemaAny
@@ -827,7 +827,7 @@ Partial Public Class ID_CARDS_2017DataSet
         Public Shared Function GetTypedTableSchema(ByVal xs As Global.System.Xml.Schema.XmlSchemaSet) As Global.System.Xml.Schema.XmlSchemaComplexType
             Dim type As Global.System.Xml.Schema.XmlSchemaComplexType = New Global.System.Xml.Schema.XmlSchemaComplexType
             Dim sequence As Global.System.Xml.Schema.XmlSchemaSequence = New Global.System.Xml.Schema.XmlSchemaSequence
-            Dim ds As ID_CARDS_2017DataSet = New ID_CARDS_2017DataSet
+            Dim ds As ID_CARDS_DataSet = New ID_CARDS_DataSet
             Dim any1 As Global.System.Xml.Schema.XmlSchemaAny = New Global.System.Xml.Schema.XmlSchemaAny
             any1.Namespace = "http://www.w3.org/2001/XMLSchema"
             any1.MinOccurs = New Decimal(0)
@@ -1659,7 +1659,7 @@ Partial Public Class ID_CARDS_2017DataSet
     End Class
 End Class
 
-Namespace ID_CARDS_2017DataSetTableAdapters
+Namespace ID_CARDS_DataSetTableAdapters
     
     '''<summary>
     '''Represents the connection and commands used to retrieve and save data.
@@ -1874,7 +1874,7 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter"),  _
          Global.System.ComponentModel.DataObjectMethodAttribute(Global.System.ComponentModel.DataObjectMethodType.Fill, true)>  _
-        Public Overloads Overridable Function Fill(ByVal dataTable As ID_CARDS_2017DataSet.ID_CARDSDataTable) As Integer
+        Public Overloads Overridable Function Fill(ByVal dataTable As ID_CARDS_DataSet.ID_CARDSDataTable) As Integer
             Me.Adapter.SelectCommand = Me.CommandCollection(0)
             If (Me.ClearBeforeFill = true) Then
                 dataTable.Clear
@@ -1886,22 +1886,22 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter"),  _
          Global.System.ComponentModel.DataObjectMethodAttribute(Global.System.ComponentModel.DataObjectMethodType.[Select], true)>  _
-        Public Overloads Overridable Function GetData() As ID_CARDS_2017DataSet.ID_CARDSDataTable
+        Public Overloads Overridable Function GetData() As ID_CARDS_DataSet.ID_CARDSDataTable
             Me.Adapter.SelectCommand = Me.CommandCollection(0)
-            Dim dataTable As ID_CARDS_2017DataSet.ID_CARDSDataTable = New ID_CARDS_2017DataSet.ID_CARDSDataTable
+            Dim dataTable As ID_CARDS_DataSet.ID_CARDSDataTable = New ID_CARDS_DataSet.ID_CARDSDataTable
             Me.Adapter.Fill(dataTable)
             Return dataTable
         End Function
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")>  _
-        Public Overloads Overridable Function Update(ByVal dataTable As ID_CARDS_2017DataSet.ID_CARDSDataTable) As Integer
+        Public Overloads Overridable Function Update(ByVal dataTable As ID_CARDS_DataSet.ID_CARDSDataTable) As Integer
             Return Me.Adapter.Update(dataTable)
         End Function
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")>  _
-        Public Overloads Overridable Function Update(ByVal dataSet As ID_CARDS_2017DataSet) As Integer
+        Public Overloads Overridable Function Update(ByVal dataSet As ID_CARDS_DataSet) As Integer
             Return Me.Adapter.Update(dataSet, "ID_CARDS")
         End Function
         
@@ -2204,7 +2204,7 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         '''Update rows in top-down order.
         '''</summary>
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-        Private Function UpdateUpdatedRows(ByVal dataSet As ID_CARDS_2017DataSet, ByVal allChangedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow), ByVal allAddedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow)) As Integer
+        Private Function UpdateUpdatedRows(ByVal dataSet As ID_CARDS_DataSet, ByVal allChangedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow), ByVal allAddedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow)) As Integer
             Dim result As Integer = 0
             If (Not (Me._iD_CARDS_TableAdapter) Is Nothing) Then
                 Dim updatedRows() As Global.System.Data.DataRow = dataSet.ID_CARDS.Select(Nothing, Nothing, Global.System.Data.DataViewRowState.ModifiedCurrent)
@@ -2222,7 +2222,7 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         '''Insert rows in top-down order.
         '''</summary>
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-        Private Function UpdateInsertedRows(ByVal dataSet As ID_CARDS_2017DataSet, ByVal allAddedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow)) As Integer
+        Private Function UpdateInsertedRows(ByVal dataSet As ID_CARDS_DataSet, ByVal allAddedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow)) As Integer
             Dim result As Integer = 0
             If (Not (Me._iD_CARDS_TableAdapter) Is Nothing) Then
                 Dim addedRows() As Global.System.Data.DataRow = dataSet.ID_CARDS.Select(Nothing, Nothing, Global.System.Data.DataViewRowState.Added)
@@ -2239,7 +2239,7 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         '''Delete rows in bottom-up order.
         '''</summary>
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-        Private Function UpdateDeletedRows(ByVal dataSet As ID_CARDS_2017DataSet, ByVal allChangedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow)) As Integer
+        Private Function UpdateDeletedRows(ByVal dataSet As ID_CARDS_DataSet, ByVal allChangedRows As Global.System.Collections.Generic.List(Of Global.System.Data.DataRow)) As Integer
             Dim result As Integer = 0
             If (Not (Me._iD_CARDS_TableAdapter) Is Nothing) Then
                 Dim deletedRows() As Global.System.Data.DataRow = dataSet.ID_CARDS.Select(Nothing, Nothing, Global.System.Data.DataViewRowState.Deleted)
@@ -2281,7 +2281,7 @@ Namespace ID_CARDS_2017DataSetTableAdapters
         '''Update all changes to the dataset.
         '''</summary>
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-        Public Overridable Function UpdateAll(ByVal dataSet As ID_CARDS_2017DataSet) As Integer
+        Public Overridable Function UpdateAll(ByVal dataSet As ID_CARDS_DataSet) As Integer
             If (dataSet Is Nothing) Then
                 Throw New Global.System.ArgumentNullException("dataSet")
             End If

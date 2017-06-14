@@ -107,7 +107,7 @@ Partial Public Class ConvertDialogForm
                 ' Get the current selected/displaying record
                 '   and extract the data
                 m_curr_Position = ID_CARDS_BS.Position
-                Dim curr_data As ID_CARDS_2017DataSet.ID_CARDSRow = ID_CARDS_DS.ID_CARDS.Rows(m_curr_Position)
+                Dim curr_data As ID_CARDS_DataSet.ID_CARDSRow = ID_CARDS_DS.ID_CARDS.Rows(m_curr_Position)
                 Dim rm As Match = rx_Split_Tracks.Match(curr_data.AAMVAMAG)
                 If rm.Success Then
                     g1 = rm.Groups("Track1").Value

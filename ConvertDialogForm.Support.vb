@@ -258,8 +258,8 @@ Partial Public Class ConvertDialogForm
         ProgressBar1.Maximum = ID_CARDS_DS.ID_CARDS.Rows.Count
         ID_CARDS_DS.ID_CARDS.BeginLoadData()   ' Freeze index updates
 
-        Dim EmptyRecords_ID_CARDS As New List(Of ID_CARDS_2017DataSet.ID_CARDSRow)
-        For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_DS.ID_CARDS
+        Dim EmptyRecords_ID_CARDS As New List(Of ID_CARDS_DataSet.ID_CARDSRow)
+        For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DS.ID_CARDS
             ' Weed out empty records
             If dr.IsLastNameNull OrElse String.IsNullOrEmpty(dr.LastName) OrElse _
                 dr.IsFirstNameNull OrElse String.IsNullOrEmpty(dr.FirstName) OrElse _
@@ -287,7 +287,7 @@ Partial Public Class ConvertDialogForm
         ProgressBar1.Maximum = EmptyRecords_ID_CARDS.Count
 
         ' Remove empty records from the dataset
-        For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In EmptyRecords_ID_CARDS
+        For Each dr As ID_CARDS_DataSet.ID_CARDSRow In EmptyRecords_ID_CARDS
             dr.Delete()
             Application.DoEvents()
             ProgressBar1.PerformStep()
@@ -295,7 +295,7 @@ Partial Public Class ConvertDialogForm
         ID_CARDS_DS.ID_CARDS.EndLoadData()
     End Sub
 
-    Private Function ValidateRecord(ByVal dr As ID_CARDS_2017DataSet.ID_CARDSRow) As Boolean
+    Private Function ValidateRecord(ByVal dr As ID_CARDS_DataSet.ID_CARDSRow) As Boolean
         Dim IsValid As Boolean = True
 
         ' Clear all errors first
@@ -374,7 +374,7 @@ Partial Public Class ConvertDialogForm
 
     Private Function CheckOutputRecords() As Boolean
         Dim curr_idx As Integer
-        Dim dr As ID_CARDS_2017DataSet.ID_CARDSRow
+        Dim dr As ID_CARDS_DataSet.ID_CARDSRow
 
         ' Loop thru all records and do verification
         For curr_idx = 0 To ID_CARDS_DS.ID_CARDS.Count() - 1
@@ -403,7 +403,7 @@ Partial Public Class ConvertDialogForm
             Me.ID_CARDS_TA.Connection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileName
             Me.ID_CARDS_TA.Connection.Open()
 
-            For Each dr As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_DS.ID_CARDS
+            For Each dr As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DS.ID_CARDS
 
                 Dim id_card_data As IDCardData = GetIDCardData(dr)
                 With dr
@@ -468,7 +468,7 @@ Partial Public Class ConvertDialogForm
                         ' Check if the Table in ID_CARDS format
                         If TblName.ToUpper().Contains("ID_CARDS") Then
                             Dim cmdCheck As New OleDbCommand()
-                            Dim dba As New ID_CARDS_2017DataSetTableAdapters.ID_CARDS_TableAdapter
+                            Dim dba As New ID_CARDS_DataSetTableAdapters.ID_CARDS_TableAdapter
                             dba.Connection = conn
                             cmdCheck.Connection = conn
                             cmdCheck.CommandText = "SELECT COUNT(1) FROM [" + TblName + "] WHERE " + _
@@ -480,7 +480,7 @@ Partial Public Class ConvertDialogForm
 
                             ' Go thru all records and only add unique ones
                             Dim rec_count As Integer = 0
-                            For Each data_rec As ID_CARDS_2017DataSet.ID_CARDSRow In ID_CARDS_DS.ID_CARDS.Rows
+                            For Each data_rec As ID_CARDS_DataSet.ID_CARDSRow In ID_CARDS_DS.ID_CARDS.Rows
                                 With data_rec
                                     cmdCheck.Parameters.Clear()
                                     cmdCheck.Parameters.AddWithValue("@IDNumber", .IDNumber)
@@ -521,7 +521,7 @@ Partial Public Class ConvertDialogForm
     End Sub
 
 
-    Private Function GetIDCardData(ByVal dr As CSMR_DB_Convert.ID_CARDS_2017DataSet.ID_CARDSRow) As IDCardData
+    Private Function GetIDCardData(ByVal dr As CSMR_DB_Convert.ID_CARDS_DataSet.ID_CARDSRow) As IDCardData
         Dim card_data As New IDCardData()
         With card_data
             Try

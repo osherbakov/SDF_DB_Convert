@@ -11,7 +11,7 @@ Public Class ConvertDialogForm
 
 
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        'TODO: This line of code loads data into the 'ID_CARDS_2017DataSet.ID_CARDS' table. You can move, or remove it, as needed.
+        'TODO: This line of code loads data into the 'ID_CARDS_DataSet.ID_CARDS' table. You can move, or remove it, as needed.
         ' Me.ID_CARDS_TA.Fill(Me.ID_CARDS_DS.ID_CARDS)
 
         Me.InitLists()
@@ -29,7 +29,7 @@ Public Class ConvertDialogForm
     Private Sub Convert_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Convert.Click
         ' Start converting data into ID_CARDS format
         '        Dim id_card As New IDCardData()
-        Dim id_row As ID_CARDS_2017DataSet.ID_CARDSRow
+        Dim id_row As ID_CARDS_DataSet.ID_CARDSRow
 
         ProgressBar1.Minimum = 0
         ProgressBar1.Value = 0

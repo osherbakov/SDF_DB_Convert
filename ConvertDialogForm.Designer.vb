@@ -108,7 +108,7 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS = New System.Windows.Forms.TabPage
         Me.AbbreviationTextBox = New System.Windows.Forms.TextBox
         Me.ID_CARDS_BS = New System.Windows.Forms.BindingSource(Me.components)
-        Me.ID_CARDS_DS = New CSMR_DB_Convert.ID_CARDS_2017DataSet
+        Me.ID_CARDS_DS = New CSMR_DB_Convert.ID_CARDS_DataSet
         Me.Button_ID_Photo = New System.Windows.Forms.Button
         Me.RankComboBox_ID = New System.Windows.Forms.ComboBox
         Me.DLDataTextBox = New System.Windows.Forms.TextBox
@@ -192,8 +192,8 @@ Partial Class ConvertDialogForm
         Me.SSNTextBox2 = New System.Windows.Forms.TextBox
         Me.WeightTextBox1 = New System.Windows.Forms.TextBox
         Me.CSMR_ID_TAM = New CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
-        Me.ID_CARDS_TA = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDS_TableAdapter
-        Me.ID_CARDS_TAM = New CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
+        Me.ID_CARDS_TA = New CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.ID_CARDS_TableAdapter
+        Me.ID_CARDS_TAM = New CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.TableAdapterManager
         Me.OpenFileDialog_CSMR_ID = New System.Windows.Forms.OpenFileDialog
         Me.Form_error = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.SaveFileDialog_ID_CARDS = New System.Windows.Forms.SaveFileDialog
@@ -1924,7 +1924,7 @@ Partial Class ConvertDialogForm
         '
         Me.ID_CARDS_TAM.BackupDataSetBeforeUpdate = False
         Me.ID_CARDS_TAM.ID_CARDS_TableAdapter = Me.ID_CARDS_TA
-        Me.ID_CARDS_TAM.UpdateOrder = CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete
+        Me.ID_CARDS_TAM.UpdateOrder = CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete
         '
         'OpenFileDialog_CSMR_ID
         '
@@ -2028,7 +2028,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents DOBDateTimePicker As System.Windows.Forms.DateTimePicker
     Friend WithEvents Convert As System.Windows.Forms.Button
     Friend WithEvents Button_CreateDB As System.Windows.Forms.Button
-    Friend WithEvents ID_CARDS_DS As CSMR_DB_Convert.ID_CARDS_2017DataSet
+    Friend WithEvents ID_CARDS_DS As CSMR_DB_Convert.ID_CARDS_DataSet
     Friend WithEvents ID_CARDS_BS As System.Windows.Forms.BindingSource
     Friend WithEvents IDNumberTextBox As System.Windows.Forms.TextBox
     Friend WithEvents LastNameTextBox As System.Windows.Forms.TextBox
@@ -2060,8 +2060,8 @@ Partial Class ConvertDialogForm
     Friend WithEvents SaveItem As System.Windows.Forms.ToolStripButton
     Private WithEvents CSMR_ID_TA As CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.CSMR_IDTableAdapter
     Private WithEvents CSMR_ID_TAM As CSMR_DB_Convert.CSMR_ID_DataSetTableAdapters.TableAdapterManager
-    Private WithEvents ID_CARDS_TA As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.ID_CARDS_TableAdapter
-    Private WithEvents ID_CARDS_TAM As CSMR_DB_Convert.ID_CARDS_2017DataSetTableAdapters.TableAdapterManager
+    Private WithEvents ID_CARDS_TA As CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.ID_CARDS_TableAdapter
+    Private WithEvents ID_CARDS_TAM As CSMR_DB_Convert.ID_CARDS_DataSetTableAdapters.TableAdapterManager
     Friend WithEvents OpenFileDialog_CSMR_ID As System.Windows.Forms.OpenFileDialog
     Friend WithEvents Form_error As System.Windows.Forms.ErrorProvider
     Friend WithEvents HairComboBox As System.Windows.Forms.ComboBox
@@ -2127,7 +2127,7 @@ Partial Class ConvertDialogForm
     Friend WithEvents Barcode_Status As System.Windows.Forms.Label
     Friend WithEvents OpenFileDialog_Photo As System.Windows.Forms.OpenFileDialog
     Friend WithEvents Button_ID_Photo As System.Windows.Forms.Button
-    ' Friend WithEvents ID_CARDS_2017DataSet As CSMR_DB_Convert.ID_CARDS_2017DataSet
+    ' Friend WithEvents ID_CARDS_DataSet As CSMR_DB_Convert.ID_CARDS_DataSet
     Friend WithEvents AbbreviationTextBox As System.Windows.Forms.TextBox
 
 End Class
