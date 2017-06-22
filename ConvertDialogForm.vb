@@ -11,9 +11,6 @@ Public Class ConvertDialogForm
 
 
     Private Sub ConvertDialogForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        'TODO: This line of code loads data into the 'ID_CARDS_DataSet.ID_CARDS' table. You can move, or remove it, as needed.
-        ' Me.ID_CARDS_TA.Fill(Me.ID_CARDS_DS.ID_CARDS)
-
         Me.InitLists()
 
         ' Define special formatters for Names and Dates 
@@ -65,7 +62,7 @@ Public Class ConvertDialogForm
                 .PayGrade = dr.PAY_GR.ToUpper()
 
                 .IssueDate = Date.Today()
-                .ExpirationDate = .IssueDate.AddYears(3)
+                .ExpirationDate = .IssueDate.AddYears(2)
 
                 .Hair = dr.HAIR.ToUpper()
                 .Eyes = dr.EYES.ToUpper()
@@ -76,7 +73,7 @@ Public Class ConvertDialogForm
                 .Photo = GetImageFile(.LastName, .FirstName, .MI)
                 .IDNumber = Support.MakeFullNumber(IssuingStation.Text, .SSN, .LastName)
                 .SerialNumber = Support.MakeSerial()
-                If .PayGrade.Contains("CIV") Then
+                If .PayGrade.Contains("CIV") Or .Rank.Contains("AMB") Then
                     .Affiliation = "Civilian"
                     .Abbreviation = "ESGR"
                 Else
@@ -88,6 +85,7 @@ Public Class ConvertDialogForm
             ID_CARDS_DS.ID_CARDS.AddID_CARDSRow(id_row)
             ProgressBar1.PerformStep()
         Next
+        ProgressBar1.Value = ProgressBar1.Minimum
         ID_CARDS_DS.ID_CARDS.EndLoadData()
         TabControl_ID.SelectTab(1)
     End Sub

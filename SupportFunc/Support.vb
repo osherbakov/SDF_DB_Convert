@@ -1,6 +1,5 @@
 Imports System.Drawing
 Imports System.Drawing.Drawing2D
-Imports System.Windows.Forms
 Imports System.Text
 Imports System.Text.RegularExpressions
 Imports VB = Microsoft.VisualBasic

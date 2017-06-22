@@ -71,6 +71,7 @@ Partial Class ConvertDialogForm
         Dim SSNLabel2 As System.Windows.Forms.Label
         Dim WeightLabel1 As System.Windows.Forms.Label
         Dim AbbreviationLabel As System.Windows.Forms.Label
+        Dim AffiliationLabel As System.Windows.Forms.Label
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ConvertDialogForm))
         Me.TabControl_ID = New System.Windows.Forms.TabControl
         Me.TabPage_CSMR_ID = New System.Windows.Forms.TabPage
@@ -106,9 +107,10 @@ Partial Class ConvertDialogForm
         Me.H_ZIPTextBox = New System.Windows.Forms.TextBox
         Me.DOBDateTimePicker = New System.Windows.Forms.DateTimePicker
         Me.TabPage_ID_CARDS = New System.Windows.Forms.TabPage
-        Me.AbbreviationTextBox = New System.Windows.Forms.TextBox
+        Me.AffiliationTextBox = New System.Windows.Forms.TextBox
         Me.ID_CARDS_BS = New System.Windows.Forms.BindingSource(Me.components)
         Me.ID_CARDS_DS = New CSMR_DB_Convert.ID_CARDS_DataSet
+        Me.AbbreviationTextBox = New System.Windows.Forms.TextBox
         Me.Button_ID_Photo = New System.Windows.Forms.Button
         Me.RankComboBox_ID = New System.Windows.Forms.ComboBox
         Me.DLDataTextBox = New System.Windows.Forms.TextBox
@@ -250,6 +252,7 @@ Partial Class ConvertDialogForm
         SSNLabel2 = New System.Windows.Forms.Label
         WeightLabel1 = New System.Windows.Forms.Label
         AbbreviationLabel = New System.Windows.Forms.Label
+        AffiliationLabel = New System.Windows.Forms.Label
         Me.TabControl_ID.SuspendLayout()
         Me.TabPage_CSMR_ID.SuspendLayout()
         CType(Me.CSMR_ID_BS, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -445,7 +448,7 @@ Partial Class ConvertDialogForm
         'HairLabel
         '
         HairLabel.AutoSize = True
-        HairLabel.Location = New System.Drawing.Point(478, 181)
+        HairLabel.Location = New System.Drawing.Point(492, 190)
         HairLabel.Name = "HairLabel"
         HairLabel.Size = New System.Drawing.Size(29, 13)
         HairLabel.TabIndex = 21
@@ -454,7 +457,7 @@ Partial Class ConvertDialogForm
         'EyesLabel
         '
         EyesLabel.AutoSize = True
-        EyesLabel.Location = New System.Drawing.Point(478, 207)
+        EyesLabel.Location = New System.Drawing.Point(492, 223)
         EyesLabel.Name = "EyesLabel"
         EyesLabel.Size = New System.Drawing.Size(33, 13)
         EyesLabel.TabIndex = 23
@@ -463,7 +466,7 @@ Partial Class ConvertDialogForm
         'BloodTypeLabel
         '
         BloodTypeLabel.AutoSize = True
-        BloodTypeLabel.Location = New System.Drawing.Point(478, 233)
+        BloodTypeLabel.Location = New System.Drawing.Point(492, 256)
         BloodTypeLabel.Name = "BloodTypeLabel"
         BloodTypeLabel.Size = New System.Drawing.Size(64, 13)
         BloodTypeLabel.TabIndex = 25
@@ -472,7 +475,7 @@ Partial Class ConvertDialogForm
         'PayGradeLabel
         '
         PayGradeLabel.AutoSize = True
-        PayGradeLabel.Location = New System.Drawing.Point(285, 207)
+        PayGradeLabel.Location = New System.Drawing.Point(299, 223)
         PayGradeLabel.Name = "PayGradeLabel"
         PayGradeLabel.Size = New System.Drawing.Size(60, 13)
         PayGradeLabel.TabIndex = 29
@@ -481,7 +484,7 @@ Partial Class ConvertDialogForm
         'HeightLabel
         '
         HeightLabel.AutoSize = True
-        HeightLabel.Location = New System.Drawing.Point(643, 178)
+        HeightLabel.Location = New System.Drawing.Point(663, 190)
         HeightLabel.Name = "HeightLabel"
         HeightLabel.Size = New System.Drawing.Size(41, 13)
         HeightLabel.TabIndex = 31
@@ -490,7 +493,7 @@ Partial Class ConvertDialogForm
         'WeightLabel
         '
         WeightLabel.AutoSize = True
-        WeightLabel.Location = New System.Drawing.Point(643, 204)
+        WeightLabel.Location = New System.Drawing.Point(663, 223)
         WeightLabel.Name = "WeightLabel"
         WeightLabel.Size = New System.Drawing.Size(44, 13)
         WeightLabel.TabIndex = 33
@@ -499,7 +502,7 @@ Partial Class ConvertDialogForm
         'SexLabel
         '
         SexLabel.AutoSize = True
-        SexLabel.Location = New System.Drawing.Point(285, 233)
+        SexLabel.Location = New System.Drawing.Point(299, 256)
         SexLabel.Name = "SexLabel"
         SexLabel.Size = New System.Drawing.Size(45, 13)
         SexLabel.TabIndex = 37
@@ -517,7 +520,7 @@ Partial Class ConvertDialogForm
         'DLDataLabel
         '
         DLDataLabel.AutoSize = True
-        DLDataLabel.Location = New System.Drawing.Point(285, 291)
+        DLDataLabel.Location = New System.Drawing.Point(299, 289)
         DLDataLabel.Name = "DLDataLabel"
         DLDataLabel.Size = New System.Drawing.Size(47, 13)
         DLDataLabel.TabIndex = 45
@@ -526,7 +529,7 @@ Partial Class ConvertDialogForm
         'RankLabel1
         '
         RankLabel1.AutoSize = True
-        RankLabel1.Location = New System.Drawing.Point(285, 178)
+        RankLabel1.Location = New System.Drawing.Point(299, 190)
         RankLabel1.Name = "RankLabel1"
         RankLabel1.Size = New System.Drawing.Size(36, 13)
         RankLabel1.TabIndex = 46
@@ -702,6 +705,15 @@ Partial Class ConvertDialogForm
         AbbreviationLabel.Size = New System.Drawing.Size(69, 13)
         AbbreviationLabel.TabIndex = 48
         AbbreviationLabel.Text = "Abbreviation:"
+        '
+        'AffiliationLabel
+        '
+        AffiliationLabel.AutoSize = True
+        AffiliationLabel.Location = New System.Drawing.Point(299, 157)
+        AffiliationLabel.Name = "AffiliationLabel"
+        AffiliationLabel.Size = New System.Drawing.Size(52, 13)
+        AffiliationLabel.TabIndex = 49
+        AffiliationLabel.Text = "Affiliation:"
         '
         'TabControl_ID
         '
@@ -1016,6 +1028,8 @@ Partial Class ConvertDialogForm
         'TabPage_ID_CARDS
         '
         Me.TabPage_ID_CARDS.AutoScroll = True
+        Me.TabPage_ID_CARDS.Controls.Add(AffiliationLabel)
+        Me.TabPage_ID_CARDS.Controls.Add(Me.AffiliationTextBox)
         Me.TabPage_ID_CARDS.Controls.Add(AbbreviationLabel)
         Me.TabPage_ID_CARDS.Controls.Add(Me.AbbreviationTextBox)
         Me.TabPage_ID_CARDS.Controls.Add(Me.Button_ID_Photo)
@@ -1067,15 +1081,15 @@ Partial Class ConvertDialogForm
         Me.TabPage_ID_CARDS.Text = "ID_CARDS"
         Me.TabPage_ID_CARDS.UseVisualStyleBackColor = True
         '
-        'AbbreviationTextBox
+        'AffiliationTextBox
         '
-        Me.AbbreviationTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Abbreviation", True))
-        Me.AbbreviationTextBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
-        Me.AbbreviationTextBox.Location = New System.Drawing.Point(158, 144)
-        Me.AbbreviationTextBox.Name = "AbbreviationTextBox"
-        Me.AbbreviationTextBox.Size = New System.Drawing.Size(100, 26)
-        Me.AbbreviationTextBox.TabIndex = 49
-        Me.AbbreviationTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.AffiliationTextBox.CausesValidation = False
+        Me.AffiliationTextBox.ReadOnly = True
+        Me.AffiliationTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Affiliation", True))
+        Me.AffiliationTextBox.Location = New System.Drawing.Point(375, 150)
+        Me.AffiliationTextBox.Name = "AffiliationTextBox"
+        Me.AffiliationTextBox.Size = New System.Drawing.Size(90, 20)
+        Me.AffiliationTextBox.TabIndex = 50
         '
         'ID_CARDS_BS
         '
@@ -1087,6 +1101,18 @@ Partial Class ConvertDialogForm
         Me.ID_CARDS_DS.DataSetName = "ID_CARDS_DS"
         Me.ID_CARDS_DS.EnforceConstraints = False
         Me.ID_CARDS_DS.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
+        'AbbreviationTextBox
+        '
+        Me.AbbreviationTextBox.CausesValidation = False
+        Me.AbbreviationTextBox.ReadOnly = True
+        Me.AbbreviationTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Abbreviation", True))
+        Me.AbbreviationTextBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(204, Byte))
+        Me.AbbreviationTextBox.Location = New System.Drawing.Point(158, 144)
+        Me.AbbreviationTextBox.Name = "AbbreviationTextBox"
+        Me.AbbreviationTextBox.Size = New System.Drawing.Size(100, 26)
+        Me.AbbreviationTextBox.TabIndex = 49
+        Me.AbbreviationTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Button_ID_Photo
         '
@@ -1103,16 +1129,16 @@ Partial Class ConvertDialogForm
         Me.RankComboBox_ID.DataSource = Me.ID_CARDS_BS
         Me.RankComboBox_ID.DisplayMember = "Rank"
         Me.RankComboBox_ID.FormattingEnabled = True
-        Me.RankComboBox_ID.Location = New System.Drawing.Point(375, 175)
+        Me.RankComboBox_ID.Location = New System.Drawing.Point(375, 183)
         Me.RankComboBox_ID.Name = "RankComboBox_ID"
-        Me.RankComboBox_ID.Size = New System.Drawing.Size(68, 21)
+        Me.RankComboBox_ID.Size = New System.Drawing.Size(90, 21)
         Me.RankComboBox_ID.TabIndex = 47
         Me.RankComboBox_ID.ValueMember = "Rank"
         '
         'DLDataTextBox
         '
         Me.DLDataTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "DLData", True))
-        Me.DLDataTextBox.Location = New System.Drawing.Point(375, 284)
+        Me.DLDataTextBox.Location = New System.Drawing.Point(375, 283)
         Me.DLDataTextBox.Name = "DLDataTextBox"
         Me.DLDataTextBox.Size = New System.Drawing.Size(96, 20)
         Me.DLDataTextBox.TabIndex = 46
@@ -1125,9 +1151,9 @@ Partial Class ConvertDialogForm
         Me.BloodTypeComboBox.DataSource = Me.ID_CARDS_BS
         Me.BloodTypeComboBox.DisplayMember = "BloodType"
         Me.BloodTypeComboBox.FormattingEnabled = True
-        Me.BloodTypeComboBox.Location = New System.Drawing.Point(568, 233)
+        Me.BloodTypeComboBox.Location = New System.Drawing.Point(568, 249)
         Me.BloodTypeComboBox.Name = "BloodTypeComboBox"
-        Me.BloodTypeComboBox.Size = New System.Drawing.Size(55, 21)
+        Me.BloodTypeComboBox.Size = New System.Drawing.Size(81, 21)
         Me.BloodTypeComboBox.TabIndex = 45
         Me.BloodTypeComboBox.ValueMember = "BloodType"
         '
@@ -1139,9 +1165,9 @@ Partial Class ConvertDialogForm
         Me.EyesComboBox.DataSource = Me.ID_CARDS_BS
         Me.EyesComboBox.DisplayMember = "Eyes"
         Me.EyesComboBox.FormattingEnabled = True
-        Me.EyesComboBox.Location = New System.Drawing.Point(568, 204)
+        Me.EyesComboBox.Location = New System.Drawing.Point(568, 216)
         Me.EyesComboBox.Name = "EyesComboBox"
-        Me.EyesComboBox.Size = New System.Drawing.Size(55, 21)
+        Me.EyesComboBox.Size = New System.Drawing.Size(81, 21)
         Me.EyesComboBox.TabIndex = 43
         Me.EyesComboBox.ValueMember = "Eyes"
         '
@@ -1153,9 +1179,9 @@ Partial Class ConvertDialogForm
         Me.HairComboBox.DataSource = Me.ID_CARDS_BS
         Me.HairComboBox.DisplayMember = "Hair"
         Me.HairComboBox.FormattingEnabled = True
-        Me.HairComboBox.Location = New System.Drawing.Point(568, 177)
+        Me.HairComboBox.Location = New System.Drawing.Point(568, 183)
         Me.HairComboBox.Name = "HairComboBox"
-        Me.HairComboBox.Size = New System.Drawing.Size(55, 21)
+        Me.HairComboBox.Size = New System.Drawing.Size(81, 21)
         Me.HairComboBox.TabIndex = 42
         Me.HairComboBox.ValueMember = "Hair"
         '
@@ -1368,15 +1394,15 @@ Partial Class ConvertDialogForm
         'PayGradeTextBox
         '
         Me.PayGradeTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "PayGrade", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.PayGradeTextBox.Location = New System.Drawing.Point(375, 204)
+        Me.PayGradeTextBox.Location = New System.Drawing.Point(375, 217)
         Me.PayGradeTextBox.Name = "PayGradeTextBox"
-        Me.PayGradeTextBox.Size = New System.Drawing.Size(68, 20)
+        Me.PayGradeTextBox.Size = New System.Drawing.Size(90, 20)
         Me.PayGradeTextBox.TabIndex = 30
         '
         'HeightTextBox
         '
         Me.HeightTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Height", True))
-        Me.HeightTextBox.Location = New System.Drawing.Point(713, 175)
+        Me.HeightTextBox.Location = New System.Drawing.Point(713, 184)
         Me.HeightTextBox.Name = "HeightTextBox"
         Me.HeightTextBox.Size = New System.Drawing.Size(55, 20)
         Me.HeightTextBox.TabIndex = 32
@@ -1384,7 +1410,7 @@ Partial Class ConvertDialogForm
         'WeightTextBox
         '
         Me.WeightTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Weight", True))
-        Me.WeightTextBox.Location = New System.Drawing.Point(713, 200)
+        Me.WeightTextBox.Location = New System.Drawing.Point(713, 217)
         Me.WeightTextBox.Name = "WeightTextBox"
         Me.WeightTextBox.Size = New System.Drawing.Size(55, 20)
         Me.WeightTextBox.TabIndex = 34
@@ -1392,13 +1418,14 @@ Partial Class ConvertDialogForm
         'SexTextBox
         '
         Me.SexTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "Sex", True))
-        Me.SexTextBox.Location = New System.Drawing.Point(375, 230)
+        Me.SexTextBox.Location = New System.Drawing.Point(375, 250)
         Me.SexTextBox.Name = "SexTextBox"
-        Me.SexTextBox.Size = New System.Drawing.Size(68, 20)
+        Me.SexTextBox.Size = New System.Drawing.Size(90, 20)
         Me.SexTextBox.TabIndex = 38
         '
         'SerialNumberTextBox
         '
+        Me.SerialNumberTextBox.CausesValidation = False
         Me.SerialNumberTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Me.ID_CARDS_BS, "SerialNumber", True))
         Me.SerialNumberTextBox.Location = New System.Drawing.Point(375, 330)
         Me.SerialNumberTextBox.Name = "SerialNumberTextBox"
@@ -2129,5 +2156,6 @@ Partial Class ConvertDialogForm
     Friend WithEvents Button_ID_Photo As System.Windows.Forms.Button
     ' Friend WithEvents ID_CARDS_DataSet As CSMR_DB_Convert.ID_CARDS_DataSet
     Friend WithEvents AbbreviationTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents AffiliationTextBox As System.Windows.Forms.TextBox
 
 End Class

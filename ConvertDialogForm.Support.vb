@@ -369,6 +369,19 @@ Partial Public Class ConvertDialogForm
             Form_error.SetError(SexTextBox, "Invalid Gender (M or F)")
             IsValid = False
         End If
+
+        If dr.IsAbbreviationNull OrElse String.IsNullOrEmpty(dr.Abbreviation) _
+            OrElse Not (dr.Abbreviation = "CSMR" Or dr.Abbreviation = "ESGR") Then
+            Form_error.SetError(AbbreviationTextBox, "Incorrect Abbreviation")
+            IsValid = False
+        End If
+
+        If dr.IsAffiliationNull OrElse String.IsNullOrEmpty(dr.Affiliation) _
+            OrElse Not (dr.Affiliation = "Reserve" Or dr.Affiliation = "Civilian") Then
+            Form_error.SetError(RankComboBox_ID, "Incorrect Rank")
+            IsValid = False
+        End If
+
         Return IsValid
     End Function
 
