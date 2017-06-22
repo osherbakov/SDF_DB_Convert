@@ -112,8 +112,10 @@ Public Class ConvertDialogForm
         Next
         If PayGradeTextBox.Text.Contains("CIV") Then
             AbbreviationTextBox.Text = "ESGR"
+            AffiliationTextBox.Text = "Civilian"
         Else
             AbbreviationTextBox.Text = "CSMR"
+            AffiliationTextBox.Text = "Reserve"
         End If
     End Sub
 
