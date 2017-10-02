@@ -454,7 +454,10 @@ Partial Public Class ConvertDialogForm
         If SaveFileDialog_ID_CARDS.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Dim FileName As String = SaveFileDialog_ID_CARDS.FileName
             Dim extProp As String = ""
-            If String.IsNullOrEmpty(FileName) OrElse Not FileIO.FileSystem.FileExists(FileName) Then Exit Sub
+            If String.IsNullOrEmpty(FileName) Then Exit Sub
+            If Not FileIO.FileSystem.FileExists(FileName) Then
+                CreateAccessDatabase(FileName)
+            End If
 
             Dim cb As OleDb.OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
             cb.DataSource = FileName

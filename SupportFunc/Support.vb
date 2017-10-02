@@ -380,12 +380,13 @@ Public Class Support
     Private Shared ElementTemplate As String = "{0}(?<Data>.*?)\u{1:X0004}"
 
     Public Shared Function IsValidAAMVAFile(ByVal scannedString As String) As Boolean
-        Return rxANSIHeader.Match(scannedString).Success
+        Dim Result As Boolean = rxANSIHeader.Match(scannedString).Success
+        Return Result
     End Function
 
     Public Shared Function ExtractAAMVATag(ByVal scannedString As String, ByVal subFile As String, ByVal requestedTag As String) As String
         Dim ret As String = ""
-        ' First find the header and extract delimiters
+        ' First find the header and extract delimiters 
         Dim DS, RS, SR As String
         Dim NSub As Integer
         Dim offset, length As Integer
@@ -635,7 +636,7 @@ Public Class Support
             Dim nSubFields As Integer = 2
             Dim SubfieldStart As Integer = 0
 
-            result.Append("@" + VB.vbLf + Chr(&H1E) + VB.vbCr)
+            result.Append("@" + VB.vbLf + VB.vbTab + VB.vbCr)
             result.Append("ANSI " + "636014")
             result.Append("0400")       '  Version
             result.Append(nSubFields.ToString("D02"))     ' Number of subfields
